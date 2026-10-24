@@ -2,18 +2,20 @@ import { sound } from '../audio/sound';
 import { Progress } from '../game/progress';
 import { Session } from '../game/session';
 import { detectLanguage, LANGUAGES, loc, onLanguageChange, setLanguage, t, language, type Lang } from '../i18n';
+import { dailyId, dailyKey, generateDaily, previousKey } from '../level/daily';
+import type { LevelDef } from '../level/schema';
 import { LEVELS } from '../levels';
 import { h, icon, iconButton } from './dom';
 import { GameScreen } from './gameScreen';
 
-type Route = { name: 'menu' } | { name: 'levels' } | { name: 'game'; index: number };
+type Route = { name: 'menu' } | { name: 'levels' } | { name: 'game'; index: number } | { name: 'daily'; key: string };
 
 /** Screen router and app-wide state. */
 export class App {
   private progress = new Progress();
   private current: { el: HTMLElement; destroy?: () => void; refresh?: () => void } | null = null;
   /** The level in progress, kept across screen rebuilds (language switch). */
-  private live: { index: number; session: Session } | null = null;
+  private live: { id: string; session: Session } | null = null;
   private route: Route = { name: 'menu' };
   private modalRoot = h('div', { class: 'modal-root' });
 
@@ -37,16 +39,27 @@ export class App {
       if (index >= 0 && (import.meta.env.DEV || this.progress.isUnlocked(index, ids))) return { name: 'game', index };
     }
     if (location.hash === '#/levels') return { name: 'levels' };
+    if (location.hash === '#/daily') return { name: 'daily', key: dailyKey() };
+    // Dev builds can open any day's puzzle.
+    const d = location.hash.match(/^#\/daily\/(\d{4}-\d{2}-\d{2})$/);
+    if (d && import.meta.env.DEV) return { name: 'daily', key: d[1] };
     return { name: 'menu' };
   }
 
   private go(route: Route, push = true): void {
     this.route = route;
-    const hash = route.name === 'game' ? `#/level/${LEVELS[route.index].id}` : route.name === 'levels' ? '#/levels' : '#/';
+    const hash = route.name === 'game' ? `#/level/${LEVELS[route.index].id}` : route.name === 'levels' ? '#/levels' : route.name === 'daily' ? '#/daily' : '#/';
     if (push && location.hash !== hash) history.pushState(null, '', hash);
     this.current?.destroy?.();
     this.current?.el.remove();
-    const screen = route.name === 'menu' ? this.menu() : route.name === 'levels' ? this.levels() : this.game(route.index);
+    const screen =
+      route.name === 'menu'
+        ? this.menu()
+        : route.name === 'levels'
+          ? this.levels()
+          : route.name === 'daily'
+            ? this.daily(route.key)
+            : this.game(route.index);
     this.current = screen;
     this.root.insertBefore(screen.el, this.modalRoot);
     const focusable = screen.el.querySelector<HTMLElement>('[autofocus], .btn.primary');
@@ -78,11 +91,32 @@ export class App {
         'nav',
         { class: 'menu-actions' },
         play,
+        this.dailyButton(),
         h('button', { class: 'btn', type: 'button', onclick: () => this.go({ name: 'levels' }) }, t('levels')),
         h('button', { class: 'btn', type: 'button', onclick: () => this.openSettings() }, t('settings')),
       ),
     );
     return { el };
+  }
+
+  private dailyButton(): HTMLElement {
+    const today = dailyKey();
+    const solved = !!this.progress.level(dailyId(today));
+    const streak = this.progress.streak(today, dailyId, previousKey);
+    const status = solved ? t('dailySolved') : t('dailyNew');
+    const b = h(
+      'button',
+      { class: `btn daily-btn ${solved ? 'solved' : ''}`, type: 'button' },
+      h('span', {}, t('daily')),
+      h('small', {}, streak > 1 ? `${status} · ${t('dailyStreak', { n: streak })}` : status),
+    );
+    b.addEventListener('click', () => {
+      sound.unlock();
+      sound.play('click');
+      if (this.live?.id === dailyId(today) && this.live.session.won) this.live = null;
+      this.go({ name: 'daily', key: today });
+    });
+    return b;
   }
 
   private levels(): { el: HTMLElement } {
@@ -109,7 +143,7 @@ export class App {
         unlocked ? stars : icon('lock'),
       );
       btn.addEventListener('click', () => {
-        if (this.live?.index === i && this.live.session.won) this.live = null;
+        if (this.live?.id === level.id && this.live.session.won) this.live = null;
         this.go({ name: 'game', index: i });
       });
       grid.append(btn);
@@ -123,23 +157,51 @@ export class App {
     return { el };
   }
 
-  private game(index: number): { el: HTMLElement; destroy: () => void; refresh: () => void } {
-    if (this.live?.index !== index) {
-      this.live = { index, session: new Session(LEVELS[index]) };
+  /** The session for a level, resumed if it is the one in progress. */
+  private sessionFor(level: LevelDef): Session {
+    if (this.live?.id !== level.id) {
+      this.live = { id: level.id, session: new Session(level) };
       // Dev aid: ?solve applies the reference solution (screenshots, level tuning).
       if (import.meta.env.DEV && new URLSearchParams(location.search).has('solve')) this.live.session.applySolution();
     }
+    return this.live.session;
+  }
+
+  private game(index: number): { el: HTMLElement; destroy: () => void; refresh: () => void } {
+    const level = LEVELS[index];
+    const last = index + 1 >= LEVELS.length;
     const screen = new GameScreen({
-      level: LEVELS[index],
-      session: this.live.session,
-      index,
-      total: LEVELS.length,
+      level,
+      session: this.sessionFor(level),
+      kicker: t('levelN', { n: index + 1 }),
+      nextLabel: last ? t('levels') : t('next'),
+      doneText: last ? t('allDone') : t('solvedText'),
       progress: this.progress,
       onExit: () => this.go({ name: 'levels' }),
-      onNext: () => this.go({ name: 'game', index: index + 1 }),
+      onNext: () => (last ? this.go({ name: 'levels' }) : this.go({ name: 'game', index: index + 1 })),
       onReplay: () => {
         this.live = null;
         this.go({ name: 'game', index }, false);
+      },
+      onSettings: () => this.openSettings(),
+    });
+    return { el: screen.el, destroy: () => screen.destroy(), refresh: () => screen.applySettings() };
+  }
+
+  private daily(key: string): { el: HTMLElement; destroy: () => void; refresh: () => void } {
+    const level = generateDaily(key);
+    const screen = new GameScreen({
+      level,
+      session: this.sessionFor(level),
+      kicker: t('daily'),
+      nextLabel: t('back'),
+      doneText: t('dailyDone'),
+      progress: this.progress,
+      onExit: () => this.go({ name: 'menu' }),
+      onNext: () => this.go({ name: 'menu' }),
+      onReplay: () => {
+        this.live = null;
+        this.go({ name: 'daily', key }, false);
       },
       onSettings: () => this.openSettings(),
     });

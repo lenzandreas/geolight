@@ -9,6 +9,8 @@ export interface BeamSegment {
   a: Vec;
   b: Vec;
   c: RGB;
+  /** Index of the emitted ray this segment descends from (lets renderers group whole light paths). */
+  root: number;
 }
 
 export interface TraceResult {
@@ -72,6 +74,7 @@ export function trace(entities: Entity[], opts: TraceOptions): TraceResult {
     t.emit(e, stack);
     for (let i = before; i < stack.length; i++) emitted += power(stack[i].c);
   }
+  stack.forEach((r, i) => (r.root = i));
 
   // The surface a child ray left from; flat surfaces can never be hit again at t≈0.
   let lastSurface: Surface | null = null;
@@ -84,7 +87,7 @@ export function trace(entities: Entity[], opts: TraceOptions): TraceResult {
         return;
       }
       if (power(c) < minPower) return;
-      const ray: Ray = { o: addScaled(o, d, NUDGE), d, c, depth: parent.depth + 1, source: parent.source };
+      const ray: Ray = { o: addScaled(o, d, NUDGE), d, c, depth: parent.depth + 1, source: parent.source, root: parent.root };
       if (lastSurface && lastSurface.shape.kind === 'segment') parentSurface.set(ray, lastSurface);
       stack.push(ray);
     },
@@ -118,7 +121,7 @@ export function trace(entities: Entity[], opts: TraceOptions): TraceResult {
     }
     if (!best) continue; // Cannot happen with a closed boundary, but stay safe.
     const point = addScaled(ray.o, ray.d, bestT);
-    segments.push({ a: ray.o, b: point, c: ray.c });
+    segments.push({ a: ray.o, b: point, c: ray.c, root: ray.root ?? 0 });
     const hit: Hit = { point, t: bestT, surface: best };
     lastSurface = best;
     best.interact(ray, hit, ctx);

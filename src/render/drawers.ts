@@ -3,7 +3,7 @@
  * physics so a different art style (or a WebGL renderer) can replace it.
  */
 import { resolveColor } from '../core/color';
-import { THIN_LEN } from '../core/entities';
+import { SLIT_THICKNESS, THIN_LEN } from '../core/entities';
 import { centre, regularPolygon, rotatedRect } from '../core/entities/shapes';
 import { getType } from '../core/registry';
 import type { TargetStatus } from '../core/rules';
@@ -81,6 +81,34 @@ registerDrawer('wall', (e, { ctx, theme }) => {
   ctx.strokeStyle = theme.wallEdge;
   ctx.lineWidth = 0.025;
   ctx.stroke();
+});
+
+registerDrawer('slit', (e, { ctx, theme }) => {
+  const t = getType('slit');
+  const gap = param<number>(e, t, 'gap');
+  const offset = param<number>(e, t, 'offset');
+  const th = SLIT_THICKNESS;
+  local(e, ctx, () => {
+    // Local frame: +x is the direction light passes, the barrier runs along y.
+    const bar = (from: number, to: number) => {
+      if (to - from < 1e-6) return;
+      roundRect(ctx, -th / 2, from, th, to - from, 0.05);
+      ctx.fillStyle = theme.wallTop;
+      ctx.fill();
+      ctx.strokeStyle = theme.wallEdge;
+      ctx.lineWidth = 0.02;
+      ctx.stroke();
+    };
+    bar(-0.5, offset - gap / 2);
+    bar(offset + gap / 2, 0.5);
+    // Soft markers on the lips of the opening, so the gap reads even when it is tiny.
+    ctx.fillStyle = 'rgba(200, 210, 255, 0.55)';
+    for (const y of [offset - gap / 2, offset + gap / 2]) {
+      ctx.beginPath();
+      ctx.arc(0, y, 0.025, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
 });
 
 /* ---------- Sources ---------- */

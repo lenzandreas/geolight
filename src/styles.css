@@ -162,6 +162,22 @@ button {
   min-width: 220px;
 }
 
+.daily-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+.daily-btn small {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+.daily-btn.solved small {
+  color: var(--warm);
+}
+
 /* A light beam entering a prism and fanning out: pure CSS. */
 .logo {
   position: relative;
@@ -358,11 +374,35 @@ button {
   transform: translate(-50%, 0);
 }
 .tray {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 8px 12px 12px;
   min-height: 78px;
+}
+.tray-drop-label {
+  position: absolute;
+  inset: 4px 8px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 2px dashed rgba(169, 184, 255, 0.45);
+  border-radius: 18px;
+  background: rgba(20, 24, 58, 0.88);
+  color: var(--text-dim);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, background 0.2s, color 0.2s, border-color 0.2s;
+}
+.tray.drop-ready .tray-drop-label {
+  opacity: 1;
+}
+.tray.drop-hover .tray-drop-label {
+  background: rgba(60, 70, 140, 0.92);
+  border-color: var(--accent-strong);
+  color: var(--text);
 }
 .tray-list {
   flex: 1;

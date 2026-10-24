@@ -85,6 +85,31 @@ describe('tracer', () => {
     expect(r.segments.length).toBeLessThan(100);
   });
 
+  it('a slit only lets light through its opening', () => {
+    const sink = ent('sink', 9, 3);
+    const laser = ent('laser', 1, 3, 0);
+    expect(trace([laser, ent('slit', 5, 3, 0, { gap: 0.1 }), sink], opts).received.has(sink.id)).toBe(true);
+    // Opening shifted away from the beam: blocked.
+    expect(trace([laser, ent('slit', 5, 3, 0, { gap: 0.1, offset: 0.2 }), sink], opts).received.has(sink.id)).toBe(false);
+  });
+
+  it('a tilted glass block shifts a beam sideways', () => {
+    const block = ent('block', 4, 3, 30);
+    const r = trace([ent('laser', 1, 3, 0), block], opts);
+    const last = r.segments[r.segments.length - 1];
+    expect(last.b.x).toBeCloseTo(12);
+    expect(Math.abs(last.a.y - last.b.y)).toBeLessThan(1e-9);
+    expect(Math.abs(last.b.y - 3.5)).toBeGreaterThan(0.1);
+  });
+
+  it('a mixing sink needs every colour of its mask', () => {
+    const sink = ent('sink', 9, 3, 0, { color: 'yellow', each: true, required: 0.6 });
+    const red = ent('laser', 1, 3, 0, { color: 'red', power: 0.5 });
+    expect(evaluate([sink], trace([red, sink], opts)).won).toBe(false);
+    const green = ent('laser', 9, 6, 270, { color: 'green', power: 0.5 });
+    expect(evaluate([sink], trace([red, green, sink], opts)).won).toBe(true);
+  });
+
   it('sensors fail the level when lit', () => {
     const sink = ent('sink', 9, 3);
     const sensor = ent('sensor', 5, 3);

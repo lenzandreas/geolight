@@ -84,7 +84,8 @@ export const Sink: EntityType = {
   id: 'sink',
   category: 'target',
   /** required: power needed (1 = one full laser). color: accepted channels. strict: off-colour light spoils it. */
-  defaults: { required: 0.9, color: 'white', strict: false, radius: SINK_RADIUS },
+  /** each: every channel in `color` must deliver its share (colour mixing, e.g. yellow = red + green). */
+  defaults: { required: 0.9, color: 'white', strict: false, each: false, radius: SINK_RADIUS },
   symmetry: 360,
   surfaces(e, out) {
     out.push({ shape: { kind: 'circle', c: centre(e), r: param<number>(e, Sink, 'radius') }, entity: e, interact: receiver(e) });
@@ -201,6 +202,34 @@ export const Blocker: EntityType = {
 
 /* ---------- Structure ---------- */
 
+export const SLIT_THICKNESS = 0.18;
+
+/**
+ * A one-cell barrier with a narrow opening. It faces `angle` (light passes along it);
+ * `gap` is the opening width and `offset` shifts it sideways (in cells).
+ */
+export const Slit: EntityType = {
+  id: 'slit',
+  category: 'structure',
+  defaults: { gap: 0.2, offset: 0 },
+  surfaces(e, out) {
+    const gap = param<number>(e, Slit, 'gap');
+    const offset = param<number>(e, Slit, 'offset');
+    const c = centre(e);
+    const n = fromAngle(e.angle);
+    const t = perp(n);
+    const bar = (from: number, to: number) => {
+      if (to - from < 1e-6) return;
+      const mid = (from + to) / 2;
+      const len = to - from;
+      const p = add(c, scale(t, mid));
+      pushPolygon(out, e, rotatedRect({ ...e, x: p.x - 0.5, y: p.y - 0.5 }, SLIT_THICKNESS, len), absorb);
+    };
+    bar(-0.5, offset - gap / 2);
+    bar(offset + gap / 2, 0.5);
+  },
+};
+
 /** Axis-aligned absorbing wall covering w×h cells from its anchor cell. */
 export const Wall: EntityType = {
   id: 'wall',
@@ -226,7 +255,7 @@ export const Wall: EntityType = {
   },
 };
 
-export const BUILTIN_TYPES: EntityType[] = [Laser, Bulb, Sun, Sink, Sensor, Mirror, Splitter, Filter, Lens, CurvedMirror, Prism, GlassBlock, Blocker, Wall];
+export const BUILTIN_TYPES: EntityType[] = [Laser, Bulb, Sun, Sink, Sensor, Mirror, Splitter, Filter, Lens, CurvedMirror, Prism, GlassBlock, Blocker, Wall, Slit];
 
 let registered = false;
 /** Idempotent registration of the built-in types. */

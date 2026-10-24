@@ -59,6 +59,17 @@ export class Progress {
     return true;
   }
 
+  /** Consecutive solved days ending today (or yesterday, if today is still open). */
+  streak(today: string, idOf: (key: string) => string, previous: (key: string) => string): number {
+    let key = this.level(idOf(today)) ? today : previous(today);
+    let n = 0;
+    while (this.level(idOf(key))) {
+      n++;
+      key = previous(key);
+    }
+    return n;
+  }
+
   isUnlocked(index: number, ids: string[]): boolean {
     return index === 0 || !!this.data.levels[ids[index - 1]] || !!this.data.levels[ids[index]];
   }

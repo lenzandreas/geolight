@@ -47,6 +47,10 @@ The **solver** searches placements, but only on cells the light currently crosse
 2. its reference solution wins with 3 stars,
 3. multi-piece levels can't be cheesed with a single piece.
 
+### Daily puzzle (`src/level/daily.ts`)
+
+A seeded generator turns the date into a level. It walks a laser path with right-angle turns, puts a mirror at each turn and a sink at the end, then hides the mirrors in the tray (or bolts some down at a wrong angle). Depending on the weekday it also adds sensors, splitters with a second sink, decoy pieces and walls. Every candidate is verified (unsolved at the start, solved by its own path, no one-piece shortcut) before it is used, and the same date always produces the same puzzle.
+
 ### Session (`src/game/session.ts`)
 
 This is the headless state of one attempt: pieces, tray counts, snapshot undo/redo, hints derived from the reference solution, and star scoring. The UI, the solver and the tests all drive the same API.
@@ -84,6 +88,6 @@ This is the headless state of one attempt: pieces, tray counts, snapshot undo/re
 ## Roadmap ideas
 
 - **More content:** polarisers (two crossed filters block light), portals/fibre optics, moving or rotating mirrors on timers, colour mixing (red + green targets that need yellow), one-way glass, solar cells that open doors, and fresnel losses on glass in a "realistic" world.
-- **Modes:** level editor with share codes (the level JSON plus the solver to verify solvability), daily puzzle, a time-attack "catch the moving light" mode, and a sandbox.
+- **Modes:** level editor with share codes (the level JSON plus the solver to verify solvability), a time-attack "catch the moving light" mode, and a sandbox. Daily puzzles could gain lenses and colours using the same generate-and-verify approach.
 - **Polish:** colour-blind patterns on coloured targets, light theme, haptics on mobile (via a platform adapter), and analytics-free play statistics.
 - **Tech:** move tracing into a Web Worker if levels grow very large, and add a WebGL renderer for richer bloom on capable devices.
