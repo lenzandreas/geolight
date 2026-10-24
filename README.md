@@ -18,6 +18,12 @@ npm run build      # static site in dist/ (open from any web server or sub-path)
 npm run preview    # serve the production build
 ```
 
+### Continuous integration & deployment
+
+`.github/workflows/ci.yml` runs the typecheck, the tests and a production build on every push and pull request. Pushes to `main` that pass are deployed to **GitHub Pages**.
+
+One-time setup: in the repository on GitHub, go to **Settings → Pages → Build and deployment → Source** and choose **GitHub Actions**. The game will then be served at `https://<owner>.github.io/<repo>/`.
+
 ### Controls
 
 | Action | Mouse | Touch | Keyboard |
