@@ -28,6 +28,8 @@ export interface Ray {
   depth: number;
   /** Source entity id, kept for future scoring or per-source rules. */
   source: string;
+  /** Index of the emitted ray this one descends from (set by the tracer). */
+  root?: number;
 }
 
 export interface Hit {

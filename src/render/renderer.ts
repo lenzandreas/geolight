@@ -107,7 +107,8 @@ export class Renderer {
     const buckets = new Map<string, Bucket>();
     // Overlapping parts of one stroke don't add up, so weak rays are spread over interleaved
     // paths: where rays crowd together (near a bulb, at a focus) they visibly brighten.
-    let weakIndex = 0;
+    // Interleave by emitted ray, so neighbouring rays always land in different paths no matter
+    // how many bounces each one takes.
     for (const s of trace.segments) {
       const p = power(s.c);
       if (p <= 0) continue;
@@ -117,7 +118,7 @@ export class Renderer {
       // Strong beams: perceptual curve. Weak rays: linear, so ray density sets the brightness.
       const a = strong ? Math.min(1, Math.pow(p, 0.35)) : Math.min(1, p * 18);
       const qa = Math.max(1, Math.round(a * 32));
-      const key = `${qc[0]},${qc[1]},${qc[2]},${qa},${strong ? 's' : weakIndex++ % WEAK_LAYERS}`;
+      const key = `${qc[0]},${qc[1]},${qc[2]},${qa},${strong ? 's' : s.root % WEAK_LAYERS}`;
       let b = buckets.get(key);
       if (!b) {
         b = { col: qc, a: qa / 32, strong, path: new Path2D() };

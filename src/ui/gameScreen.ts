@@ -36,6 +36,9 @@ type Gesture =
   | { kind: 'tray'; key: string; pointerId: number; sx: number; sy: number; moved: boolean };
 
 const DRAG_THRESHOLD = 6;
+const TOUCH_DRAG_THRESHOLD = 10;
+/** On touch, the dragged piece floats this far (CSS px) above the finger so it stays visible. */
+const TOUCH_LIFT = 56;
 
 export class GameScreen {
   readonly el: HTMLElement;
@@ -44,6 +47,9 @@ export class GameScreen {
   private canvas: HTMLCanvasElement;
   private board: HTMLElement;
   private trayList: HTMLElement;
+  private trayEl: HTMLElement;
+  /** A tray piece is being dragged over the tray: dropping returns it. */
+  private overTray = false;
   private selBar: HTMLElement;
   private toast: HTMLElement;
   private undoBtn: HTMLButtonElement;
@@ -76,6 +82,8 @@ export class GameScreen {
   constructor(private opts: GameScreenOptions) {
     const { level } = opts;
     this.session = opts.session ?? new Session(level);
+    // Dev aid for scripted browser tests.
+    if (import.meta.env.DEV) (window as unknown as { __session: Session }).__session = this.session;
 
     this.canvas = h('canvas', { class: 'board-canvas', tabindex: 0, 'aria-label': loc(level.name) });
     this.board = h('div', { class: 'board' }, this.canvas);
@@ -102,8 +110,9 @@ export class GameScreen {
       iconButton('rotr', t('rotateRight'), () => this.rotateSelected(1)),
       iconButton('tray', t('removePiece'), () => this.removeSelected()),
     );
-    const tray = h('footer', { class: 'tray' }, this.trayList, this.selBar);
-    this.el = h('section', { class: 'screen game-screen' }, header, this.board, tray);
+    const dropLabel = h('div', { class: 'tray-drop-label', 'aria-hidden': 'true' }, icon('tray'), h('span', {}, t('removePiece')));
+    this.trayEl = h('footer', { class: 'tray' }, this.trayList, this.selBar, dropLabel);
+    this.el = h('section', { class: 'screen game-screen' }, header, this.board, this.trayEl);
 
     this.session.onChange(() => this.onModelChange());
     this.buildTray();
@@ -176,6 +185,7 @@ export class GameScreen {
     let floating: { entity: Entity; valid: boolean } | null = null;
     for (const p of this.session.pieces) {
       const angle = this.displayAngles.get(p.id) ?? p.angle;
+      if (g?.kind === 'piece' && g.moved && g.id === p.id && this.overTray) continue;
       if (g?.kind === 'piece' && g.moved && g.id === p.id && this.pointerWorld) {
         if (drop?.valid) optics.push({ ...p, x: drop.x, y: drop.y, angle });
         else floating = { entity: { ...p, x: this.pointerWorld.x - 0.5, y: this.pointerWorld.y - 0.5, angle }, valid: false };
@@ -462,6 +472,33 @@ export class GameScreen {
     return this.renderer.view.toWorld({ x: ev.clientX - r.left, y: ev.clientY - r.top });
   }
 
+  /** Where a dragged piece is: lifted above the finger on touch screens. */
+  private dragWorld(ev: PointerEvent): { x: number; y: number } {
+    const lift = ev.pointerType === 'touch' ? TOUCH_LIFT : 0;
+    const r = this.canvas.getBoundingClientRect();
+    return this.renderer.view.toWorld({ x: ev.clientX - r.left, y: ev.clientY - lift - r.top });
+  }
+
+  private isOverTray(ev: PointerEvent): boolean {
+    const r = this.trayEl.getBoundingClientRect();
+    return ev.clientX >= r.left && ev.clientX <= r.right && ev.clientY >= r.top && ev.clientY <= r.bottom;
+  }
+
+  /** Track the drag position and the tray drop zone. */
+  private updateDrag(ev: PointerEvent, canReturn: boolean): void {
+    this.overTray = canReturn && this.isOverTray(ev);
+    this.pointerWorld = this.overTray ? null : this.dragWorld(ev);
+    this.trayEl.classList.toggle('drop-ready', canReturn);
+    this.trayEl.classList.toggle('drop-hover', this.overTray);
+    this.touch();
+  }
+
+  private endDrag(): void {
+    this.overTray = false;
+    this.pointerWorld = null;
+    this.trayEl.classList.remove('drop-ready', 'drop-hover');
+  }
+
   private pickPiece(w: { x: number; y: number }): Piece | undefined {
     let best: Piece | undefined;
     let bestD = 0.62;
@@ -549,7 +586,8 @@ export class GameScreen {
         return;
       }
       if (g.kind === 'piece') {
-        if (!g.moved && Math.hypot(ev.clientX - g.sx, ev.clientY - g.sy) > DRAG_THRESHOLD) {
+        const threshold = ev.pointerType === 'touch' ? TOUCH_DRAG_THRESHOLD : DRAG_THRESHOLD;
+        if (!g.moved && Math.hypot(ev.clientX - g.sx, ev.clientY - g.sy) > threshold) {
           const p = this.session.get(g.id)!;
           if (this.session.canMove(p)) {
             g.moved = true;
@@ -561,16 +599,15 @@ export class GameScreen {
             return;
           }
         }
-        if (g.moved) {
-          this.pointerWorld = w;
-          this.touch();
-        }
+        if (g.moved) this.updateDrag(ev, this.session.get(g.id)?.lock === 'tray');
       }
     });
 
     const endPointer = (ev: PointerEvent) => {
       const g = this.gesture;
       if (!g || g.pointerId !== ev.pointerId || g.kind === 'tray') return;
+      // Read the drop target while the gesture is still active.
+      const drop = this.dropCell();
       this.gesture = null;
       if (g.kind === 'rotate') {
         if (this.session.setAngle(g.id, g.angle)) sound.play('click');
@@ -586,16 +623,20 @@ export class GameScreen {
         this.select(p.id);
         return;
       }
-      const drop = this.dropCell();
-      this.pointerWorld = null;
-      if (drop?.valid && ev.type !== 'pointercancel') {
+      const returning = this.overTray;
+      this.endDrag();
+      if (ev.type === 'pointercancel') {
+        // Interrupted (e.g. a system gesture): leave the piece where it was.
+      } else if (returning) {
+        this.session.remove(p.id);
+        sound.play('remove');
+      } else if (drop?.valid) {
         this.session.move(p.id, drop.x, drop.y);
         sound.play('place');
         this.select(p.id);
-      } else if (!drop && p.lock === 'tray' && ev.type !== 'pointercancel') {
-        // Dropped off the board: back to the tray.
-        this.session.remove(p.id);
-        sound.play('remove');
+      } else {
+        // Anywhere else (off the board, an occupied cell): snap back.
+        this.select(p.id);
       }
       this.touch();
     };
@@ -639,14 +680,12 @@ export class GameScreen {
     const move = (e: PointerEvent) => {
       const g = this.gesture;
       if (!g || g.kind !== 'tray' || e.pointerId !== g.pointerId) return;
-      if (!g.moved && Math.hypot(e.clientX - g.sx, e.clientY - g.sy) > DRAG_THRESHOLD) {
+      const threshold = e.pointerType === 'touch' ? TOUCH_DRAG_THRESHOLD : DRAG_THRESHOLD;
+      if (!g.moved && Math.hypot(e.clientX - g.sx, e.clientY - g.sy) > threshold) {
         g.moved = true;
         sound.play('pick');
       }
-      if (g.moved) {
-        this.pointerWorld = this.toWorld(e);
-        this.touch();
-      }
+      if (g.moved) this.updateDrag(e, false);
     };
     const up = (e: PointerEvent) => {
       const g = this.gesture;
@@ -656,7 +695,7 @@ export class GameScreen {
       if (!g || g.kind !== 'tray') return;
       const drop = this.dropCell();
       this.gesture = null;
-      this.pointerWorld = null;
+      this.endDrag();
       if (e.type === 'pointercancel') {
         this.touch();
         return;
