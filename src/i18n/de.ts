@@ -18,6 +18,7 @@ export const de: Strings = {
   world2: 'Licht sammeln',
   world3: 'Farben',
   world4: 'Optische Kniffe',
+  world5: 'Linsenkunst',
   levelN: 'Level {n}',
   locked: 'Gesperrt',
   undo: 'Rückgängig',
