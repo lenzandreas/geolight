@@ -27,6 +27,19 @@ describe('progress', () => {
     expect(p.isUnlocked(2, ids)).toBe(false);
   });
 
+  it('counts daily streaks', () => {
+    const p = new Progress(memory());
+    const id = (k: string) => `daily-${k}`;
+    const prev = (k: string) => String(Number(k) - 1);
+    expect(p.streak('10', id, prev)).toBe(0);
+    p.complete('daily-8', 3, 1);
+    p.complete('daily-9', 3, 1);
+    expect(p.streak('10', id, prev)).toBe(2); // Today still open: the streak lives on.
+    p.complete('daily-10', 3, 1);
+    expect(p.streak('10', id, prev)).toBe(3);
+    expect(p.streak('12', id, prev)).toBe(0);
+  });
+
   it('survives a corrupt save', () => {
     const kv = memory();
     kv.set('geolight.save', '{not json');

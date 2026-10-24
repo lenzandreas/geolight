@@ -162,6 +162,22 @@ button {
   min-width: 220px;
 }
 
+.daily-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+.daily-btn small {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+.daily-btn.solved small {
+  color: var(--warm);
+}
+
 /* A light beam entering a prism and fanning out: pure CSS. */
 .logo {
   position: relative;

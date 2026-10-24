@@ -38,7 +38,7 @@ Levels live in `src/levels/NN-name.json` and load in file-name order. The test s
 | `laser` | `color` (`white`), `power` (1) |
 | `bulb` | `color`, `power` (1), `rays` (720) |
 | `sun` | `color`, `power` (1), `width` (3 cells), `rays` (90) |
-| `sink` | `required` (0.9), `color` (`white`, i.e. accepts all), `strict` (false: off-colour light spoils it), `radius` (0.32) |
+| `sink` | `required` (0.9), `color` (`white`, i.e. accepts all), `strict` (false: off-colour light spoils it), `each` (false: every colour of `color` must bring an equal share, for mixing), `radius` (0.32) |
 | `sensor` | `limit` (0.02): more light than this blocks the win |
 | `mirror` | `reflectance` (1) |
 | `splitter` | `ratio` (0.5) |
@@ -49,6 +49,7 @@ Levels live in `src/levels/NN-name.json` and load in file-name order. The test s
 | `block` | `n` (1.5), `size` (0.8) |
 | `blocker` | `size` (0.56) |
 | `wall` | `w`, `h` in cells (anchored at the top-left cell) |
+| `slit` | `gap` (0.2), `offset` (0): a one-cell barrier facing `angle` with an opening of `gap` cells, shifted sideways by `offset` |
 
 Colours can be names (`white`, `red`, `green`, `blue`, `yellow`, `cyan`, `magenta`) or `[r, g, b]` masks. Power is split across channels, so a white laser of power 1 carries 1/3 in each of red, green and blue.
 

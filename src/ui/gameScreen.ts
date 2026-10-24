@@ -21,8 +21,11 @@ export interface GameScreenOptions {
   level: LevelDef;
   /** Resume an existing session (e.g. after switching language). */
   session?: Session;
-  index: number;
-  total: number;
+  /** Small label above the level name, e.g. "Level 3" or "Daily puzzle". */
+  kicker: string;
+  /** Win card: label of the main button, and the text under the stars. */
+  nextLabel: string;
+  doneText: string;
   progress: Progress;
   onExit(): void;
   onNext(): void;
@@ -98,7 +101,7 @@ export class GameScreen {
       'header',
       { class: 'game-header' },
       iconButton('back', t('back'), () => opts.onExit()),
-      h('div', { class: 'level-title' }, h('span', { class: 'level-num' }, t('levelN', { n: opts.index + 1 })), h('span', { class: 'level-name' }, loc(level.name))),
+      h('div', { class: 'level-title' }, h('span', { class: 'level-num' }, opts.kicker), h('span', { class: 'level-name' }, loc(level.name))),
       h('div', { class: 'header-actions' }, this.undoBtn, this.redoBtn, iconButton('reset', t('reset'), () => this.session.reset()), iconButton('hint', t('hint'), () => this.showHint()), iconButton('settings', t('settings'), () => opts.onSettings())),
     );
 
@@ -317,22 +320,20 @@ export class GameScreen {
   }
 
   private showWinOverlay(stars: number): void {
-    const { index, total } = this.opts;
-    const last = index + 1 >= total;
     const starRow = h('div', { class: 'stars', 'aria-label': `${stars} / 3` });
     for (let i = 0; i < 3; i++) {
       const s = h('span', { class: `star ${i < stars ? 'on' : ''}`, style: `animation-delay:${0.15 + i * 0.15}s` });
       s.append(icon('star', i < stars));
       starRow.append(s);
     }
-    const next = h('button', { class: 'btn primary', type: 'button' }, last ? t('levels') : t('next'));
-    next.addEventListener('click', () => (last ? this.opts.onExit() : this.opts.onNext()));
+    const next = h('button', { class: 'btn primary', type: 'button' }, this.opts.nextLabel);
+    next.addEventListener('click', () => this.opts.onNext());
     const card = h(
       'div',
       { class: 'card win-card', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'win-title' },
       h('h2', { id: 'win-title' }, t('solved')),
       starRow,
-      h('p', {}, last ? t('allDone') : t('solvedText')),
+      h('p', {}, this.opts.doneText),
       h('div', { class: 'card-actions' }, h('button', { class: 'btn', type: 'button', onclick: () => this.opts.onReplay() }, t('replay')), next),
     );
     this.overlay = h('div', { class: 'overlay' }, card);

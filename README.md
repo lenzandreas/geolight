@@ -2,17 +2,19 @@
 
 A calm, glowing 2D puzzle game about light. Place and rotate mirrors, lenses, prisms and filters to guide beams from lasers, light bulbs and sunlight into their targets. Avoid the sensors.
 
-- **12 levels** in three worlds: *Reflections*, *Gathering Light* and *Colours*, from a one-mirror tutorial to a finale that combines everything.
+- **18 levels** in four worlds: *Reflections*, *Gathering Light*, *Colours* and *Optical Tricks*, from a one-mirror tutorial to focusing sunlight through a slit, relaying it with a second lens and mixing colours.
+- **Daily puzzle:** a new level every day, generated from the date (the same for everyone), gentle on Mondays and trickier at the weekend, with a streak counter.
 - **Sources:** laser (a sharp beam), light bulb (diffuse light that has to be gathered), sunlight (a wide parallel band), all in any colour.
 - **Pieces:** mirror, beam splitter, converging and diverging lens, concave mirror, prism (splits white light into colours), colour filter, glass block, shade.
-- **Targets:** rings that need enough light (optionally of one colour only) and sensor eyes that must stay dark.
+- **Targets:** rings that need enough light (of one colour, or a mix such as yellow = red + green) and sensor eyes that must stay dark.
+- **Obstacles:** walls and slits with narrow, sometimes off-centre openings.
 - Works with mouse, touch and keyboard, in English and German. It plays offline once installed (PWA) and idles at zero CPU when nothing moves.
 
 ## Play / develop
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173  (dev-only extras: ?solve applies a level's solution; every level is unlocked via #/level/<id>)
+npm run dev        # http://localhost:5173  (dev-only extras: ?solve applies a level's solution; every level is unlocked via #/level/<id>; any day's puzzle via #/daily/YYYY-MM-DD)
 npm test           # optics, session, progress and level-pack tests (every level is checked to be solvable)
 npm run build      # static site in dist/ (open from any web server or sub-path)
 npm run preview    # serve the production build
@@ -31,7 +33,7 @@ One-time setup: in the repository on GitHub, go to **Settings → Pages → Buil
 | Place a piece | drag from the tray | drag from the tray | focus a tray item, Enter |
 | Move | drag | drag | arrow keys |
 | Rotate | click a selected piece, scroll wheel, right click, or drag the round handle | tap a selected piece, or drag the handle | Q / E |
-| Return to the tray | drag off the board | drag off the board | Delete |
+| Return to the tray | drag onto the tray | drag onto the tray | Delete |
 | Undo / redo | buttons | buttons | Ctrl+Z / Ctrl+Shift+Z |
 | Hint | 💡 button | 💡 button | H |
 
