@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "id": "turnstiles",
+  "world": 1,
+  "name": {
+    "en": "Turnstiles",
+    "de": "Drehkreuze"
+  },
+  "intro": {
+    "en": "These mirrors are bolted down, but they still turn. Tap or scroll to rotate.",
+    "de": "Diese Spiegel sind festgeschraubt, lassen sich aber drehen. Tippen oder scrollen zum Drehen."
+  },
+  "grid": {"w": 10, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 3, "angle": 0},
+    {"id": "m1", "type": "mirror", "x": 3, "y": 3, "angle": 90, "lock": "rotate"},
+    {"id": "m2", "type": "mirror", "x": 3, "y": 1, "angle": 0, "lock": "rotate"},
+    {"id": "m3", "type": "mirror", "x": 8, "y": 1, "angle": 90, "lock": "rotate"},
+    {"id": "m4", "type": "mirror", "x": 6, "y": 5, "angle": 0, "lock": "rotate"},
+    {"type": "sink", "x": 8, "y": 5},
+    {"type": "wall", "x": 5, "y": 2, "params": {"w": 1, "h": 3}},
+    {"type": "wall", "x": 9, "y": 3, "params": {"w": 1, "h": 1}}
+  ],
+  "inventory": [],
+  "solution": [
+    {"id": "m1", "x": 3, "y": 3, "angle": 45},
+    {"id": "m2", "x": 3, "y": 1, "angle": 45},
+    {"id": "m3", "x": 8, "y": 1, "angle": 135}
+  ]
+}
