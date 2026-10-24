@@ -10,6 +10,7 @@ export const en = {
   world1: 'Reflections',
   world2: 'Gathering Light',
   world3: 'Colours',
+  world4: 'Optical Tricks',
   levelN: 'Level {n}',
   locked: 'Locked',
   undo: 'Undo',
@@ -50,6 +51,7 @@ export const en = {
   piece_prism: 'Prism',
   piece_block: 'Glass block',
   piece_blocker: 'Shade',
+  piece_slit: 'Slit',
   keyboardHelp: 'Keys: arrows move · Q/E rotate · Del returns · Tab selects · Ctrl+Z undo',
   installed: 'Ready to play offline',
 };

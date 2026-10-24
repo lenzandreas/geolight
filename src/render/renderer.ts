@@ -34,7 +34,7 @@ export interface RenderState {
 export type Quality = 'high' | 'low';
 
 const GLOW_DOWNSCALE = 5;
-/** Rays weaker than this (fractions of a diffuse source) are drawn as glow only. */
+/** Paths emitted weaker than this (fractions of a diffuse source) are drawn as glow only. */
 const STRONG_RAY = 0.02;
 const WEAK_LAYERS = 24;
 
@@ -109,10 +109,15 @@ export class Renderer {
     // paths: where rays crowd together (near a bulb, at a focus) they visibly brighten.
     // Interleave by emitted ray, so neighbouring rays always land in different paths no matter
     // how many bounces each one takes.
+    // A path's look is decided by how its source emitted it (a few strong rays vs. many weak
+    // ones), so a beam keeps its style after filters or splitters dim it. The first segment
+    // of each root is the emitted ray itself.
+    const rootPower = new Map<number, number>();
     for (const s of trace.segments) {
       const p = power(s.c);
+      if (!rootPower.has(s.root)) rootPower.set(s.root, p);
       if (p <= 0) continue;
-      const strong = p >= STRONG_RAY;
+      const strong = rootPower.get(s.root)! >= STRONG_RAY;
       const col = lightColor(this.theme, s.c);
       const qc = col.map((v) => Math.round(v / 32) * 32) as [number, number, number];
       // Strong beams: perceptual curve. Weak rays: linear, so ray density sets the brightness.
@@ -131,7 +136,8 @@ export class Renderer {
       ctx.lineWidth = width;
       for (const b of buckets.values()) {
         if (b.strong !== (which === 'strong')) continue;
-        const c = b.col.map((v) => v + (255 - v) * whiten);
+        // Bright cores burn towards white; faint beams keep their colour.
+        const c = b.col.map((v) => v + (255 - v) * whiten * b.a);
         ctx.strokeStyle = rgba(c, Math.min(1, alpha * b.a));
         ctx.stroke(b.path);
       }

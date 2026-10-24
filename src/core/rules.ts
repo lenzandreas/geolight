@@ -59,16 +59,16 @@ export function targetStatus(e: Entity, received: RGB | undefined): TargetStatus
     const value = dotRGB(r, mask);
     const off = power(r) - value;
     const contaminated = param<boolean>(e, t, 'strict') && off > CONTAMINATION_LIMIT;
-    return {
-      id: e.id,
-      kind: 'sink',
-      received: r,
-      value,
-      threshold: required,
-      progress: required > 0 ? Math.min(1, value / required) : 1,
-      ok: value + TOLERANCE >= required && !contaminated,
-      contaminated,
-    };
+    let progress = required > 0 ? Math.min(1, value / required) : 1;
+    let met = value + TOLERANCE >= required;
+    if (param<boolean>(e, t, 'each')) {
+      // Mixing: each colour in the mask must bring its equal share of the requirement.
+      const channels = [0, 1, 2].filter((ch) => mask[ch] > 0);
+      const share = required / Math.max(1, channels.length);
+      progress = Math.min(1, ...channels.map((ch) => (share > 0 ? (r[ch] * mask[ch]) / share : 1)));
+      met = channels.every((ch) => r[ch] * mask[ch] + TOLERANCE >= share);
+    }
+    return { id: e.id, kind: 'sink', received: r, value, threshold: required, progress, ok: met && !contaminated, contaminated };
   }
   if (e.type === 'sensor') {
     const limit = param<number>(e, getType('sensor'), 'limit');

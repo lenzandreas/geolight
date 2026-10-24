@@ -12,6 +12,7 @@ export const de: Strings = {
   world1: 'Spiegelungen',
   world2: 'Licht sammeln',
   world3: 'Farben',
+  world4: 'Optische Kniffe',
   levelN: 'Level {n}',
   locked: 'Gesperrt',
   undo: 'Rückgängig',
@@ -52,6 +53,7 @@ export const de: Strings = {
   piece_prism: 'Prisma',
   piece_block: 'Glasblock',
   piece_blocker: 'Schatten',
+  piece_slit: 'Spalt',
   keyboardHelp: 'Tasten: Pfeile bewegen · Q/E drehen · Entf zurücklegen · Tab wählt · Strg+Z rückgängig',
   installed: 'Offline spielbereit',
 };
