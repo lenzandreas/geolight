@@ -2,7 +2,7 @@
 
 A calm, glowing 2D puzzle game about light. Place and rotate mirrors, lenses, prisms and filters to guide beams from lasers, light bulbs and sunlight into their targets. Avoid the sensors.
 
-- **18 levels** in four worlds: *Reflections*, *Gathering Light*, *Colours* and *Optical Tricks*, from a one-mirror tutorial to focusing sunlight through a slit, relaying it with a second lens and mixing colours.
+- **26 levels** in five worlds: *Reflections*, *Gathering Light*, *Colours*, *Optical Tricks* and *Lens Craft*, from a one-mirror tutorial to focusing sunlight through slits, relaying it with lens chains and telescopes, taming a light bulb into a beam, and mixing colours.
 - **Daily puzzle:** a new level every day, generated from the date (the same for everyone), gentle on Mondays and trickier at the weekend, with a streak counter.
 - **Sources:** laser (a sharp beam), light bulb (diffuse light that has to be gathered), sunlight (a wide parallel band), all in any colour.
 - **Pieces:** mirror, beam splitter, converging and diverging lens, concave mirror, prism (splits white light into colours), colour filter, glass block, shade.

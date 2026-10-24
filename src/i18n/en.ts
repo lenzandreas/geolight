@@ -16,6 +16,7 @@ export const en = {
   world2: 'Gathering Light',
   world3: 'Colours',
   world4: 'Optical Tricks',
+  world5: 'Lens Craft',
   levelN: 'Level {n}',
   locked: 'Locked',
   undo: 'Undo',
