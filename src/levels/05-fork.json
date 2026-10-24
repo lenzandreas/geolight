@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "id": "fork",
+  "world": 1,
+  "name": {
+    "en": "A Fork in the Beam",
+    "de": "Gabelung"
+  },
+  "intro": {
+    "en": "A half-silvered mirror reflects half the light and lets half pass. Fill both rings.",
+    "de": "Ein halbdurchlässiger Spiegel reflektiert die Hälfte und lässt die Hälfte durch. Fülle beide Ringe."
+  },
+  "grid": {"w": 10, "h": 7},
+  "par": 3,
+  "entities": [
+    {"type": "laser", "x": 0, "y": 3, "angle": 0},
+    {"type": "sink", "x": 8, "y": 0, "params": {"required": 0.45}},
+    {"type": "sink", "x": 8, "y": 6, "params": {"required": 0.45}},
+    {"type": "wall", "x": 6, "y": 1, "params": {"w": 1, "h": 1}},
+    {"type": "wall", "x": 6, "y": 5, "params": {"w": 1, "h": 1}},
+    {"type": "wall", "x": 9, "y": 2, "params": {"w": 1, "h": 3}}
+  ],
+  "inventory": [
+    {"type": "splitter", "count": 1},
+    {"type": "mirror", "count": 2}
+  ],
+  "solution": [
+    {"type": "splitter", "x": 2, "y": 3, "angle": 45},
+    {"type": "mirror", "x": 2, "y": 0, "angle": 45},
+    {"type": "mirror", "x": 8, "y": 3, "angle": 135}
+  ]
+}

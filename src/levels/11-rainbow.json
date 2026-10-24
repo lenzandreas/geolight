@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "id": "rainbow",
+  "world": 3,
+  "name": {
+    "en": "Rainbow",
+    "de": "Regenbogen"
+  },
+  "intro": {
+    "en": "A prism bends each colour by a different amount and fans white light into a rainbow.",
+    "de": "Ein Prisma bricht jede Farbe unterschiedlich stark und fächert weißes Licht zum Regenbogen auf."
+  },
+  "grid": {"w": 12, "h": 8},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 1, "angle": 0},
+    {"id": "prism", "type": "prism", "x": 3, "y": 1, "angle": 0, "lock": "rotate"},
+    {"type": "sink", "x": 11, "y": 5, "params": {"color": "red", "strict": true, "required": 0.3}},
+    {"type": "sink", "x": 11, "y": 7, "params": {"color": "green", "strict": true, "required": 0.3}},
+    {"type": "sink", "x": 1, "y": 6, "params": {"color": "blue", "strict": true, "required": 0.3}},
+    {"type": "wall", "x": 8, "y": 0, "params": {"w": 1, "h": 3}},
+    {"type": "wall", "x": 0, "y": 3, "params": {"w": 3, "h": 1}}
+  ],
+  "inventory": [
+    {"type": "mirror", "count": 2}
+  ],
+  "solution": [
+    {"id": "prism", "x": 3, "y": 1, "angle": 45},
+    {"type": "mirror", "x": 5, "y": 3, "angle": 105},
+    {"type": "mirror", "x": 5, "y": 4, "angle": 60}
+  ]
+}

@@ -1,0 +1,89 @@
+# Architecture
+
+## Platform choice
+
+Geolight is a **TypeScript web app** (Vite and Canvas 2D, no game engine), shipped as a **progressive web app**.
+
+- **Reach:** it runs in any modern browser on desktop, tablet and phone, can be installed to the home screen, and plays offline. Sharing it takes one link.
+- **Size and battery:** the production JS is about 25 KB gzipped. The renderer draws only when something changes, so an idle board uses no CPU or GPU.
+- **Store builds later without a rewrite:** wrap `dist/` with **Capacitor** (iOS/Android) or **Tauri** (Windows/macOS/Linux). Platform-specific code is kept behind small adapters (`src/platform/`).
+
+## Layers
+
+```
+          ┌──────────────────────────────────────────────┐
+  ui/     │ screens, input, HUD, settings      (DOM)     │
+          ├───────────────┬──────────────┬───────────────┤
+  render/ │ Canvas 2D     │ audio/       │ i18n/         │
+          ├───────────────┴──────────────┴───────────────┤
+  game/   │ Session (placement, undo, hints), Progress    │
+          ├──────────────────────────────────────────────┤
+  level/  │ schema · validation · solver                  │
+          ├──────────────────────────────────────────────┤
+  core/   │ optics engine: tracer, interactions, types,   │
+          │ rules           (pure TS, no DOM)             │
+          └──────────────────────────────────────────────┘
+```
+
+Each layer depends only on the layers below it. `core`, `level` and `game` never touch the DOM, so they run in tests, in Node scripts (solver, level tools) and could run in a Web Worker.
+
+### Optics engine (`src/core`)
+
+- **Entity:** everything on the board (`{ id, type, x, y, angle, params }`). Its behaviour comes from an **EntityType** in a registry. A type contributes:
+  - `surfaces(e)`: segments or circles with an *interaction* function,
+  - `emit(e)` (sources only): initial rays,
+  - metadata: category, defaults, rotational `symmetry`, `footprint`.
+- **Interaction:** what happens when a ray hits a surface: `absorb`, `mirror`, `splitter`, `filter`, `thinOptic` (an ideal lens or curved mirror, using the paraxial `slope −= h/f`), `refract` (Snell's law with total internal reflection and per-channel dispersion), `receiver` (targets). New physics means writing a new interaction.
+- **Light** is power per R/G/B channel. Filters multiply channels. Prisms split multi-channel rays into one ray per channel. The tracer is iterative (a stack, no recursion) and limited by depth, minimum power and segment count, so mirror loops can't hang it.
+- **Rules** (`rules.ts`) turn received light into target status and a win. Goals are registered by name (`allTargets`, `anyTargets`), so new modes plug in.
+
+### Levels (`src/level`, `src/levels`)
+
+Levels are versioned JSON (`schema: 1`). Each one lists entities with lock modes (`fixed`, `rotate`, `free`), a tray inventory, an optional goal and a reference **solution**. `parseLevel` validates files and is where migrations go when the schema grows.
+
+The **solver** searches placements, but only on cells the light currently crosses. Tests use it to check that:
+
+1. every level is unsolved at the start,
+2. its reference solution wins with 3 stars,
+3. multi-piece levels can't be cheesed with a single piece.
+
+### Session (`src/game/session.ts`)
+
+This is the headless state of one attempt: pieces, tray counts, snapshot undo/redo, hints derived from the reference solution, and star scoring. The UI, the solver and the tests all drive the same API.
+
+### Rendering (`src/render`)
+
+- Canvas 2D with the device pixel ratio capped at 2 (1.25 on "low" quality).
+- **Cached layers:** the board background is redrawn only on resize. The beam layer is redrawn only when the traced light changes.
+- **Beams:** segments are batched into a handful of `Path2D`s by colour and brightness. The bloom comes from strokes drawn into a 1/5-resolution canvas and upscaled. This is a soft blur that works on every browser and costs almost nothing.
+- **Diffuse light:** hundreds of weak rays are spread over 24 interleaved paths, so where rays crowd together (near a bulb, at a focus) they really do get brighter.
+- **On-demand frames:** a `requestAnimationFrame` loop runs only while something animates (rotation tweens, meters filling, the win celebration) and then stops.
+- Portrait screens get the board rotated by 90°, so cells stay large on phones. Input goes through the same view transform.
+- Visuals live in `drawers.ts`, keyed by entity type and separate from physics. A new art style or a WebGL renderer can replace them.
+
+### UI, audio, i18n, platform
+
+- The UI is plain DOM: accessible buttons, focus handling, ARIA labels, and keyboard control on the board.
+- Audio is synthesised with Web Audio (pentatonic chimes plus a soft delay), so it needs no asset files.
+- Strings live in `i18n/en.ts` and `i18n/de.ts`, and level text is localised in place. `en` is the fallback.
+- Storage sits behind a `KeyValueStore` interface (localStorage today; Capacitor Preferences or cloud sync later).
+- The service worker precaches the whole build. The precache list is generated at build time in `vite.config.ts`.
+
+## Extension points
+
+| To add… | Do this |
+| --- | --- |
+| a new object (e.g. portal, polariser, grating) | register an `EntityType` in `core/entities`, a drawer in `render/drawers.ts`, and a name in `i18n` |
+| new physics | write an `Interaction` in `core/interactions.ts` |
+| a new game mode or win condition | `registerGoal('name', rule)` and set `"goal": { "type": "name" }` in a level |
+| a level | drop a JSON file into `src/levels/` (see `docs/LEVELS.md`); tests check it automatically |
+| a language | add `i18n/<lang>.ts` and register it in `LANGUAGES` |
+| a theme | create another `Theme` object (`render/theme.ts`) |
+| a platform (app stores) | wrap `dist/` with Capacitor or Tauri and swap `platform/storage.ts` if needed |
+
+## Roadmap ideas
+
+- **More content:** polarisers (two crossed filters block light), portals/fibre optics, moving or rotating mirrors on timers, colour mixing (red + green targets that need yellow), one-way glass, solar cells that open doors, and fresnel losses on glass in a "realistic" world.
+- **Modes:** level editor with share codes (the level JSON plus the solver to verify solvability), daily puzzle, a time-attack "catch the moving light" mode, and a sandbox.
+- **Polish:** colour-blind patterns on coloured targets, light theme, haptics on mobile (via a platform adapter), and analytics-free play statistics.
+- **Tech:** move tracing into a Web Worker if levels grow very large, and add a WebGL renderer for richer bloom on capable devices.

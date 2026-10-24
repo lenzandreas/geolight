@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "id": "skylight",
+  "world": 2,
+  "name": {
+    "en": "Skylight",
+    "de": "Oberlicht"
+  },
+  "intro": {
+    "en": "Sunlight falls in a wide band, too wide for the ring. Focus it, then steer it.",
+    "de": "Sonnenlicht fällt als breites Band, zu breit für den Ring. Bündle es und lenke es dann."
+  },
+  "grid": {"w": 11, "h": 7},
+  "entities": [
+    {"type": "sun", "x": 2, "y": 0, "angle": 90, "params": {"width": 0.6, "rays": 40}},
+    {"type": "sink", "x": 9, "y": 5, "params": {"required": 0.85, "radius": 0.18}},
+    {"type": "wall", "x": 5, "y": 3, "params": {"w": 1, "h": 4}},
+    {"type": "wall", "x": 0, "y": 0, "params": {"w": 1, "h": 7}}
+  ],
+  "inventory": [
+    {"type": "lens", "count": 1, "params": {"f": 3}},
+    {"type": "mirror", "count": 2}
+  ],
+  "solution": [
+    {"type": "mirror", "x": 2, "y": 2, "angle": 135},
+    {"type": "mirror", "x": 9, "y": 2, "angle": 135},
+    {"type": "lens", "params": {"f": 3}, "x": 9, "y": 3, "angle": 90}
+  ]
+}

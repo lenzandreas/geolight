@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "id": "seeing-red",
+  "world": 3,
+  "name": {
+    "en": "Seeing Red",
+    "de": "Rot sehen"
+  },
+  "intro": {
+    "en": "White light holds every colour. Coloured rings accept only their own colour. Filters let one colour pass.",
+    "de": "Weißes Licht enthält alle Farben. Farbige Ringe nehmen nur ihre Farbe an. Filter lassen eine Farbe durch."
+  },
+  "grid": {"w": 11, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 3, "angle": 0},
+    {"type": "sink", "x": 10, "y": 3, "params": {"color": "red", "strict": true, "required": 0.15}},
+    {"type": "sink", "x": 7, "y": 6, "params": {"color": "blue", "strict": true, "required": 0.15}},
+    {"type": "wall", "x": 4, "y": 5, "params": {"w": 1, "h": 2}},
+    {"type": "wall", "x": 7, "y": 0, "params": {"w": 1, "h": 2}}
+  ],
+  "inventory": [
+    {"type": "splitter", "count": 1},
+    {"type": "filter", "count": 1, "params": {"color": "red"}},
+    {"type": "filter", "count": 1, "params": {"color": "blue"}},
+    {"type": "mirror", "count": 1}
+  ],
+  "solution": [
+    {"type": "splitter", "x": 7, "y": 3, "angle": 135},
+    {"type": "filter", "params": {"color": "blue"}, "x": 7, "y": 5, "angle": 90},
+    {"type": "filter", "params": {"color": "red"}, "x": 9, "y": 3, "angle": 0}
+  ]
+}

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#141a42"/>
+      <stop offset="1" stop-color="#241650"/>
+    </linearGradient>
+    <linearGradient id="beam" x1="0" x2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#fff"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <g filter="url(#glow)" opacity="0.9">
+    <path d="M60 262 L232 262" stroke="#fff" stroke-width="16"/>
+    <path d="M300 270 L470 200" stroke="#ff7690" stroke-width="14"/>
+    <path d="M300 276 L470 270" stroke="#78ffb0" stroke-width="14"/>
+    <path d="M300 282 L470 340" stroke="#80a4ff" stroke-width="14"/>
+  </g>
+  <path d="M60 262 L232 262" stroke="url(#beam)" stroke-width="7" stroke-linecap="round"/>
+  <path d="M300 270 L470 200" stroke="#ffc2cd" stroke-width="6" stroke-linecap="round"/>
+  <path d="M300 276 L470 270" stroke="#c8ffe0" stroke-width="6" stroke-linecap="round"/>
+  <path d="M300 282 L470 340" stroke="#c8d8ff" stroke-width="6" stroke-linecap="round"/>
+  <path d="M256 150 L330 330 L182 330 Z" fill="#b4d2ff" fill-opacity="0.22" stroke="#d6e6ff" stroke-width="7" stroke-linejoin="round"/>
+</svg>
