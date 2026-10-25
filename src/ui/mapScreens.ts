@@ -61,6 +61,14 @@ function treeLayout(worlds: WorldDef[]): { pos: Map<string, { col: number; row: 
     move(w.id);
     cols = Math.max(cols, Math.ceil(col + width / 2));
   }
+  // Joins with overlapping parents can land on top of each other: keep worlds in a row a column apart.
+  const rows = new Map<number, { col: number; row: number }[]>();
+  for (const p of pos.values()) rows.set(p.row, [...(rows.get(p.row) ?? []), p]);
+  for (const row of rows.values()) {
+    row.sort((a, b) => a.col - b.col);
+    for (let i = 1; i < row.length; i++) row[i].col = Math.max(row[i].col, row[i - 1].col + 1);
+    cols = Math.max(cols, Math.ceil(row[row.length - 1].col + 1));
+  }
   return { pos, cols, rows: Math.max(...depth.values()) + 1 };
 }
 

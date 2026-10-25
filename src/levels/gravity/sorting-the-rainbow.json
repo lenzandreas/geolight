@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "id": "sorting-the-rainbow",
+  "name": {
+    "en": "Sorting the Rainbow",
+    "de": "Regenbogen sortieren"
+  },
+  "intro": {
+    "en": "Gravity treats every colour alike, but the colour passing closest bends most. Turn the prism, then let a black hole deal out the colours.",
+    "de": "Die Schwerkraft behandelt alle Farben gleich, doch die Farbe, die am nächsten vorbeizieht, wird am stärksten abgelenkt. Drehe das Prisma und lass ein Schwarzes Loch die Farben verteilen."
+  },
+  "grid": {"w": 12, "h": 8},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 1, "angle": 0},
+    {"id": "prism", "type": "prism", "x": 2, "y": 1, "angle": 0, "lock": "rotate"},
+    {"type": "sink", "x": 8, "y": 4, "params": {"color": "red", "strict": true, "required": 0.3}},
+    {"type": "sink", "x": 7, "y": 7, "params": {"color": "green", "strict": true, "required": 0.3}},
+    {"type": "sink", "x": 11, "y": 6, "params": {"color": "blue", "strict": true, "required": 0.3}},
+    {"type": "sensor", "x": 6, "y": 6}
+  ],
+  "inventory": [
+    {"type": "blackHole", "count": 1}
+  ],
+  "solution": [
+    {"id": "prism", "x": 2, "y": 1, "angle": 45},
+    {"type": "blackHole", "x": 6, "y": 5, "angle": 0}
+  ]
+}

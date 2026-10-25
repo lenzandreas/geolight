@@ -3,7 +3,7 @@
  * hints or a level editor's "is this solvable?" check).
  *
  * Pieces only matter where light already goes, so placements are restricted to
- * cells the current light passes through. That keeps laser levels fast; levels
+ * cells the current light passes through (or, for black holes, near enough to pull on it). That keeps laser levels fast; levels
  * with diffuse sources (light everywhere) should keep their trays small.
  */
 import { evaluate } from '../core/rules';
@@ -41,8 +41,21 @@ function litCells(t: TraceResult, w: number, h: number): Set<number> {
   return cells;
 }
 
+/** Cells within `r` (Chebyshev) of any cell in the set: pieces that act at a distance (gravity) matter there too. */
+function grow(cells: Set<number>, r: number, w: number, h: number): Set<number> {
+  const out = new Set<number>();
+  for (const c of cells) {
+    const x = c % w;
+    const y = Math.floor(c / w);
+    for (let i = -r; i <= r; i++) for (let j = -r; j <= r; j++) if (x + i >= 0 && y + j >= 0 && x + i < w && y + j < h) out.add((y + j) * w + x + i);
+  }
+  return out;
+}
+
 function anglesFor(type: string, step: number): number[] {
   const sym = getType(type).symmetry ?? 360;
+  // A symmetry of 360 marks pieces that can't be turned (e.g. black holes): only one angle matters.
+  if (getType(type).symmetry === 360) return [0];
   const out: number[] = [];
   for (let a = 0; a < sym; a += step) out.push(a);
   return out;
@@ -96,7 +109,9 @@ export function solve(level: LevelDef, opts: SolveOptions = {}): SolveResult {
       if (used[i] || triedKeys.has(tray[i].key)) continue;
       triedKeys.add(tray[i].key);
       used[i] = true;
-      for (const cell of lit) {
+      const field = getType(tray[i].type).field;
+      const reach = field ? Math.floor(field({ id: '', type: tray[i].type, x: 0, y: 0, angle: 0, params: tray[i].params }).reach) : 0;
+      for (const cell of reach ? grow(lit, reach, w, h) : lit) {
         if (occ.has(cell)) continue;
         for (const angle of anglesFor(tray[i].type, step)) {
           entities.push({ id: `s${count}`, type: tray[i].type, x: cell % w, y: Math.floor(cell / w), angle, params: tray[i].params });

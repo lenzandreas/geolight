@@ -9,7 +9,8 @@ import { param, type Entity } from './types';
 
 export interface TargetStatus {
   id: string;
-  kind: 'sink' | 'sensor';
+  /** Photocells only report progress; they never block a win (ok is always true). */
+  kind: 'sink' | 'sensor' | 'photocell';
   received: RGB;
   /** Useful light (sink) or total light (sensor). */
   value: number;
@@ -81,6 +82,11 @@ export function targetStatus(e: Entity, received: RGB | undefined, receptions: R
       met = channels.every((ch) => r[ch] * mask[ch] + TOLERANCE >= share);
     }
     return { id: e.id, kind: 'sink', received: r, value, threshold: required, progress, ok: met && !contaminated, contaminated };
+  }
+  if (e.type === 'photocell') {
+    const required = param<number>(e, getType('photocell'), 'required');
+    const value = power(r);
+    return { id: e.id, kind: 'photocell', received: r, value, threshold: required, progress: required > 0 ? Math.min(1, value / required) : 1, ok: true, contaminated: false };
   }
   if (e.type === 'sensor') {
     const limit = param<number>(e, getType('sensor'), 'limit');

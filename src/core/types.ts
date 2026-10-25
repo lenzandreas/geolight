@@ -32,6 +32,23 @@ export interface Ray {
   root?: number;
   /** Polarization axis in degrees [0, 180), or null/undefined for unpolarized light. */
   pol?: number | null;
+  /** Curved-path steps taken so far inside gravity fields (set by the tracer). */
+  steps?: number;
+}
+
+/**
+ * A region that bends light continuously, like the gravity of a black hole.
+ * A ray passing at distance b is turned towards the centre by 2·rs/b in total
+ * (the general-relativity deflection), counted only within `reach`.
+ */
+export interface Field {
+  c: Vec;
+  /** Schwarzschild radius in cells. */
+  rs: number;
+  /** Beyond this distance the pull is ignored. */
+  reach: number;
+  /** Light coming closer than this is swallowed. */
+  capture: number;
 }
 
 export interface Hit {
@@ -76,6 +93,13 @@ export interface EntityType {
   surfaces(e: Entity, out: Surface[]): void;
   /** Append rays emitted by this entity (sources only). */
   emit?(e: Entity, out: Ray[]): void;
+  /** A gravity field that bends passing light (black holes). */
+  field?(e: Entity): Field;
+  /**
+   * Switchable structures (gates): whether the entity is open, given which receivers
+   * are powered. Open entities contribute no surfaces.
+   */
+  isOpen?(e: Entity, powered: (id: string) => boolean): boolean;
 }
 
 /** Read a typed parameter with registry defaults applied. */

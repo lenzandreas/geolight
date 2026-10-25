@@ -149,6 +149,78 @@ describe('tracer', () => {
     });
   });
 
+  describe('gravity', () => {
+    const exitAngle = (r: ReturnType<typeof trace>) => {
+      const last = r.segments[r.segments.length - 1];
+      return (Math.atan2(last.b.y - last.a.y, last.b.x - last.a.x) * 180) / Math.PI;
+    };
+    const wide = { width: 24, height: 9 };
+
+    it('bends a passing beam by 2·rs/b, as general relativity predicts for weak fields', () => {
+      for (const b of [1.5, 2.5]) {
+        // Hole above the beam (y grows downwards), so the beam turns upwards (negative angle).
+        const r = trace([ent('laser', 0, 4, 0), ent('blackHole', 8, 4 - b, 0, { rs: 0.02, reach: 12 })], wide);
+        const expected = ((2 * 0.02) / b) * Math.sqrt(1 - (b * b) / 144) * (180 / Math.PI);
+        expect(-exitAngle(r)).toBeCloseTo(expected, 1);
+      }
+    });
+
+    it('pulls towards itself from either side, more strongly when closer', () => {
+      const above = trace([ent('laser', 0, 4, 0), ent('blackHole', 8, 3)], wide);
+      const below = trace([ent('laser', 0, 4, 0), ent('blackHole', 8, 5)], wide);
+      const far = trace([ent('laser', 0, 4, 0), ent('blackHole', 8, 2.5)], wide);
+      expect(exitAngle(above)).toBeCloseTo(-exitAngle(below), 6);
+      expect(exitAngle(above)).toBeLessThan(-15);
+      expect(Math.abs(exitAngle(far))).toBeLessThan(Math.abs(exitAngle(above)));
+    });
+
+    it('swallows light aimed at it and ignores light beyond its reach', () => {
+      const sink = ent('sink', 10, 4, 0, { required: 0.5 });
+      const aimed = [ent('laser', 0, 4, 0), ent('blackHole', 5, 4), sink];
+      expect(trace(aimed, wide).received.has(sink.id)).toBe(false);
+      const distant = [ent('laser', 0, 4, 0), ent('blackHole', 5, 1), sink];
+      expect(evaluate(distant, trace(distant, wide)).won).toBe(true);
+    });
+  });
+
+  describe('gates', () => {
+    it('a gate stays shut until its photocell is powered', () => {
+      const sink = ent('sink', 9, 3, 0, { required: 0.4 });
+      const cell = ent('photocell', 5, 6, 0, { required: 0.3 });
+      const gate = ent('gate', 7, 3, 0, { by: cell.id });
+      const shut = [ent('laser', 1, 3, 0), gate, cell, sink];
+      expect(trace(shut, opts).open.size).toBe(0);
+      expect(evaluate(shut, trace(shut, opts)).won).toBe(false);
+      // A splitter sends half the light down to the photocell; the other half passes the opened gate.
+      const powered = [ent('laser', 1, 3, 0), ent('splitter', 5, 3, 135), gate, cell, sink];
+      const r = trace(powered, opts);
+      expect(r.open.has(gate.id)).toBe(true);
+      expect(evaluate(powered, r).won).toBe(true);
+    });
+
+    it('a gate cannot hold itself open with light that only passes once it is open', () => {
+      const cell = ent('photocell', 9, 3, 0, { required: 0.1 });
+      const es = [ent('laser', 1, 3, 0), ent('gate', 5, 3, 0, { by: cell.id }), cell];
+      expect(trace(es, opts).open.size).toBe(0);
+    });
+
+    it('a gate with several photocells needs all of them', () => {
+      const a = ent('photocell', 5, 6);
+      const b = ent('photocell', 9, 3);
+      const gate = ent('gate', 0, 0, 0, { by: [a.id, b.id] });
+      const one = [ent('laser', 1, 3, 0), gate, a, b];
+      expect(trace(one, opts).open.size).toBe(0);
+      const both = [ent('laser', 1, 3, 0), ent('splitter', 5, 3, 135), gate, a, b];
+      expect(trace(both, opts).open.has(gate.id)).toBe(true);
+    });
+
+    it('photocells never block a win', () => {
+      const sink = ent('sink', 9, 3);
+      const es = [ent('laser', 1, 3, 0), ent('photocell', 5, 6), sink];
+      expect(evaluate(es, trace(es, opts)).won).toBe(true);
+    });
+  });
+
   it('sensors fail the level when lit', () => {
     const sink = ent('sink', 9, 3);
     const sensor = ent('sensor', 5, 3);

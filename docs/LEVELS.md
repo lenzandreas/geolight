@@ -8,7 +8,7 @@ Levels live in one folder per world, `src/levels/<world>/<id>.json`. Their order
 
 The rules, all enforced by `npm test`:
 
-- **One new piece per world.** `object` is the piece the world introduces (`mirror`, `splitter`, `lens`, `divergingLens`, `curvedMirror`, `block`, `filter`, `prism`, `polarizer`). A world may have several `parents`; it opens when each of them has 4 solved levels and can use all of their pieces. Every level in the world uses it, and may otherwise only use pieces introduced by the world's ancestors. Sources, targets, sensors, walls and slits are level features and can be used anywhere.
+- **One new piece per world.** `object` is the piece the world introduces (`mirror`, `splitter`, `lens`, `divergingLens`, `curvedMirror`, `block`, `filter`, `prism`, `polarizer`, `blackHole`). A world may have several `parents`; it opens when each of them has 4 solved levels and can use all of their pieces. Every level in the world uses it, and may otherwise only use pieces introduced by the world's ancestors. Sources, targets, sensors, walls, slits, photocells and gates are level features and can be used anywhere.
 - **At least 6 levels per world**, ordered from easy to hard.
 - Every level file is listed by exactly one world.
 
@@ -59,6 +59,9 @@ The test suite checks every level automatically.
 | `prism` | `n` per channel ([1.38, 1.5, 1.64]), `radius` (0.46) |
 | `block` | `n` (1.5), `size` (0.8) |
 | `polarizer` | none: a disc whose axis is its `angle` (mod 180°). Unpolarized light loses half its power, polarized light keeps cos²(angle difference) (Malus's law); either way it leaves polarized along the axis |
+| `blackHole` | `rs` (0.2): Schwarzschild radius in cells; light passing at distance b turns by 2·rs/b towards it (more on close passes), and light coming within 2.6·rs (its shadow) is swallowed. `reach` (2): its pull is ignored further away. It can't be rotated |
+| `photocell` | `required` (0.1): powered once it receives this much light |
+| `gate` | `w`, `h` like a wall, `by`: a photocell id (or a list of ids). It opens while all of them are powered; a gate can't hold itself open with light that only gets through once it is open |
 | `blocker` | `size` (0.56) |
 | `wall` | `w`, `h` in cells (anchored at the top-left cell) |
 | `slit` | `gap` (0.2), `offset` (0): a one-cell barrier facing `angle` with an opening of `gap` cells, shifted sideways by `offset` |
@@ -76,5 +79,6 @@ Colours can be names (`white`, `red`, `green`, `blue`, `yellow`, `cyan`, `magent
 1. Give the level a reference `solution`. Steps with `type` place tray pieces; steps with `id` turn pre-placed ones. Hints reveal it one step at a time.
 2. Run `npm test`. It checks that the level is unsolved at the start, that the solution wins with 3 stars, and that multi-piece levels can't be solved with a single piece.
 3. Use `npm run dev` and open `#/level/<id>` (add `?solve` to see the solution) to check that it looks right.
-4. If sinks need different amounts, players see it: each ring's band is drawn as thick as its `required`, relative to the largest one on the board.
-5. For diffuse sources (bulbs), choose `required` values from experiment. The solver API (`src/level/solver.ts`) helps there: rings show progress relative to `required`.
+4. Black holes act at a distance, so the solver also tries them next to lit cells. Levels with sunlight or bulbs plus black holes trace slowly; keep their trays small.
+5. If sinks need different amounts, players see it: each ring's band is drawn as thick as its `required`, relative to the largest one on the board.
+6. For diffuse sources (bulbs), choose `required` values from experiment. The solver API (`src/level/solver.ts`) helps there: rings show progress relative to `required`.

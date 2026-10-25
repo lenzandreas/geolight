@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "id": "binary",
+  "name": {
+    "en": "Binary",
+    "de": "Doppelstern"
+  },
+  "intro": {
+    "en": "Between two equal black holes the pulls cancel and light flies straight. Focus the sunlight to open the gate, then bend the beam home.",
+    "de": "Zwischen zwei gleichen Schwarzen Löchern heben sich die Kräfte auf, und das Licht fliegt geradeaus. Bündle das Sonnenlicht, um das Tor zu öffnen, und lenke dann den Strahl ins Ziel."
+  },
+  "grid": {"w": 12, "h": 8},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 1, "angle": 0},
+    {"type": "blackHole", "x": 5, "y": 0},
+    {"type": "blackHole", "x": 5, "y": 2},
+    {"type": "sun", "x": 0, "y": 5, "angle": 0},
+    {"id": "p", "type": "photocell", "x": 6, "y": 3, "params": {"required": 0.2}},
+    {"type": "gate", "x": 8, "y": 0, "params": {"h": 4, "by": "p"}},
+    {"type": "wall", "x": 8, "y": 4, "params": {"w": 4, "h": 1}},
+    {"type": "sink", "x": 11, "y": 2, "params": {"required": 0.9}}
+  ],
+  "inventory": [
+    {"type": "curvedMirror", "count": 1},
+    {"type": "blackHole", "count": 1}
+  ],
+  "solution": [
+    {"type": "curvedMirror", "x": 6, "y": 5, "angle": 225},
+    {"type": "blackHole", "x": 9, "y": 2, "angle": 0}
+  ]
+}

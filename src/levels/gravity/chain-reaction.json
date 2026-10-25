@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "id": "chain-reaction",
+  "name": {
+    "en": "Chain Reaction",
+    "de": "Kettenreaktion"
+  },
+  "intro": {
+    "en": "Each solar cell hides behind the gate before it. Open them one after another.",
+    "de": "Jede Solarzelle versteckt sich hinter dem Tor davor. Öffne sie eins nach dem anderen."
+  },
+  "grid": {"w": 12, "h": 8},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 6, "angle": 0},
+    {"id": "a", "type": "photocell", "x": 0, "y": 2, "params": {"required": 0.2}},
+    {"type": "wall", "x": 0, "y": 3},
+    {"type": "gate", "x": 6, "y": 0, "params": {"h": 8, "by": "a"}},
+    {"id": "b", "type": "photocell", "x": 8, "y": 1, "params": {"required": 0.1}},
+    {"type": "gate", "x": 10, "y": 0, "params": {"h": 8, "by": "b"}},
+    {"type": "sink", "x": 11, "y": 6, "params": {"required": 0.2}}
+  ],
+  "inventory": [
+    {"type": "splitter", "count": 2},
+    {"type": "blackHole", "count": 1}
+  ],
+  "solution": [
+    {"type": "splitter", "x": 3, "y": 6, "angle": 30},
+    {"type": "blackHole", "x": 0, "y": 4, "angle": 0},
+    {"type": "splitter", "x": 8, "y": 6, "angle": 45}
+  ]
+}

@@ -2,12 +2,12 @@
 
 A calm, glowing 2D puzzle game about light. Place and rotate mirrors, lenses, prisms and filters to guide beams from lasers, light bulbs and sunlight into their targets. Avoid the sensors.
 
-- **60 levels in 9 worlds on a star map.** Each world is a constellation that introduces exactly one new piece: mirror, beam splitter, lens, concave mirror, diverging lens, glass block, colour filter, prism and polarizer. The worlds form a tree. A world opens once 4 levels of each parent are solved, and two levels are open at a time inside a world, so being stuck never blocks you completely. The last world, *Polarity*, needs three worlds at once and combines their pieces with polarizers (including the famous three-polarizer paradox).
+- **68 levels in 10 worlds on a star map.** Each world is a constellation that introduces exactly one new piece: mirror, beam splitter, lens, concave mirror, diverging lens, glass block, colour filter, prism, polarizer and black hole. The worlds form a tree. A world opens once 4 levels of each parent are solved, and two levels are open at a time inside a world, so being stuck never blocks you completely. Two worlds need several parents at once and combine their pieces: *Polarity* (polarizers, including the famous three-polarizer paradox) and *Event Horizon* (black holes that bend light along curved paths, with gravitational lensing, Einstein rings and twin holes whose pulls cancel).
 - **Daily puzzle:** a new level every day, generated from the date (the same for everyone), gentle on Mondays and trickier at the weekend, with a streak counter.
 - **Sources:** laser (a sharp beam), light bulb (diffuse light that has to be gathered), sunlight (a wide parallel band), all in any colour.
-- **Pieces:** mirror, beam splitter, converging and diverging lens, concave mirror, prism (splits white light into colours), colour filter, glass block, polarizer, shade.
+- **Pieces:** mirror, beam splitter, converging and diverging lens, concave mirror, prism (splits white light into colours), colour filter, glass block, polarizer, black hole (bends passing light, swallows what comes too close), shade.
 - **Targets:** rings that need enough light (of one colour, a mix such as yellow = red + green, or one polarization) and sensor eyes that must stay dark. When rings need different amounts, the band of each ring is as thick as its need, like a tank.
-- **Obstacles:** walls and slits with narrow, sometimes off-centre openings.
+- **Obstacles:** walls, slits with narrow, sometimes off-centre openings, and gates that open while their solar cell gets enough light.
 - Works with mouse, touch and keyboard, in English and German. It plays offline once installed (PWA) and idles at zero CPU when nothing moves.
 
 ## Play / develop
