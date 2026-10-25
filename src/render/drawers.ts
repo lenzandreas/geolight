@@ -3,7 +3,7 @@
  * physics so a different art style (or a WebGL renderer) can replace it.
  */
 import { resolveColor } from '../core/color';
-import { SLIT_THICKNESS, THIN_LEN } from '../core/entities';
+import { POLARIZER_RADIUS, SLIT_THICKNESS, THIN_LEN } from '../core/entities';
 import { centre, regularPolygon, rotatedRect } from '../core/entities/shapes';
 import { getType } from '../core/registry';
 import type { TargetStatus } from '../core/rules';
@@ -135,6 +135,11 @@ registerDrawer('laser', (e, { ctx, theme }) => {
     ctx.fill();
     softGlow(ctx, 0.34, 0, 0.22, col, 0.55);
   });
+  const pol = param<number | null>(e, getType('laser'), 'pol');
+  if (pol !== null && pol !== undefined) {
+    const c = centre(e);
+    polStripes(ctx, c.x + Math.cos((e.angle * Math.PI) / 180) * 0.04, c.y + Math.sin((e.angle * Math.PI) / 180) * 0.04, 0.12, pol, 'rgba(230, 220, 255, 0.85)', 0.02, 0.06);
+  }
 });
 
 registerDrawer('bulb', (e, { ctx, theme, time }) => {
@@ -207,6 +212,21 @@ registerDrawer('sink', (e, { ctx, theme, time, status }) => {
     ctx.arc(c.x, c.y, r * 0.28, 0, Math.PI * 2);
     ctx.fillStyle = rgba(col, 0.9);
     ctx.fill();
+  }
+  const pol = param<number | null>(e, t, 'pol');
+  if (pol !== null && pol !== undefined) {
+    // A bar across the ring shows the accepted polarization axis.
+    const a = (pol * Math.PI) / 180;
+    ctx.strokeStyle = rgba(col, 0.85);
+    ctx.lineWidth = 0.035;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(c.x - Math.cos(a) * (r + 0.12), c.y - Math.sin(a) * (r + 0.12));
+    ctx.lineTo(c.x - Math.cos(a) * (r + 0.02), c.y - Math.sin(a) * (r + 0.02));
+    ctx.moveTo(c.x + Math.cos(a) * (r + 0.02), c.y + Math.sin(a) * (r + 0.02));
+    ctx.lineTo(c.x + Math.cos(a) * (r + 0.12), c.y + Math.sin(a) * (r + 0.12));
+    ctx.stroke();
+    ctx.lineCap = 'butt';
   }
   if (status?.contaminated) {
     ctx.strokeStyle = rgba([255, 140, 160], 0.9);
@@ -376,6 +396,52 @@ registerDrawer('block', (e, { ctx, theme }) => {
   ctx.lineWidth = 0.022;
   ctx.lineJoin = 'round';
   ctx.stroke();
+});
+
+/** Short parallel strokes along a polarization axis, clipped to a circle. */
+function polStripes(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, axis: number, color: string, width: number, gap: number): void {
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.clip();
+  ctx.translate(x, y);
+  ctx.rotate((axis * Math.PI) / 180);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.beginPath();
+  for (let o = -r + gap / 2; o < r; o += gap) {
+    ctx.moveTo(-r, o);
+    ctx.lineTo(r, o);
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+
+registerDrawer('polarizer', (e, { ctx, theme }) => {
+  const c = centre(e);
+  const r = POLARIZER_RADIUS;
+  ctx.beginPath();
+  ctx.arc(c.x, c.y, r, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(170, 150, 230, 0.18)';
+  ctx.fill();
+  polStripes(ctx, c.x, c.y, r, e.angle, 'rgba(220, 210, 255, 0.55)', 0.022, 0.095);
+  ctx.beginPath();
+  ctx.arc(c.x, c.y, r, 0, Math.PI * 2);
+  ctx.strokeStyle = theme.glassEdge;
+  ctx.lineWidth = 0.03;
+  ctx.stroke();
+  // Axis notches on the rim, so the orientation reads even at a glance.
+  ctx.strokeStyle = theme.mirror;
+  ctx.lineWidth = 0.04;
+  ctx.lineCap = 'round';
+  const a = (e.angle * Math.PI) / 180;
+  for (const s of [-1, 1]) {
+    ctx.beginPath();
+    ctx.moveTo(c.x + Math.cos(a) * s * (r - 0.07), c.y + Math.sin(a) * s * (r - 0.07));
+    ctx.lineTo(c.x + Math.cos(a) * s * (r + 0.05), c.y + Math.sin(a) * s * (r + 0.05));
+    ctx.stroke();
+  }
+  ctx.lineCap = 'butt';
 });
 
 registerDrawer('blocker', (e, { ctx, theme }) => {

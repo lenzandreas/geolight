@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "id": "glass-paradox",
+  "name": {
+    "en": "Glass Paradox",
+    "de": "Gläsernes Paradoxon"
+  },
+  "intro": {
+    "en": "Crossed and dark again, and the keyhole between them sits off-centre. Two tricks at once.",
+    "de": "Wieder gekreuzt und dunkel, und das Schlüsselloch dazwischen sitzt außermittig. Zwei Kniffe auf einmal."
+  },
+  "grid": {"w": 11, "h": 5},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 2, "angle": 0},
+    {"type": "polarizer", "x": 1, "y": 2, "angle": 0},
+    {"type": "wall", "x": 2, "y": 0, "params": {"w": 7, "h": 2}},
+    {"type": "wall", "x": 2, "y": 3, "params": {"w": 7, "h": 2}},
+    {"type": "slit", "x": 5, "y": 2, "angle": 0, "params": {"gap": 0.1, "offset": -0.155}},
+    {"type": "slit", "x": 7, "y": 2, "angle": 0, "params": {"gap": 0.1, "offset": 0}},
+    {"type": "polarizer", "x": 9, "y": 2, "angle": 90},
+    {"type": "sink", "x": 10, "y": 2, "params": {"required": 0.1, "radius": 0.24}}
+  ],
+  "inventory": [
+    {"type": "block", "count": 2},
+    {"type": "polarizer", "count": 1}
+  ],
+  "solution": [
+    {"type": "block", "x": 2, "y": 2, "angle": 60},
+    {"type": "block", "x": 6, "y": 2, "angle": 30},
+    {"type": "polarizer", "x": 3, "y": 2, "angle": 45}
+  ]
+}

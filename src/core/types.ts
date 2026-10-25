@@ -30,6 +30,8 @@ export interface Ray {
   source: string;
   /** Index of the emitted ray this one descends from (set by the tracer). */
   root?: number;
+  /** Polarization axis in degrees [0, 180), or null/undefined for unpolarized light. */
+  pol?: number | null;
 }
 
 export interface Hit {
@@ -39,8 +41,11 @@ export interface Hit {
 }
 
 export interface TraceContext {
-  /** Spawn a new ray (reflected, refracted, split...). Depth is handled by the tracer. */
-  emit(parent: Ray, o: Vec, d: Vec, c: RGB): void;
+  /**
+   * Spawn a new ray (reflected, refracted, split...). Depth is handled by the tracer.
+   * The child keeps the parent's polarization unless `pol` is given (null = unpolarized).
+   */
+  emit(parent: Ray, o: Vec, d: Vec, c: RGB, pol?: number | null): void;
   /** Register light absorbed by a receiver entity. */
   receive(entity: Entity, c: RGB, ray: Ray): void;
 }

@@ -106,6 +106,31 @@ function refractOne(
   ctx.emit(ray, hit.point, normalize({ x: ray.d.x * eta + nrm.x * a, y: ray.d.y * eta + nrm.y * a }), c);
 }
 
+/** Share of light a polarizer with axis `axis` lets through (Malus's law; half for unpolarized light). */
+export function malus(pol: number | null | undefined, axis: number): number {
+  if (pol === null || pol === undefined) return 0.5;
+  const d = ((pol - axis) * Math.PI) / 180;
+  return Math.cos(d) ** 2;
+}
+
+/**
+ * Polarizing disc: light crosses the whole disc (any direction), leaving polarized
+ * along `axis` with the power Malus's law allows.
+ */
+export function polarize(centre: Vec, axis: number): Interaction {
+  return (ray, hit, ctx) => {
+    // Exit point: the far intersection of the ray with the disc.
+    const mx = hit.point.x - centre.x;
+    const my = hit.point.y - centre.y;
+    const b = mx * ray.d.x + my * ray.d.y;
+    const chord = Math.max(0, -2 * b);
+    const exit = { x: hit.point.x + ray.d.x * chord, y: hit.point.y + ray.d.y * chord };
+    const k = malus(ray.pol, axis);
+    if (k < 1e-6) return;
+    ctx.emit(ray, exit, ray.d, scaleRGB(ray.c, k), axis);
+  };
+}
+
 /** Absorbs and reports light to the owning entity (sinks, sensors, solar cells...). */
 export function receiver(entity: Entity): Interaction {
   return (ray, _hit, ctx) => ctx.receive(entity, ray.c, ray);

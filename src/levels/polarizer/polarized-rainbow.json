@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "id": "polarized-rainbow",
+  "name": {
+    "en": "Polarized Rainbow",
+    "de": "Polarisierter Regenbogen"
+  },
+  "intro": {
+    "en": "Every colour keeps the laser's swing. Turn blue a little, turn red all the way, and stop green cold: a crossed polarizer is a perfect wall.",
+    "de": "Jede Farbe behält die Schwingung des Lasers. Dreh Blau ein wenig, Rot ganz und halt Grün auf: Ein gekreuzter Polarisator ist eine perfekte Wand."
+  },
+  "grid": {"w": 11, "h": 9},
+  "entities": [
+    {"type": "laser", "x": 1, "y": 1, "angle": 0, "params": {"pol": 0}},
+    {"type": "prism", "x": 2, "y": 1, "angle": 45},
+    {"type": "sink", "x": 10, "y": 5, "params": {"color": "red", "pol": 90, "strict": true, "required": 0.07}},
+    {"type": "sink", "x": 6, "y": 6, "params": {"color": "blue", "pol": 45, "strict": true, "required": 0.15}},
+    {"type": "sensor", "x": 10, "y": 7}
+  ],
+  "inventory": [
+    {"type": "polarizer", "count": 4}
+  ],
+  "solution": [
+    {"type": "polarizer", "x": 6, "y": 3, "angle": 45},
+    {"type": "polarizer", "x": 8, "y": 4, "angle": 90},
+    {"type": "polarizer", "x": 5, "y": 5, "angle": 45},
+    {"type": "polarizer", "x": 6, "y": 4, "angle": 90}
+  ]
+}

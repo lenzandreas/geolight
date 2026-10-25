@@ -57,3 +57,50 @@ function normalise(pts: Point[]): Point[] {
   const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
   return pts.map((p) => ({ x: x1 > x0 ? (p.x - x0) / (x1 - x0) : 0.5, y: y1 > y0 ? (p.y - y0) / (y1 - y0) : 0.5 }));
 }
+
+export interface SkyLayout {
+  /** Star centres in pixels inside a box of `width` × `height`. */
+  points: Point[];
+  width: number;
+  height: number;
+}
+
+/**
+ * Readable star layout for a world view: stars snake through a grid sized to the
+ * available space (row by row, alternating direction, so neighbours stay close and
+ * lines never cross), each nudged by a stable random offset so it still looks like
+ * a constellation. Cells are at least `minCell` wide/tall, so labels never collide;
+ * if the space is too small the layout grows taller (the view scrolls).
+ */
+export function skyLayout(id: string, n: number, availW: number, availH: number, minCell = { w: 124, h: 116 }): SkyLayout {
+  const random = seeded(`sky:${id}`);
+  const maxCols = Math.max(1, Math.floor(availW / minCell.w));
+  // Pick the column count whose cells come closest to square, within the limits.
+  let best = { cols: 1, score: Infinity };
+  for (let cols = 1; cols <= Math.min(maxCols, n); cols++) {
+    const rows = Math.ceil(n / cols);
+    const cw = availW / cols;
+    const ch = Math.max(minCell.h, availH / rows);
+    const score = Math.abs(Math.log(cw / ch)) + (rows * minCell.h > availH ? 1 : 0);
+    if (score < best.score) best = { cols, score };
+  }
+  const cols = best.cols;
+  const rows = Math.ceil(n / cols);
+  const width = availW;
+  const height = Math.max(availH, rows * minCell.h);
+  const cw = width / cols;
+  const ch = height / rows;
+  const points: Point[] = [];
+  for (let i = 0; i < n; i++) {
+    const row = Math.floor(i / cols);
+    const inRow = Math.min(cols, n - row * cols);
+    let col = i % cols;
+    if (row % 2 === 1) col = inRow - 1 - col;
+    // Centre a short last row.
+    const offset = (cols - inRow) / 2;
+    const jx = (random() - 0.5) * 0.36;
+    const jy = (random() - 0.5) * 0.3;
+    points.push({ x: (col + offset + 0.5 + jx) * cw, y: (row + 0.42 + jy) * ch });
+  }
+  return { points, width, height };
+}

@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "id": "squeeze-and-turn",
+  "name": {
+    "en": "Squeeze and Turn",
+    "de": "Schmal und gedreht"
+  },
+  "intro": {
+    "en": "The sunbeam is wider than a polarizer. Whatever slips past the edge stays unpolarized and spoils the ring.",
+    "de": "Der Sonnenstrahl ist breiter als ein Polarisator. Was am Rand vorbeischlüpft, bleibt unpolarisiert und verdirbt den Ring."
+  },
+  "grid": {"w": 10, "h": 7},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 3, "angle": 0, "params": {"width": 0.8, "rays": 40}},
+    {"type": "wall", "x": 3, "y": 0, "params": {"w": 1, "h": 3}},
+    {"type": "wall", "x": 3, "y": 4, "params": {"w": 1, "h": 3}},
+    {"type": "slit", "x": 3, "y": 3, "angle": 0, "params": {"gap": 0.44}},
+    {"type": "sink", "x": 9, "y": 3, "params": {"pol": 60, "strict": true, "required": 0.4, "radius": 0.24}}
+  ],
+  "inventory": [
+    {"type": "lens", "count": 1, "params": {"f": 2}},
+    {"type": "lens", "count": 1, "params": {"f": -1}},
+    {"type": "polarizer", "count": 1}
+  ],
+  "solution": [
+    {"type": "lens", "params": {"f": 2}, "x": 1, "y": 3, "angle": 0},
+    {"type": "lens", "params": {"f": -1}, "x": 2, "y": 3, "angle": 0},
+    {"type": "polarizer", "x": 4, "y": 3, "angle": 60}
+  ]
+}

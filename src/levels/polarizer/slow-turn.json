@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "id": "slow-turn",
+  "name": {
+    "en": "Slow Turn",
+    "de": "Langsame Drehung"
+  },
+  "intro": {
+    "en": "This laser's light is already polarized. Turn its swing a quarter round before the last polarizer. Small steps lose far less than one big leap.",
+    "de": "Das Licht dieses Lasers ist schon polarisiert. Dreh seine Schwingung um eine Vierteldrehung vor dem letzten Polarisator. Kleine Schritte verlieren viel weniger als ein großer Sprung."
+  },
+  "grid": {"w": 10, "h": 5},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 2, "angle": 0, "params": {"pol": 0}},
+    {"type": "polarizer", "x": 7, "y": 2, "angle": 90},
+    {"type": "wall", "x": 1, "y": 0, "params": {"w": 6, "h": 2}},
+    {"type": "wall", "x": 1, "y": 3, "params": {"w": 6, "h": 2}},
+    {"type": "sink", "x": 9, "y": 2, "params": {"required": 0.6}}
+  ],
+  "inventory": [
+    {"type": "polarizer", "count": 6}
+  ],
+  "solution": [
+    {"type": "polarizer", "x": 1, "y": 2, "angle": 15},
+    {"type": "polarizer", "x": 2, "y": 2, "angle": 30},
+    {"type": "polarizer", "x": 3, "y": 2, "angle": 45},
+    {"type": "polarizer", "x": 4, "y": 2, "angle": 60},
+    {"type": "polarizer", "x": 5, "y": 2, "angle": 75},
+    {"type": "polarizer", "x": 6, "y": 2, "angle": 90}
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "crossed",
+  "name": {
+    "en": "Crossed",
+    "de": "Gekreuzt"
+  },
+  "intro": {
+    "en": "A polarizer only lets light through that swings along its stripes, so it halves ordinary light. Two polarizers at right angles block everything. Turn one of them.",
+    "de": "Ein Polarisator lässt nur Licht durch, das entlang seiner Streifen schwingt, und halbiert so gewöhnliches Licht. Zwei Polarisatoren im rechten Winkel sperren alles. Dreh einen davon."
+  },
+  "grid": {"w": 8, "h": 5},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 2, "angle": 0},
+    {"id": "p1", "type": "polarizer", "x": 2, "y": 2, "angle": 0, "lock": "rotate"},
+    {"id": "p2", "type": "polarizer", "x": 5, "y": 2, "angle": 90, "lock": "rotate"},
+    {"type": "sink", "x": 7, "y": 2, "params": {"required": 0.45}}
+  ],
+  "inventory": [],
+  "solution": [
+    {"id": "p2", "x": 5, "y": 2, "angle": 0}
+  ]
+}

@@ -62,6 +62,17 @@ describe('campaign progression', () => {
     expect(children.every((w) => enough.worldOpen(w))).toBe(true);
   });
 
+  it('opens a world with several parents only when every parent is far enough', () => {
+    const joint = WORLDS.find((w) => w.parents.length > 1)!;
+    expect(joint).toBeDefined();
+    // Everything solved except the last parent, which is one short.
+    const all = WORLDS.filter((w) => w !== joint).flatMap((w) => w.levels);
+    const last = WORLDS.find((w) => w.id === joint.parents[joint.parents.length - 1])!;
+    const short = all.filter((id) => !last.levels.slice(UNLOCK_AFTER - 1).includes(id));
+    expect(make(short).worldOpen(joint)).toBe(false);
+    expect(make(all).worldOpen(joint)).toBe(true);
+  });
+
   it('suggests the next level in the same world first', () => {
     const c = make(root.levels.slice(0, UNLOCK_AFTER));
     expect(c.next(root)?.level.id).toBe(root.levels[UNLOCK_AFTER]);

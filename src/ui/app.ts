@@ -177,18 +177,21 @@ export class App {
         },
       });
     const screen: Screen = { el: build() };
-    // The star layout depends on orientation: rebuild when it flips.
-    const portrait = () => window.innerHeight > window.innerWidth;
-    let was = portrait();
+    // The star layout depends on the available space: rebuild after resizing settles.
+    let timer = 0;
     const onResize = () => {
-      if (portrait() === was) return;
-      was = portrait();
-      const fresh = build();
-      screen.el.replaceWith(fresh);
-      screen.el = fresh;
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        const fresh = build();
+        screen.el.replaceWith(fresh);
+        screen.el = fresh;
+      }, 150);
     };
     window.addEventListener('resize', onResize);
-    screen.destroy = () => window.removeEventListener('resize', onResize);
+    screen.destroy = () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', onResize);
+    };
     return screen;
   }
 

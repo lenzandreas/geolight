@@ -6,7 +6,7 @@
  * the beam direction for emitters, the surface normal for thin optics.
  */
 import { resolveColor, spectrum, type RGB } from '../color';
-import { absorb, filter, mirror, receiver, refract, splitter, thinOptic } from '../interactions';
+import { absorb, filter, mirror, polarize, receiver, refract, splitter, thinOptic } from '../interactions';
 import { add, fromAngle, perp, scale } from '../math';
 import { registerType } from '../registry';
 import { param, type Entity, type EntityType } from '../types';
@@ -21,14 +21,15 @@ export const SENSOR_RADIUS = 0.28;
 export const Laser: EntityType = {
   id: 'laser',
   category: 'source',
-  defaults: { color: 'white', power: 1 },
+  /** pol: polarization axis in degrees, or null for unpolarized light. */
+  defaults: { color: 'white', power: 1, pol: null },
   surfaces(e, out) {
     pushPolygon(out, e, rotatedRect(e, 0.62, 0.42), absorb);
   },
   emit(e, out) {
     const d = fromAngle(e.angle);
     const c = spectrum(resolveColor(param(e, Laser, 'color')), param<number>(e, Laser, 'power'));
-    out.push({ o: add(centre(e), scale(d, 0.33)), d, c, depth: 0, source: e.id });
+    out.push({ o: add(centre(e), scale(d, 0.33)), d, c, depth: 0, source: e.id, pol: param<number | null>(e, Laser, 'pol') });
   },
 };
 
@@ -84,8 +85,11 @@ export const Sink: EntityType = {
   id: 'sink',
   category: 'target',
   /** required: power needed (1 = one full laser). color: accepted channels. strict: off-colour light spoils it. */
-  /** each: every channel in `color` must deliver its share (colour mixing, e.g. yellow = red + green). */
-  defaults: { required: 0.9, color: 'white', strict: false, each: false, radius: SINK_RADIUS },
+  /**
+   * each: every channel in `color` must deliver its share (colour mixing, e.g. yellow = red + green).
+   * pol: if set, only light polarized along this axis counts (and with `strict`, other light spoils it).
+   */
+  defaults: { required: 0.9, color: 'white', strict: false, each: false, radius: SINK_RADIUS, pol: null },
   symmetry: 360,
   surfaces(e, out) {
     out.push({ shape: { kind: 'circle', c: centre(e), r: param<number>(e, Sink, 'radius') }, entity: e, interact: receiver(e) });
@@ -188,6 +192,20 @@ export const GlassBlock: EntityType = {
   },
 };
 
+export const POLARIZER_RADIUS = 0.34;
+
+/** Polarizing disc. Its axis is the entity angle (mod 180); light crosses it from any side. */
+export const Polarizer: EntityType = {
+  id: 'polarizer',
+  category: 'optic',
+  defaults: {},
+  symmetry: 180,
+  surfaces(e, out) {
+    const c = centre(e);
+    out.push({ shape: { kind: 'circle', c, r: POLARIZER_RADIUS }, entity: e, interact: polarize(c, ((e.angle % 180) + 180) % 180) });
+  },
+};
+
 /** A small absorbing block the player can place to shade things. */
 export const Blocker: EntityType = {
   id: 'blocker',
@@ -255,7 +273,7 @@ export const Wall: EntityType = {
   },
 };
 
-export const BUILTIN_TYPES: EntityType[] = [Laser, Bulb, Sun, Sink, Sensor, Mirror, Splitter, Filter, Lens, CurvedMirror, Prism, GlassBlock, Blocker, Wall, Slit];
+export const BUILTIN_TYPES: EntityType[] = [Laser, Bulb, Sun, Sink, Sensor, Mirror, Splitter, Filter, Lens, CurvedMirror, Prism, GlassBlock, Blocker, Wall, Slit, Polarizer];
 
 let registered = false;
 /** Idempotent registration of the built-in types. */
