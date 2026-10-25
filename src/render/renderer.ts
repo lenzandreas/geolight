@@ -6,7 +6,8 @@ import { power } from '../core/color';
 import { centre } from '../core/entities/shapes';
 import type { TargetStatus } from '../core/rules';
 import type { TraceResult } from '../core/tracer';
-import type { Entity } from '../core/types';
+import { getType } from '../core/registry';
+import { param, type Entity } from '../core/types';
 import { getDrawer, roundRect } from './drawers';
 import { lightColor, rgba, type Theme } from './theme';
 import { View } from './view';
@@ -231,9 +232,12 @@ export class Renderer {
       ctx.setLineDash([]);
     }
 
+    const need = (e: Entity) => param<number>(e, getType('sink'), 'required');
+    const hungriest = Math.max(0, ...s.pieces.filter((e) => e.type === 'sink').map(need));
     for (const e of s.pieces) {
       if (e.type === 'wall') continue;
-      getDrawer(e.type)?.(e, { ctx, theme: t, time, status: s.statuses.get(e.id) });
+      const demand = e.type === 'sink' && hungriest > 0 ? need(e) / hungriest : 1;
+      getDrawer(e.type)?.(e, { ctx, theme: t, time, status: s.statuses.get(e.id), demand });
     }
 
     if (s.floating) {

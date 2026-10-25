@@ -16,6 +16,8 @@ export interface DrawContext {
   /** Seconds, for gentle idle animation (0 when motion is reduced). */
   time: number;
   status?: TargetStatus;
+  /** Sinks: this sink's requirement as a share of the largest one on the board (1 = the hungriest). */
+  demand?: number;
 }
 
 export type Drawer = (e: Entity, d: DrawContext) => void;
@@ -175,7 +177,7 @@ registerDrawer('sun', (e, { ctx, theme }) => {
 
 /* ---------- Targets ---------- */
 
-registerDrawer('sink', (e, { ctx, theme, time, status }) => {
+registerDrawer('sink', (e, { ctx, theme, time, status, demand = 1 }) => {
   const t = getType('sink');
   const c = centre(e);
   const r = param<number>(e, t, 'radius');
@@ -191,17 +193,38 @@ registerDrawer('sink', (e, { ctx, theme, time, status }) => {
   ctx.arc(c.x, c.y, r, 0, Math.PI * 2);
   ctx.fillStyle = theme.sinkWell;
   ctx.fill();
-  // Track and progress arc.
+  // Track and progress arc. When sinks need different amounts, the full ring stands
+  // for the hungriest one: smaller needs get a shorter track, ending at a tick.
+  const top = -Math.PI / 2;
+  const end = top + Math.PI * 2 * demand;
+  const partial = demand < 0.995;
   ctx.lineWidth = 0.06;
+  if (partial) {
+    ctx.strokeStyle = rgba(col, 0.12);
+    ctx.beginPath();
+    ctx.arc(c.x, c.y, r, 0, Math.PI * 2);
+    ctx.stroke();
+  }
   ctx.strokeStyle = rgba(col, 0.38);
   ctx.beginPath();
-  ctx.arc(c.x, c.y, r, 0, Math.PI * 2);
+  ctx.arc(c.x, c.y, r, top, partial ? end : top + Math.PI * 2);
   ctx.stroke();
+  if (partial) {
+    ctx.strokeStyle = rgba(col, 0.75);
+    ctx.lineWidth = 0.035;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(c.x + Math.cos(end) * (r - 0.07), c.y + Math.sin(end) * (r - 0.07));
+    ctx.lineTo(c.x + Math.cos(end) * (r + 0.1), c.y + Math.sin(end) * (r + 0.1));
+    ctx.stroke();
+    ctx.lineCap = 'butt';
+    ctx.lineWidth = 0.06;
+  }
   if (progress > 0.001) {
     ctx.strokeStyle = rgba(col, ok ? 1 : 0.85);
     ctx.lineCap = 'round';
     ctx.beginPath();
-    ctx.arc(c.x, c.y, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * progress);
+    ctx.arc(c.x, c.y, r, top, top + Math.PI * 2 * demand * progress);
     ctx.stroke();
     ctx.lineCap = 'butt';
   }
