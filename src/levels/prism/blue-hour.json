@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "id": "blue-hour",
+  "name": {
+    "en": "Blue Hour",
+    "de": "Blaue Stunde"
+  },
+  "intro": {
+    "en": "Blue bends the most in a prism, red the least. Pick out the blue and keep the rest away from the eye.",
+    "de": "Blau wird im Prisma am stärksten gebrochen, Rot am wenigsten. Fisch das Blau heraus und halt den Rest vom Auge fern."
+  },
+  "grid": {"w": 10, "h": 8},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 1, "angle": 0},
+    {"type": "sink", "x": 1, "y": 7, "params": {"color": "blue", "strict": true, "required": 0.3}},
+    {"type": "sensor", "x": 9, "y": 1},
+    {"type": "wall", "x": 2, "y": 4, "params": {"w": 8, "h": 1}}
+  ],
+  "inventory": [
+    {"type": "prism", "count": 1},
+    {"type": "mirror", "count": 1}
+  ],
+  "solution": [
+    {"type": "prism", "x": 1, "y": 1, "angle": 30},
+    {"type": "mirror", "x": 1, "y": 2, "angle": 15}
+  ]
+}

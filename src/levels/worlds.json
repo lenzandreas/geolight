@@ -1,0 +1,58 @@
+[
+  {
+    "id": "mirror",
+    "name": {"en": "Reflections", "de": "Spiegelungen"},
+    "object": "mirror",
+    "parents": [],
+    "levels": ["first-light", "around-the-corner", "turnstiles", "slanted", "dont-wake-the-guard", "teamwork"]
+  },
+  {
+    "id": "splitter",
+    "name": {"en": "Forks", "de": "Gabelungen"},
+    "object": "splitter",
+    "parents": ["mirror"],
+    "levels": ["half-and-half", "fork", "three-ways", "merge", "both-halves", "chandelier"]
+  },
+  {
+    "id": "lens",
+    "name": {"en": "Gathering Light", "de": "Licht sammeln"},
+    "object": "lens",
+    "parents": ["splitter"],
+    "levels": ["gather-the-glow", "skylight", "keyhole", "condenser", "relay", "lighthouse", "twin-beams", "periscope", "pinpoint", "lantern-relay"]
+  },
+  {
+    "id": "concave",
+    "name": {"en": "Dishes", "de": "Schalen"},
+    "object": "curvedMirror",
+    "parents": ["lens"],
+    "levels": ["dish", "mirror-image", "flashlight", "searchlight", "solar-furnace", "newtonian"]
+  },
+  {
+    "id": "diverging",
+    "name": {"en": "Spreading Out", "de": "Zerstreuung"},
+    "object": "divergingLens",
+    "parents": ["lens"],
+    "levels": ["spread-the-light", "tight-squeeze", "telephoto", "long-throw", "twin-gates", "grand-telescope"]
+  },
+  {
+    "id": "glass",
+    "name": {"en": "Through the Glass", "de": "Durch das Glas"},
+    "object": "block",
+    "parents": ["lens"],
+    "levels": ["nudge", "thread-the-needle", "zigzag", "bend", "split-decision", "glass-maze"]
+  },
+  {
+    "id": "filter",
+    "name": {"en": "Colours", "de": "Farben"},
+    "object": "filter",
+    "parents": ["lens"],
+    "levels": ["red-light", "seeing-red", "traffic-light", "secondary-colours", "unmix", "observatory"]
+  },
+  {
+    "id": "prism",
+    "name": {"en": "Rainbows", "de": "Regenbögen"},
+    "object": "prism",
+    "parents": ["filter"],
+    "levels": ["rainbow", "blue-hour", "make-yellow", "purple-rain", "white-again", "aurora"]
+  }
+]

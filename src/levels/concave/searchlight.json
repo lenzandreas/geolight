@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "id": "searchlight",
+  "name": {
+    "en": "Searchlight",
+    "de": "Suchscheinwerfer"
+  },
+  "intro": {
+    "en": "Put the lamp right at the dish's focus and its light leaves as one straight beam. Then steer it.",
+    "de": "Steht die Lampe genau im Brennpunkt der Schale, verlässt ihr Licht sie als ein gerader Strahl. Dann lenk ihn."
+  },
+  "grid": {"w": 10, "h": 7},
+  "entities": [
+    {"type": "bulb", "x": 2, "y": 1},
+    {"type": "wall", "x": 6, "y": 0, "params": {"w": 1, "h": 4}},
+    {"type": "wall", "x": 0, "y": 3, "params": {"w": 3, "h": 1}},
+    {"type": "sink", "x": 9, "y": 5, "params": {"required": 0.018, "radius": 0.25}}
+  ],
+  "inventory": [
+    {"type": "curvedMirror", "count": 1, "params": {"f": 1}},
+    {"type": "mirror", "count": 2}
+  ],
+  "solution": [
+    {"type": "curvedMirror", "params": {"f": 1}, "x": 1, "y": 1, "angle": 0},
+    {"type": "mirror", "x": 4, "y": 1, "angle": 135},
+    {"type": "mirror", "x": 4, "y": 5, "angle": 135}
+  ]
+}

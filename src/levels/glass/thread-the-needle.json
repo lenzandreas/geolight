@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "id": "thread-the-needle",
+  "name": {
+    "en": "Thread the Needle",
+    "de": "Nadelöhr"
+  },
+  "intro": {
+    "en": "The opening sits just off the beam. Glass held at a slant nudges light sideways.",
+    "de": "Die Öffnung liegt knapp neben dem Strahl. Schräg gehaltenes Glas versetzt Licht seitlich."
+  },
+  "grid": {"w": 10, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 1, "angle": 0},
+    {"type": "wall", "x": 6, "y": 0, "params": {"w": 1, "h": 5}},
+    {"type": "slit", "x": 6, "y": 5, "angle": 0, "params": {"gap": 0.1, "offset": 0.155}},
+    {"type": "wall", "x": 6, "y": 6, "params": {"w": 1, "h": 1}},
+    {"type": "sink", "x": 8, "y": 5}
+  ],
+  "inventory": [
+    {"type": "mirror", "count": 2},
+    {"type": "block", "count": 1}
+  ],
+  "solution": [
+    {"type": "mirror", "x": 2, "y": 1, "angle": 135},
+    {"type": "mirror", "x": 2, "y": 5, "angle": 135},
+    {"type": "block", "x": 4, "y": 5, "angle": 30}
+  ]
+}

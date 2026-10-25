@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "id": "both-halves",
+  "name": {
+    "en": "Both Halves",
+    "de": "Beide Hälften"
+  },
+  "intro": {
+    "en": "A splitter never sends light just one way. Find a home for both halves, away from the eyes.",
+    "de": "Ein Strahlteiler schickt Licht nie nur in eine Richtung. Finde für beide Hälften ein Ziel, fern von den Augen."
+  },
+  "grid": {"w": 10, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 3, "angle": 0},
+    {"type": "sensor", "x": 9, "y": 3},
+    {"type": "sensor", "x": 5, "y": 0},
+    {"type": "sensor", "x": 5, "y": 6},
+    {"type": "sink", "x": 9, "y": 1, "params": {"required": 0.45}},
+    {"type": "sink", "x": 7, "y": 6, "params": {"required": 0.45}},
+    {"type": "wall", "x": 2, "y": 0, "params": {"w": 1, "h": 2}},
+    {"type": "wall", "x": 2, "y": 5, "params": {"w": 1, "h": 2}},
+    {"type": "wall", "x": 8, "y": 0, "params": {"w": 1, "h": 1}},
+    {"type": "wall", "x": 8, "y": 2, "params": {"w": 2, "h": 1}},
+    {"type": "wall", "x": 6, "y": 5, "params": {"w": 1, "h": 2}},
+    {"type": "wall", "x": 8, "y": 5, "params": {"w": 1, "h": 2}}
+  ],
+  "inventory": [
+    {"type": "splitter", "count": 1},
+    {"type": "mirror", "count": 2}
+  ],
+  "solution": [
+    {"type": "splitter", "x": 5, "y": 3, "angle": 45},
+    {"type": "mirror", "x": 5, "y": 1, "angle": 45},
+    {"type": "mirror", "x": 7, "y": 3, "angle": 135}
+  ]
+}

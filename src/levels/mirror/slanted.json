@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "id": "slanted",
+  "name": {
+    "en": "Slanted",
+    "de": "Schräglage"
+  },
+  "intro": {
+    "en": "Not every beam runs straight. Mirrors turn in 15° steps.",
+    "de": "Nicht jeder Strahl verläuft gerade. Spiegel drehen sich in 15°-Schritten."
+  },
+  "grid": {"w": 10, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 6, "angle": 330},
+    {"type": "sink", "x": 9, "y": 6},
+    {"type": "wall", "x": 6, "y": 4, "params": {"w": 1, "h": 3}},
+    {"type": "wall", "x": 3, "y": 0, "params": {"w": 2, "h": 1}},
+    {"type": "wall", "x": 8, "y": 3, "params": {"w": 2, "h": 1}}
+  ],
+  "inventory": [
+    {"type": "mirror", "count": 2}
+  ],
+  "solution": [
+    {"type": "mirror", "x": 5, "y": 3, "angle": 45},
+    {"type": "mirror", "x": 6, "y": 1, "angle": 90}
+  ]
+}

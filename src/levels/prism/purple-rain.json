@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "id": "purple-rain",
+  "name": {
+    "en": "Purple Rain",
+    "de": "Lila Regen"
+  },
+  "intro": {
+    "en": "Violet is red and blue, the two ends of the rainbow. Green has no business here, least of all in the eye.",
+    "de": "Violett ist Rot und Blau, die beiden Enden des Regenbogens. Grün hat hier nichts verloren, schon gar nicht im Auge."
+  },
+  "grid": {"w": 11, "h": 9},
+  "entities": [
+    {"type": "laser", "x": 1, "y": 1, "angle": 0},
+    {"type": "prism", "x": 2, "y": 1, "angle": 45},
+    {"type": "sink", "x": 3, "y": 1, "params": {"color": "magenta", "each": true, "strict": true, "required": 0.6}},
+    {"type": "sensor", "x": 7, "y": 5}
+  ],
+  "inventory": [
+    {"type": "mirror", "count": 2},
+    {"type": "filter", "count": 1, "params": {"color": "magenta"}}
+  ],
+  "solution": [
+    {"type": "mirror", "x": 6, "y": 3, "angle": 30},
+    {"type": "mirror", "x": 4, "y": 3, "angle": 60},
+    {"type": "filter", "params": {"color": "magenta"}, "x": 5, "y": 3, "angle": 30}
+  ]
+}

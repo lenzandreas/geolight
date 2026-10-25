@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "id": "solar-furnace",
+  "name": {
+    "en": "Solar Furnace",
+    "de": "Sonnenofen"
+  },
+  "intro": {
+    "en": "One window of sunlight is not enough. Bring both onto the same small ring.",
+    "de": "Ein Fenster voll Sonnenlicht reicht nicht. Bring beide auf denselben kleinen Ring."
+  },
+  "grid": {"w": 9, "h": 9},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 2, "angle": 0, "params": {"width": 0.6, "rays": 30}},
+    {"type": "sun", "x": 0, "y": 7, "angle": 0, "params": {"width": 0.6, "rays": 30}},
+    {"type": "sink", "x": 4, "y": 4, "params": {"required": 1.7, "radius": 0.12}},
+    {"type": "wall", "x": 0, "y": 4, "params": {"w": 2, "h": 1}},
+    {"type": "wall", "x": 6, "y": 3, "params": {"w": 1, "h": 3}}
+  ],
+  "inventory": [
+    {"type": "curvedMirror", "count": 1, "params": {"f": 2}},
+    {"type": "curvedMirror", "count": 1, "params": {"f": 3}}
+  ],
+  "solution": [
+    {"type": "curvedMirror", "params": {"f": 2}, "x": 4, "y": 7, "angle": 225},
+    {"type": "curvedMirror", "params": {"f": 3}, "x": 4, "y": 2, "angle": 135}
+  ]
+}

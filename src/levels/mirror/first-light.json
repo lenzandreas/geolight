@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "first-light",
+  "name": {
+    "en": "First Light",
+    "de": "Erstes Licht"
+  },
+  "intro": {
+    "en": "Drag the mirror into the beam, then tap it to turn it. Guide the light into the glowing ring.",
+    "de": "Zieh den Spiegel in den Strahl und tippe ihn an, um ihn zu drehen. Lenke das Licht in den leuchtenden Ring."
+  },
+  "grid": {"w": 8, "h": 5},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 1, "angle": 0},
+    {"type": "sink", "x": 5, "y": 4},
+    {"type": "wall", "x": 7, "y": 0, "params": {"w": 1, "h": 2}}
+  ],
+  "inventory": [
+    {"type": "mirror", "count": 1}
+  ],
+  "solution": [
+    {"type": "mirror", "x": 5, "y": 1, "angle": 135}
+  ]
+}

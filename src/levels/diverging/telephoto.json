@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "id": "telephoto",
+  "name": {
+    "en": "Telephoto",
+    "de": "Teleobjektiv"
+  },
+  "intro": {
+    "en": "The open frames take up room but let light through. A gathering lens alone focuses too soon. A spreading lens just behind it pushes the focus further out.",
+    "de": "Die offenen Rahmen belegen Platz, lassen aber Licht durch. Eine Sammellinse allein bündelt zu früh. Eine Zerstreuungslinse direkt dahinter schiebt den Brennpunkt weiter hinaus."
+  },
+  "grid": {"w": 9, "h": 7},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 3, "angle": 0, "params": {"width": 0.6, "rays": 36}},
+    {"type": "slit", "x": 3, "y": 3, "angle": 0, "params": {"gap": 0.8}},
+    {"type": "slit", "x": 4, "y": 3, "angle": 0, "params": {"gap": 0.8}},
+    {"type": "slit", "x": 5, "y": 3, "angle": 0, "params": {"gap": 0.8}},
+    {"type": "wall", "x": 3, "y": 0, "params": {"w": 3, "h": 3}},
+    {"type": "wall", "x": 3, "y": 4, "params": {"w": 3, "h": 3}},
+    {"type": "sink", "x": 6, "y": 3, "params": {"required": 0.9, "radius": 0.08}},
+    {"type": "wall", "x": 7, "y": 0, "params": {"w": 2, "h": 7}}
+  ],
+  "inventory": [
+    {"type": "lens", "count": 1, "params": {"f": 2}},
+    {"type": "lens", "count": 1, "params": {"f": -1.3333}}
+  ],
+  "solution": [
+    {"type": "lens", "params": {"f": 2}, "x": 1, "y": 3, "angle": 0},
+    {"type": "lens", "params": {"f": -1.3333}, "x": 2, "y": 3, "angle": 0}
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "id": "zigzag",
+  "name": {
+    "en": "Zigzag",
+    "de": "Zickzack"
+  },
+  "intro": {
+    "en": "Out of line, then back in. Which way does each block need to lean?",
+    "de": "Aus der Spur und wieder zurück. In welche Richtung muss sich jeder Block neigen?"
+  },
+  "grid": {"w": 10, "h": 5},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 2, "angle": 0},
+    {"type": "wall", "x": 3, "y": 0, "params": {"w": 1, "h": 2}},
+    {"type": "slit", "x": 3, "y": 2, "angle": 0, "params": {"gap": 0.1, "offset": -0.155}},
+    {"type": "wall", "x": 3, "y": 3, "params": {"w": 1, "h": 2}},
+    {"type": "wall", "x": 7, "y": 0, "params": {"w": 1, "h": 2}},
+    {"type": "slit", "x": 7, "y": 2, "angle": 0, "params": {"gap": 0.1, "offset": 0}},
+    {"type": "wall", "x": 7, "y": 3, "params": {"w": 1, "h": 2}},
+    {"type": "sink", "x": 9, "y": 2, "params": {"radius": 0.12}}
+  ],
+  "inventory": [
+    {"type": "block", "count": 2}
+  ],
+  "solution": [
+    {"type": "block", "x": 1, "y": 2, "angle": 60},
+    {"type": "block", "x": 4, "y": 2, "angle": 30}
+  ]
+}

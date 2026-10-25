@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "spread-the-light",
+  "name": {
+    "en": "Spread the Light",
+    "de": "Licht verteilen"
+  },
+  "intro": {
+    "en": "A diverging lens does the opposite of a gathering one: it fans light out. One thin beam, three rings.",
+    "de": "Eine Zerstreuungslinse macht das Gegenteil einer Sammellinse: Sie fächert Licht auf. Ein dünner Strahl, drei Ringe."
+  },
+  "grid": {"w": 9, "h": 7},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 3, "angle": 0, "params": {"width": 0.3, "rays": 45}},
+    {"type": "sink", "x": 7, "y": 2, "params": {"required": 0.12}},
+    {"type": "sink", "x": 7, "y": 3, "params": {"required": 0.12}},
+    {"type": "sink", "x": 7, "y": 4, "params": {"required": 0.12}}
+  ],
+  "inventory": [
+    {"type": "lens", "count": 1, "params": {"f": -1}}
+  ],
+  "solution": [
+    {"type": "lens", "params": {"f": -1}, "x": 1, "y": 3, "angle": 0}
+  ]
+}

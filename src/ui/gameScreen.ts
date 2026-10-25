@@ -23,14 +23,20 @@ export interface GameScreenOptions {
   session?: Session;
   /** Small label above the level name, e.g. "Level 3" or "Daily puzzle". */
   kicker: string;
-  /** Win card: label of the main button, and the text under the stars. */
-  nextLabel: string;
-  doneText: string;
   progress: Progress;
+  /** Win card contents, asked for after the solve has been recorded (so unlocks are known). */
+  winCard(): WinCard;
   onExit(): void;
-  onNext(): void;
   onReplay(): void;
   onSettings(): void;
+}
+
+export interface WinCard {
+  text: string;
+  /** Extra highlighted line, e.g. a newly opened world. */
+  news?: string;
+  nextLabel: string;
+  next(): void;
 }
 
 type Gesture =
@@ -326,14 +332,16 @@ export class GameScreen {
       s.append(icon('star', i < stars));
       starRow.append(s);
     }
-    const next = h('button', { class: 'btn primary', type: 'button' }, this.opts.nextLabel);
-    next.addEventListener('click', () => this.opts.onNext());
+    const info = this.opts.winCard();
+    const next = h('button', { class: 'btn primary', type: 'button' }, info.nextLabel);
+    next.addEventListener('click', () => info.next());
     const card = h(
       'div',
       { class: 'card win-card', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'win-title' },
       h('h2', { id: 'win-title' }, t('solved')),
       starRow,
-      h('p', {}, this.opts.doneText),
+      h('p', {}, info.text),
+      info.news ? h('p', { class: 'win-news' }, info.news) : null,
       h('div', { class: 'card-actions' }, h('button', { class: 'btn', type: 'button', onclick: () => this.opts.onReplay() }, t('replay')), next),
     );
     this.overlay = h('div', { class: 'overlay' }, card);

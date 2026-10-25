@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "make-yellow",
+  "name": {
+    "en": "Make Yellow",
+    "de": "Mach Gelb"
+  },
+  "intro": {
+    "en": "Red and green light together make yellow. The yellow ring needs both, and no blue.",
+    "de": "Rotes und grünes Licht ergeben zusammen Gelb. Der gelbe Ring braucht beide und kein Blau."
+  },
+  "grid": {"w": 11, "h": 8},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 1, "angle": 0},
+    {"type": "prism", "x": 2, "y": 1, "angle": 45},
+    {"type": "sink", "x": 10, "y": 1, "params": {"color": "yellow", "each": true, "strict": true, "required": 0.6}}
+  ],
+  "inventory": [
+    {"type": "mirror", "count": 2}
+  ],
+  "solution": [
+    {"type": "mirror", "x": 6, "y": 4, "angle": 90},
+    {"type": "mirror", "x": 6, "y": 3, "angle": 90}
+  ]
+}

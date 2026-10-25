@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "red-light",
+  "name": {
+    "en": "Red Light",
+    "de": "Rotlicht"
+  },
+  "intro": {
+    "en": "White light holds every colour. A coloured ring wants only its own colour; a filter lets just one colour through.",
+    "de": "Weißes Licht enthält alle Farben. Ein farbiger Ring will nur seine eigene Farbe; ein Filter lässt nur eine Farbe durch."
+  },
+  "grid": {"w": 8, "h": 5},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 2, "angle": 0},
+    {"type": "sink", "x": 7, "y": 2, "params": {"color": "red", "strict": true, "required": 0.3}}
+  ],
+  "inventory": [
+    {"type": "filter", "count": 1, "params": {"color": "red"}},
+    {"type": "filter", "count": 1, "params": {"color": "blue"}}
+  ],
+  "solution": [
+    {"type": "filter", "params": {"color": "red"}, "x": 4, "y": 2, "angle": 0}
+  ]
+}

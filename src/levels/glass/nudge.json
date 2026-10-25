@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "id": "nudge",
+  "name": {
+    "en": "Nudge",
+    "de": "Schubs"
+  },
+  "intro": {
+    "en": "Light bends as it enters glass and bends back as it leaves. A slanted block shifts a beam a little to the side.",
+    "de": "Licht knickt beim Eintritt ins Glas ab und beim Austritt zurück. Ein schräger Glasblock verschiebt den Strahl ein wenig zur Seite."
+  },
+  "grid": {"w": 8, "h": 5},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 2, "angle": 0},
+    {"type": "wall", "x": 5, "y": 0, "params": {"w": 1, "h": 2}},
+    {"type": "slit", "x": 5, "y": 2, "angle": 0, "params": {"gap": 0.1, "offset": 0.155}},
+    {"type": "wall", "x": 5, "y": 3, "params": {"w": 1, "h": 2}},
+    {"type": "sink", "x": 7, "y": 2}
+  ],
+  "inventory": [
+    {"type": "block", "count": 1}
+  ],
+  "solution": [
+    {"type": "block", "x": 3, "y": 2, "angle": 30}
+  ]
+}

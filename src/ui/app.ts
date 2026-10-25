@@ -1,19 +1,28 @@
 import { sound } from '../audio/sound';
+import { Campaign } from '../game/campaign';
 import { Progress } from '../game/progress';
 import { Session } from '../game/session';
 import { detectLanguage, LANGUAGES, loc, onLanguageChange, setLanguage, t, language, type Lang } from '../i18n';
 import { dailyId, dailyKey, generateDaily, previousKey } from '../level/daily';
 import type { LevelDef } from '../level/schema';
-import { LEVELS } from '../levels';
-import { h, icon, iconButton } from './dom';
-import { GameScreen } from './gameScreen';
+import { LEVELS, WORLDS } from '../levels';
+import { h, iconButton } from './dom';
+import { GameScreen, type WinCard } from './gameScreen';
+import { mapScreen, worldScreen } from './mapScreens';
 
-type Route = { name: 'menu' } | { name: 'levels' } | { name: 'game'; index: number } | { name: 'daily'; key: string };
+type Route =
+  | { name: 'menu' }
+  | { name: 'map' }
+  | { name: 'world'; id: string }
+  | { name: 'game'; id: string }
+  | { name: 'daily'; key: string };
+
+type Screen = { el: HTMLElement; destroy?: () => void; refresh?: () => void };
 
 /** Screen router and app-wide state. */
 export class App {
   private progress = new Progress();
-  private current: { el: HTMLElement; destroy?: () => void; refresh?: () => void } | null = null;
+  private current: Screen | null = null;
   /** The level in progress, kept across screen rebuilds (language switch). */
   private live: { id: string; session: Session } | null = null;
   private route: Route = { name: 'menu' };
@@ -30,36 +39,61 @@ export class App {
     this.go(this.routeFromHash(), false);
   }
 
+  /** Progression over the current save. Dev builds can open everything with ?unlock. */
+  private campaign(): Campaign {
+    const unlockAll = import.meta.env.DEV && new URLSearchParams(location.search).has('unlock');
+    return new Campaign(WORLDS, LEVELS, (id) => !!this.progress.level(id), unlockAll);
+  }
+
   private routeFromHash(): Route {
-    const m = location.hash.match(/^#\/level\/(.+)$/);
-    if (m) {
-      const index = LEVELS.findIndex((l) => l.id === m[1]);
-      const ids = LEVELS.map((l) => l.id);
-      // Dev builds can open any level directly.
-      if (index >= 0 && (import.meta.env.DEV || this.progress.isUnlocked(index, ids))) return { name: 'game', index };
+    const hash = location.hash;
+    const level = hash.match(/^#\/level\/(.+)$/);
+    // Dev builds can open any level directly.
+    if (level && (import.meta.env.DEV || this.campaign().levelOpen(level[1])) && this.campaign().ref(level[1])) return { name: 'game', id: level[1] };
+    const world = hash.match(/^#\/world\/(.+)$/);
+    if (world) {
+      const w = this.campaign().world(world[1]);
+      if (w && this.campaign().worldOpen(w)) return { name: 'world', id: w.id };
     }
-    if (location.hash === '#/levels') return { name: 'levels' };
-    if (location.hash === '#/daily') return { name: 'daily', key: dailyKey() };
+    if (hash === '#/map' || hash === '#/levels') return { name: 'map' };
+    if (hash === '#/daily') return { name: 'daily', key: dailyKey() };
     // Dev builds can open any day's puzzle.
-    const d = location.hash.match(/^#\/daily\/(\d{4}-\d{2}-\d{2})$/);
+    const d = hash.match(/^#\/daily\/(\d{4}-\d{2}-\d{2})$/);
     if (d && import.meta.env.DEV) return { name: 'daily', key: d[1] };
     return { name: 'menu' };
   }
 
+  private hashFor(route: Route): string {
+    switch (route.name) {
+      case 'map':
+        return '#/map';
+      case 'world':
+        return `#/world/${route.id}`;
+      case 'game':
+        return `#/level/${route.id}`;
+      case 'daily':
+        return '#/daily';
+      default:
+        return '#/';
+    }
+  }
+
   private go(route: Route, push = true): void {
     this.route = route;
-    const hash = route.name === 'game' ? `#/level/${LEVELS[route.index].id}` : route.name === 'levels' ? '#/levels' : route.name === 'daily' ? '#/daily' : '#/';
+    const hash = this.hashFor(route);
     if (push && location.hash !== hash) history.pushState(null, '', hash);
     this.current?.destroy?.();
     this.current?.el.remove();
     const screen =
-      route.name === 'menu'
-        ? this.menu()
-        : route.name === 'levels'
-          ? this.levels()
-          : route.name === 'daily'
-            ? this.daily(route.key)
-            : this.game(route.index);
+      route.name === 'map'
+        ? this.map()
+        : route.name === 'world'
+          ? this.world(route.id)
+          : route.name === 'game'
+            ? this.game(route.id)
+            : route.name === 'daily'
+              ? this.daily(route.key)
+              : this.menu();
     this.current = screen;
     this.root.insertBefore(screen.el, this.modalRoot);
     const focusable = screen.el.querySelector<HTMLElement>('[autofocus], .btn.primary');
@@ -68,18 +102,14 @@ export class App {
 
   /* ---------- Screens ---------- */
 
-  private nextUnsolved(): number {
-    const i = LEVELS.findIndex((l) => !this.progress.level(l.id));
-    return i < 0 ? 0 : i;
-  }
-
-  private menu(): { el: HTMLElement } {
-    const started = Object.keys(this.progress.data.levels).length > 0;
+  private menu(): Screen {
+    const next = this.campaign().next();
+    const started = LEVELS.some((l) => this.progress.level(l.id));
     const play = h('button', { class: 'btn primary big', type: 'button', autofocus: true }, started ? t('continue') : t('play'));
     play.addEventListener('click', () => {
       sound.unlock();
       sound.play('click');
-      this.go({ name: 'game', index: this.nextUnsolved() });
+      this.go(next ? { name: 'game', id: next.level.id } : { name: 'map' });
     });
     const el = h(
       'section',
@@ -92,7 +122,7 @@ export class App {
         { class: 'menu-actions' },
         play,
         this.dailyButton(),
-        h('button', { class: 'btn', type: 'button', onclick: () => this.go({ name: 'levels' }) }, t('levels')),
+        h('button', { class: 'btn', type: 'button', onclick: () => this.go({ name: 'map' }) }, t('starMap')),
         h('button', { class: 'btn', type: 'button', onclick: () => this.openSettings() }, t('settings')),
       ),
     );
@@ -119,42 +149,47 @@ export class App {
     return b;
   }
 
-  private levels(): { el: HTMLElement } {
-    const ids = LEVELS.map((l) => l.id);
-    const worlds = new Map<number, HTMLElement>();
-    const list = h('div', { class: 'worlds' });
-    LEVELS.forEach((level, i) => {
-      let grid = worlds.get(level.world);
-      if (!grid) {
-        grid = h('div', { class: 'level-grid' });
-        worlds.set(level.world, grid);
-        const key = `world${level.world}` as Parameters<typeof t>[0];
-        list.append(h('h2', { class: 'world-title' }, t(key) || `World ${level.world}`), grid);
-      }
-      const unlocked = this.progress.isUnlocked(i, ids);
-      const done = this.progress.level(level.id);
-      const stars = h('span', { class: 'mini-stars' });
-      for (let s = 0; s < 3; s++) stars.append(h('span', { class: done && s < done.stars ? 'on' : '' }, '★'));
-      const btn = h(
-        'button',
-        { class: `level-card ${done ? 'done' : ''}`, type: 'button', disabled: !unlocked, 'aria-label': `${t('levelN', { n: i + 1 })}: ${loc(level.name)}${unlocked ? '' : ` (${t('locked')})`}` },
-        h('span', { class: 'num' }, String(i + 1)),
-        h('span', { class: 'name' }, loc(level.name)),
-        unlocked ? stars : icon('lock'),
-      );
-      btn.addEventListener('click', () => {
-        if (this.live?.id === level.id && this.live.session.won) this.live = null;
-        this.go({ name: 'game', index: i });
-      });
-      grid.append(btn);
+  private map(): Screen {
+    const el = mapScreen({
+      campaign: this.campaign(),
+      progress: this.progress,
+      onBack: () => this.go({ name: 'menu' }),
+      onSettings: () => this.openSettings(),
+      onWorld: (w) => this.go({ name: 'world', id: w.id }),
     });
-    const el = h(
-      'section',
-      { class: 'screen levels-screen' },
-      h('header', { class: 'page-header' }, iconButton('back', t('back'), () => this.go({ name: 'menu' })), h('h1', {}, t('levels')), iconButton('settings', t('settings'), () => this.openSettings())),
-      list,
-    );
     return { el };
+  }
+
+  private world(id: string): Screen {
+    const campaign = this.campaign();
+    const world = campaign.world(id)!;
+    const build = () =>
+      worldScreen({
+        world,
+        levels: LEVELS,
+        campaign: this.campaign(),
+        progress: this.progress,
+        onBack: () => this.go({ name: 'map' }),
+        onSettings: () => this.openSettings(),
+        onLevel: (level) => {
+          if (this.live?.id === level.id && this.live.session.won) this.live = null;
+          this.go({ name: 'game', id: level.id });
+        },
+      });
+    const screen: Screen = { el: build() };
+    // The star layout depends on orientation: rebuild when it flips.
+    const portrait = () => window.innerHeight > window.innerWidth;
+    let was = portrait();
+    const onResize = () => {
+      if (portrait() === was) return;
+      was = portrait();
+      const fresh = build();
+      screen.el.replaceWith(fresh);
+      screen.el = fresh;
+    };
+    window.addEventListener('resize', onResize);
+    screen.destroy = () => window.removeEventListener('resize', onResize);
+    return screen;
   }
 
   /** The session for a level, resumed if it is the one in progress. */
@@ -167,38 +202,49 @@ export class App {
     return this.live.session;
   }
 
-  private game(index: number): { el: HTMLElement; destroy: () => void; refresh: () => void } {
-    const level = LEVELS[index];
-    const last = index + 1 >= LEVELS.length;
+  private game(id: string): Screen {
+    const before = this.campaign();
+    const ref = before.ref(id)!;
+    const { world, level, index } = ref;
+    const openBefore = before.openWorldIds();
+    const winCard = (): WinCard => {
+      const after = this.campaign();
+      const opened = after.worlds.filter((w) => after.worldOpen(w) && !openBefore.has(w.id));
+      const next = after.next(world);
+      const sameWorld = next?.world === world;
+      const complete = after.solvedCount(world) === world.levels.length;
+      return {
+        text: complete ? t('worldComplete') : t('solvedText'),
+        news: opened.length ? t('worldOpened', { world: opened.map((w) => loc(w.name)).join(', ') }) : undefined,
+        nextLabel: sameWorld ? t('next') : t('toMap'),
+        next: () => this.go(sameWorld ? { name: 'game', id: next!.level.id } : { name: 'map' }),
+      };
+    };
     const screen = new GameScreen({
       level,
       session: this.sessionFor(level),
-      kicker: t('levelN', { n: index + 1 }),
-      nextLabel: last ? t('levels') : t('next'),
-      doneText: last ? t('allDone') : t('solvedText'),
+      kicker: `${loc(world.name)} · ${index + 1}`,
       progress: this.progress,
-      onExit: () => this.go({ name: 'levels' }),
-      onNext: () => (last ? this.go({ name: 'levels' }) : this.go({ name: 'game', index: index + 1 })),
+      winCard,
+      onExit: () => this.go({ name: 'world', id: world.id }),
       onReplay: () => {
         this.live = null;
-        this.go({ name: 'game', index }, false);
+        this.go({ name: 'game', id }, false);
       },
       onSettings: () => this.openSettings(),
     });
     return { el: screen.el, destroy: () => screen.destroy(), refresh: () => screen.applySettings() };
   }
 
-  private daily(key: string): { el: HTMLElement; destroy: () => void; refresh: () => void } {
+  private daily(key: string): Screen {
     const level = generateDaily(key);
     const screen = new GameScreen({
       level,
       session: this.sessionFor(level),
       kicker: t('daily'),
-      nextLabel: t('back'),
-      doneText: t('dailyDone'),
       progress: this.progress,
+      winCard: () => ({ text: t('dailyDone'), nextLabel: t('back'), next: () => this.go({ name: 'menu' }) }),
       onExit: () => this.go({ name: 'menu' }),
-      onNext: () => this.go({ name: 'menu' }),
       onReplay: () => {
         this.live = null;
         this.go({ name: 'daily', key }, false);

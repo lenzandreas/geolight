@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "id": "dont-wake-the-guard",
+  "name": {
+    "en": "Don't Wake the Guard",
+    "de": "Weck die Wache nicht"
+  },
+  "intro": {
+    "en": "The eye is a sensor. While light touches it, you can't win. Sneak around it.",
+    "de": "Das Auge ist ein Sensor. Solange Licht es trifft, kannst du nicht gewinnen. Schleich drumherum."
+  },
+  "grid": {"w": 11, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 3, "angle": 0},
+    {"type": "sensor", "x": 5, "y": 3},
+    {"type": "sink", "x": 10, "y": 3},
+    {"type": "wall", "x": 4, "y": 0, "params": {"w": 3, "h": 2}},
+    {"type": "wall", "x": 5, "y": 4, "params": {"w": 1, "h": 1}},
+    {"type": "wall", "x": 8, "y": 2, "params": {"w": 1, "h": 1}},
+    {"type": "wall", "x": 8, "y": 4, "params": {"w": 1, "h": 1}}
+  ],
+  "inventory": [
+    {"type": "mirror", "count": 4}
+  ],
+  "solution": [
+    {"type": "mirror", "x": 1, "y": 3, "angle": 105},
+    {"type": "mirror", "x": 6, "y": 6, "angle": 60},
+    {"type": "mirror", "x": 6, "y": 3, "angle": 45}
+  ]
+}

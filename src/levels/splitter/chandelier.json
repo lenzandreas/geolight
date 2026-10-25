@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "id": "chandelier",
+  "name": {
+    "en": "Chandelier",
+    "de": "Kronleuchter"
+  },
+  "intro": {
+    "en": "Four rings, one laser. Every ring needs a fair share.",
+    "de": "Vier Ringe, ein Laser. Jeder Ring braucht seinen gerechten Anteil."
+  },
+  "grid": {"w": 10, "h": 9},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 4, "angle": 0},
+    {"type": "sink", "x": 9, "y": 1, "params": {"required": 0.2}},
+    {"type": "sink", "x": 2, "y": 0, "params": {"required": 0.2}},
+    {"type": "sink", "x": 3, "y": 7, "params": {"required": 0.2}},
+    {"type": "sink", "x": 9, "y": 4, "params": {"required": 0.2}},
+    {"type": "sensor", "x": 6, "y": 8},
+    {"type": "wall", "x": 4, "y": 2, "params": {"w": 3, "h": 1}},
+    {"type": "wall", "x": 0, "y": 6, "params": {"w": 2, "h": 1}}
+  ],
+  "inventory": [
+    {"type": "splitter", "count": 3},
+    {"type": "mirror", "count": 1}
+  ],
+  "solution": [
+    {"type": "splitter", "x": 2, "y": 4, "angle": 45},
+    {"type": "splitter", "x": 2, "y": 1, "angle": 45},
+    {"type": "splitter", "x": 6, "y": 4, "angle": 135},
+    {"type": "mirror", "x": 6, "y": 7, "angle": 45}
+  ]
+}

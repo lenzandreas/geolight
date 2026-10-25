@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "dish",
+  "name": {
+    "en": "Dish",
+    "de": "Schale"
+  },
+  "intro": {
+    "en": "A concave mirror reflects like a mirror and focuses like a lens, both at once. Its dark back swallows light.",
+    "de": "Ein Hohlspiegel spiegelt wie ein Spiegel und bündelt wie eine Linse, beides zugleich. Seine dunkle Rückseite schluckt Licht."
+  },
+  "grid": {"w": 8, "h": 6},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 1, "angle": 0, "params": {"width": 0.6, "rays": 36}},
+    {"type": "sink", "x": 5, "y": 4, "params": {"required": 0.85, "radius": 0.14}},
+    {"type": "wall", "x": 7, "y": 0, "params": {"w": 1, "h": 3}}
+  ],
+  "inventory": [
+    {"type": "curvedMirror", "count": 1, "params": {"f": 1.5}}
+  ],
+  "solution": [
+    {"type": "curvedMirror", "params": {"f": 1.5}, "x": 5, "y": 1, "angle": 135}
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "id": "merge",
+  "name": {
+    "en": "Merge",
+    "de": "Zusammenführen"
+  },
+  "intro": {
+    "en": "A splitter works both ways: it can also join two beams into one. The violet ring needs red and blue together.",
+    "de": "Ein Strahlteiler funktioniert in beide Richtungen: Er kann auch zwei Strahlen zu einem vereinen. Der violette Ring braucht Rot und Blau zusammen."
+  },
+  "grid": {"w": 9, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 3, "angle": 0, "params": {"color": "red", "power": 0.5}},
+    {"type": "laser", "x": 0, "y": 5, "angle": 0, "params": {"color": "blue", "power": 0.5}},
+    {"type": "wall", "x": 1, "y": 4, "params": {"w": 4, "h": 1}},
+    {"type": "wall", "x": 6, "y": 4, "params": {"w": 1, "h": 1}},
+    {"type": "wall", "x": 7, "y": 2, "params": {"w": 2, "h": 1}},
+    {"type": "wall", "x": 7, "y": 4, "params": {"w": 2, "h": 1}},
+    {"type": "sink", "x": 8, "y": 3, "params": {"color": "magenta", "each": true, "strict": true, "required": 0.4}}
+  ],
+  "inventory": [
+    {"type": "splitter", "count": 1},
+    {"type": "mirror", "count": 1}
+  ],
+  "solution": [
+    {"type": "mirror", "x": 5, "y": 5, "angle": 45},
+    {"type": "splitter", "x": 5, "y": 3, "angle": 45}
+  ]
+}

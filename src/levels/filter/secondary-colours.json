@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "id": "secondary-colours",
+  "name": {
+    "en": "Secondary Colours",
+    "de": "Mischfarben"
+  },
+  "intro": {
+    "en": "Some filters let two colours through. Yellow is red and green together; cyan is green and blue.",
+    "de": "Manche Filter lassen zwei Farben durch. Gelb ist Rot und Grün zusammen, Cyan ist Grün und Blau."
+  },
+  "grid": {"w": 9, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 3, "angle": 0},
+    {"type": "sink", "x": 8, "y": 3, "params": {"color": "yellow", "each": true, "strict": true, "required": 0.3}},
+    {"type": "sink", "x": 4, "y": 6, "params": {"color": "cyan", "each": true, "strict": true, "required": 0.3}},
+    {"type": "wall", "x": 6, "y": 5, "params": {"w": 3, "h": 2}}
+  ],
+  "inventory": [
+    {"type": "splitter", "count": 1},
+    {"type": "filter", "count": 1, "params": {"color": "yellow"}},
+    {"type": "filter", "count": 1, "params": {"color": "cyan"}},
+    {"type": "filter", "count": 1, "params": {"color": "magenta"}}
+  ],
+  "solution": [
+    {"type": "splitter", "x": 4, "y": 3, "angle": 135},
+    {"type": "filter", "params": {"color": "yellow"}, "x": 6, "y": 3, "angle": 0},
+    {"type": "filter", "params": {"color": "cyan"}, "x": 4, "y": 5, "angle": 90}
+  ]
+}
