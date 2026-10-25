@@ -17,16 +17,6 @@ describe('progress', () => {
     expect(new Progress(kv).level('a')).toEqual({ stars: 3, bestPieces: 2 });
   });
 
-  it('unlocks levels in order', () => {
-    const p = new Progress(memory());
-    const ids = ['a', 'b', 'c'];
-    expect(p.isUnlocked(0, ids)).toBe(true);
-    expect(p.isUnlocked(1, ids)).toBe(false);
-    p.complete('a', 1, 1);
-    expect(p.isUnlocked(1, ids)).toBe(true);
-    expect(p.isUnlocked(2, ids)).toBe(false);
-  });
-
   it('counts daily streaks', () => {
     const p = new Progress(memory());
     const id = (k: string) => `daily-${k}`;

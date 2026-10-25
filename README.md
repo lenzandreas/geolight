@@ -46,7 +46,7 @@ src/
   levels/      the level pack: one folder per world, worlds.json defines the world tree
   game/        session (placement, undo, hints) and saved progress
   render/      Canvas 2D renderer, per-type drawers, theme, view transform
-  ui/          screens (menu, level select, game, settings) and input
+  ui/          screens (menu, star map, world view, game, settings) and input
   audio/       procedural Web Audio sound effects
   i18n/        string tables (en, de)
   platform/    storage adapter and service worker template
