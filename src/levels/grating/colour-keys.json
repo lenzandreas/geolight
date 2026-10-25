@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "id": "colour-keys",
+  "name": {
+    "en": "Colour Keys",
+    "de": "Farbschlüssel"
+  },
+  "intro": {
+    "en": "The gate needs both solar cells lit. One of them hides behind the laser.",
+    "de": "Das Tor braucht beide Solarzellen. Eine davon versteckt sich hinter dem Laser."
+  },
+  "grid": {"w": 11, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 3, "angle": 0},
+    {"id": "a", "type": "photocell", "x": 8, "y": 0, "params": {"required": 0.1}},
+    {"id": "b", "type": "photocell", "x": 0, "y": 5, "params": {"required": 0.1}},
+    {"type": "gate", "x": 8, "y": 2, "params": {"h": 3, "by": ["a", "b"]}},
+    {"type": "sink", "x": 10, "y": 3, "params": {"color": "white", "each": true, "strict": true, "required": 0.3}}
+  ],
+  "inventory": [
+    {"type": "grating", "count": 1},
+    {"type": "mirror", "count": 1}
+  ],
+  "solution": [
+    {"type": "grating", "x": 2, "y": 3, "angle": 0},
+    {"type": "mirror", "x": 5, "y": 5, "angle": 15}
+  ]
+}

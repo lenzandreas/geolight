@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "upside-down-rainbow",
+  "name": {
+    "en": "Upside-Down Rainbow",
+    "de": "Verkehrter Regenbogen"
+  },
+  "intro": {
+    "en": "A prism bends blue the most and sends every colour to one side. A grating bends red the most, and to both sides at once.",
+    "de": "Ein Prisma lenkt Blau am stärksten ab und schickt alle Farben zur selben Seite. Ein Gitter lenkt Rot am stärksten ab, und zu beiden Seiten zugleich."
+  },
+  "grid": {"w": 11, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 3, "angle": 0},
+    {"type": "sink", "x": 4, "y": 5, "params": {"color": "red", "strict": true, "required": 0.1}},
+    {"type": "sink", "x": 8, "y": 0, "params": {"color": "blue", "strict": true, "required": 0.1}}
+  ],
+  "inventory": [
+    {"type": "prism", "count": 1},
+    {"type": "grating", "count": 1}
+  ],
+  "solution": [
+    {"type": "grating", "x": 2, "y": 3, "angle": 0}
+  ]
+}

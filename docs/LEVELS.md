@@ -8,7 +8,7 @@ Levels live in one folder per world, `src/levels/<world>/<id>.json`. Their order
 
 The rules, all enforced by `npm test`:
 
-- **One new piece per world.** `object` is the piece the world introduces (`mirror`, `splitter`, `lens`, `divergingLens`, `curvedMirror`, `block`, `filter`, `prism`, `polarizer`, `blackHole`). A world may have several `parents`; it opens when each of them has 4 solved levels and can use all of their pieces. Every level in the world uses it, and may otherwise only use pieces introduced by the world's ancestors. Sources, targets, sensors, walls, slits, photocells and gates are level features and can be used anywhere.
+- **One new piece per world.** `object` is the piece the world introduces (`mirror`, `splitter`, `lens`, `divergingLens`, `curvedMirror`, `block`, `filter`, `prism`, `polarizer`, `blackHole`, `grating`). A world may have several `parents`; it opens when each of them has 4 solved levels and can use all of their pieces. Every level in the world uses it, and may otherwise only use pieces introduced by the world's ancestors. Sources, targets, sensors, walls, slits, photocells and gates are level features and can be used anywhere.
 - **At least 6 levels per world**, ordered from easy to hard.
 - Every level file is listed by exactly one world.
 
@@ -62,6 +62,7 @@ The test suite checks every level automatically.
 | `blackHole` | `rs` (0.2): Schwarzschild radius in cells; light passing at distance b turns by 2·rs/b towards it (more on close passes), and light coming within 2.6·rs (its shadow) is swallowed. `reach` (2): its pull is ignored further away. It can't be rotated |
 | `photocell` | `required` (0.1): powered once it receives this much light |
 | `gate` | `w`, `h` like a wall, `by`: a photocell id (or a list of ids). It opens while all of them are powered; a gate can't hold itself open with light that only gets through once it is open |
+| `grating` | `spacing` (1000): line spacing in nanometres. A third of the light goes straight on (all colours), a third to each side, where each colour turns by the grating equation sin θ = sin θᵢ ± λ/spacing (red 650 nm, green 530 nm, blue 450 nm). A side beam that can't exist gives its share to the straight beam. So a white laser gives side beams of 1/9 per colour |
 | `blocker` | `size` (0.56) |
 | `wall` | `w`, `h` in cells (anchored at the top-left cell) |
 | `slit` | `gap` (0.2), `offset` (0): a one-cell barrier facing `angle` with an opening of `gap` cells, shifted sideways by `offset` |

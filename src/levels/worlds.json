@@ -4,14 +4,14 @@
     "name": {"en": "Reflections", "de": "Spiegelungen"},
     "object": "mirror",
     "parents": [],
-    "levels": ["first-light", "around-the-corner", "turnstiles", "slanted", "dont-wake-the-guard", "teamwork"]
+    "levels": ["first-light", "around-the-corner", "turnstiles", "slanted", "dont-wake-the-guard", "teamwork", "lock-and-key"]
   },
   {
     "id": "splitter",
     "name": {"en": "Forks", "de": "Gabelungen"},
     "object": "splitter",
     "parents": ["mirror"],
-    "levels": ["half-and-half", "fork", "three-ways", "merge", "both-halves", "chandelier"]
+    "levels": ["half-and-half", "fork", "three-ways", "merge", "both-halves", "chandelier", "power-grid"]
   },
   {
     "id": "lens",
@@ -25,35 +25,35 @@
     "name": {"en": "Dishes", "de": "Schalen"},
     "object": "curvedMirror",
     "parents": ["lens"],
-    "levels": ["dish", "mirror-image", "flashlight", "searchlight", "solar-furnace", "newtonian"]
+    "levels": ["dish", "mirror-image", "flashlight", "searchlight", "solar-furnace", "newtonian", "solar-lock"]
   },
   {
     "id": "diverging",
     "name": {"en": "Spreading Out", "de": "Zerstreuung"},
     "object": "divergingLens",
     "parents": ["lens"],
-    "levels": ["spread-the-light", "tight-squeeze", "telephoto", "long-throw", "twin-gates", "grand-telescope"]
+    "levels": ["spread-the-light", "tight-squeeze", "telephoto", "long-throw", "twin-gates", "grand-telescope", "wide-open"]
   },
   {
     "id": "glass",
     "name": {"en": "Through the Glass", "de": "Durch das Glas"},
     "object": "block",
     "parents": ["lens"],
-    "levels": ["nudge", "thread-the-needle", "zigzag", "bend", "split-decision", "glass-maze"]
+    "levels": ["nudge", "thread-the-needle", "zigzag", "bend", "split-decision", "glass-maze", "glass-key"]
   },
   {
     "id": "filter",
     "name": {"en": "Colours", "de": "Farben"},
     "object": "filter",
     "parents": ["lens"],
-    "levels": ["red-light", "seeing-red", "traffic-light", "secondary-colours", "unmix", "observatory"]
+    "levels": ["red-light", "seeing-red", "traffic-light", "secondary-colours", "unmix", "observatory", "colour-lock"]
   },
   {
     "id": "prism",
     "name": {"en": "Rainbows", "de": "Regenbögen"},
     "object": "prism",
     "parents": ["filter"],
-    "levels": ["rainbow", "blue-hour", "make-yellow", "purple-rain", "white-again", "aurora"]
+    "levels": ["rainbow", "blue-hour", "make-yellow", "purple-rain", "white-again", "aurora", "prism-lock"]
   },
   {
     "id": "polarizer",
@@ -68,5 +68,12 @@
     "object": "blackHole",
     "parents": ["concave", "prism"],
     "levels": ["gentle-pull", "two-jobs", "einstein-ring", "slingshot", "power-up", "sorting-the-rainbow", "chain-reaction", "binary"]
+  },
+  {
+    "id": "grating",
+    "name": {"en": "Spectra", "de": "Spektren"},
+    "object": "grating",
+    "parents": ["splitter", "prism"],
+    "levels": ["fine-lines", "upside-down-rainbow", "white-stays-white", "colour-keys", "no-green", "double-take", "prism-or-grating", "rainbow-gate"]
   }
 ]

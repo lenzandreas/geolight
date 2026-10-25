@@ -35,7 +35,7 @@ Each layer depends only on the layers below it. `core`, `level` and `game` never
   - `field(e)` (black holes): a gravity field that bends passing light,
   - `isOpen(e, powered)` (gates): switchable structures that drop their surfaces while open,
   - metadata: category, defaults, rotational `symmetry`, `footprint`.
-- **Interaction:** what happens when a ray hits a surface: `absorb`, `mirror`, `splitter`, `filter`, `thinOptic` (an ideal lens or curved mirror, using the paraxial `slope −= h/f`), `refract` (Snell's law with total internal reflection and per-channel dispersion), `receiver` (targets). New physics means writing a new interaction.
+- **Interaction:** what happens when a ray hits a surface: `absorb`, `mirror`, `splitter`, `filter`, `thinOptic` (an ideal lens or curved mirror, using the paraxial `slope −= h/f`), `refract` (Snell's law with total internal reflection and per-channel dispersion), `polarize` (Malus's law), `grating` (the grating equation per colour, with each channel standing for one wavelength), `receiver` (targets). New physics means writing a new interaction.
 - **Light** is power per R/G/B channel plus an optional polarization axis. Filters multiply channels; polarizers apply Malus's law and set the axis; other optics keep it. The tracer also records each packet a receiver absorbs, so targets can ask for a polarization. Prisms split multi-channel rays into one ray per channel. The tracer is iterative (a stack, no recursion) and limited by depth, minimum power and segment count, so mirror loops can't hang it.
 - **Gravity:** inside a field's reach, light moves in short straight steps (a tenth of its distance to the centre) and turns after each one, so beams curve smoothly and still interact with everything they pass. Each step turns the ray by `rs·b/r³` per unit length, which over a straight pass adds up to the general-relativity deflection `2·rs/b`; on close passes the bent path dips closer and turns further, as in reality. Light that comes within the shadow (2.6·rs) is swallowed.
 - **Gates:** the tracer starts with every gate shut, traces, opens the gates whose photocells are powered and traces again until nothing changes. Opening a gate only adds light, so this ends after at most one extra trace per gate and gives the one consistent state.
@@ -91,7 +91,7 @@ This is the headless state of one attempt: pieces, tray counts, snapshot undo/re
 
 | To add… | Do this |
 | --- | --- |
-| a new object (e.g. portal, polariser, grating) | register an `EntityType` in `core/entities`, a drawer in `render/drawers.ts`, and a name in `i18n` |
+| a new object (e.g. wave plate, phosphor, corner reflector) | register an `EntityType` in `core/entities`, a drawer in `render/drawers.ts`, and a name in `i18n` |
 | new physics | write an `Interaction` in `core/interactions.ts` |
 | a new game mode or win condition | `registerGoal('name', rule)` and set `"goal": { "type": "name" }` in a level |
 | a level | drop a JSON file into its world folder and list it in `src/levels/worlds.json` (see `docs/LEVELS.md`); tests check it automatically |

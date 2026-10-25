@@ -6,7 +6,7 @@
  * the beam direction for emitters, the surface normal for thin optics.
  */
 import { resolveColor, spectrum, type RGB } from '../color';
-import { absorb, filter, mirror, polarize, receiver, refract, splitter, thinOptic } from '../interactions';
+import { absorb, filter, grating, mirror, polarize, receiver, refract, splitter, thinOptic } from '../interactions';
 import { add, fromAngle, perp, scale } from '../math';
 import { registerType } from '../registry';
 import { param, type Entity, type EntityType } from '../types';
@@ -141,6 +141,17 @@ export const Filter: EntityType = {
   symmetry: 180,
   surfaces(e, out) {
     thin(e, filter(resolveColor(param(e, Filter, 'color'))), out);
+  },
+};
+
+/** Transmission diffraction grating; `spacing` is the line spacing in nanometres (1000 = 1000 lines per mm). */
+export const Grating: EntityType = {
+  id: 'grating',
+  category: 'optic',
+  defaults: { spacing: 1000 },
+  symmetry: 180,
+  surfaces(e, out) {
+    thin(e, grating(param<number>(e, Grating, 'spacing')), out);
   },
 };
 
@@ -334,7 +345,7 @@ export const Gate: EntityType = {
   },
 };
 
-export const BUILTIN_TYPES: EntityType[] = [Laser, Bulb, Sun, Sink, Sensor, Mirror, Splitter, Filter, Lens, CurvedMirror, Prism, GlassBlock, Blocker, Wall, Slit, Polarizer, BlackHole, Photocell, Gate];
+export const BUILTIN_TYPES: EntityType[] = [Laser, Bulb, Sun, Sink, Sensor, Mirror, Splitter, Filter, Lens, CurvedMirror, Prism, GlassBlock, Blocker, Wall, Slit, Polarizer, BlackHole, Photocell, Gate, Grating];
 
 let registered = false;
 /** Idempotent registration of the built-in types. */

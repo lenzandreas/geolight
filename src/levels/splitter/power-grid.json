@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "id": "power-grid",
+  "name": {
+    "en": "Power Grid",
+    "de": "Stromnetz"
+  },
+  "intro": {
+    "en": "Three rooms, two gates, one beam. The ring at the end wants half of everything.",
+    "de": "Drei Räume, zwei Tore, ein Strahl. Der Ring am Ende will die Hälfte von allem."
+  },
+  "grid": {"w": 11, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 3, "angle": 0},
+    {"id": "a", "type": "photocell", "x": 0, "y": 0, "params": {"required": 0.2}},
+    {"type": "gate", "x": 4, "y": 0, "params": {"h": 7, "by": "a"}},
+    {"id": "b", "type": "photocell", "x": 7, "y": 6, "params": {"required": 0.2}},
+    {"type": "gate", "x": 8, "y": 0, "params": {"h": 7, "by": "b"}},
+    {"type": "sink", "x": 10, "y": 3, "params": {"required": 0.45}}
+  ],
+  "inventory": [
+    {"type": "splitter", "count": 2},
+    {"type": "mirror", "count": 1}
+  ],
+  "solution": [
+    {"type": "splitter", "x": 1, "y": 3, "angle": 30},
+    {"type": "splitter", "x": 1, "y": 2, "angle": 45},
+    {"type": "mirror", "x": 0, "y": 2, "angle": 45}
+  ]
+}

@@ -183,6 +183,47 @@ describe('tracer', () => {
     });
   });
 
+  describe('diffraction grating', () => {
+    const dirs = (r: ReturnType<typeof trace>, ch: number) =>
+      r.segments.filter((g) => g.a.x > 4 && g.c[ch] > 0.01 && g.c.filter((v) => v > 0.01).length === 1).map((g) => (Math.atan2(g.b.y - g.a.y, g.b.x - g.a.x) * 180) / Math.PI);
+    const wide = { width: 30, height: 30 };
+
+    it('sends a third of white light straight on and the colours to either side by the grating equation', () => {
+      // Grating facing the beam (normal along +x), so the light arrives head-on.
+      const r = trace([ent('laser', 1, 15, 0), ent('grating', 5, 15, 0)], wide);
+      const straight = r.segments.find((g) => g.a.x > 5 && Math.abs(g.b.y - g.a.y) < 1e-9)!;
+      expect(straight.c.reduce((a, b) => a + b, 0)).toBeCloseTo(1 / 3);
+      for (const [ch, nm] of [[0, 650], [1, 530], [2, 450]]) {
+        const angles = dirs(r, ch).sort((a, b) => a - b);
+        const expected = (Math.asin(nm / 1000) * 180) / Math.PI;
+        expect(angles[0]).toBeCloseTo(-expected, 6);
+        expect(angles[angles.length - 1]).toBeCloseTo(expected, 6);
+      }
+      // Red turns the most, blue the least: the reverse of a prism.
+      expect(Math.max(...dirs(r, 0))).toBeGreaterThan(Math.max(...dirs(r, 2)));
+    });
+
+    it('follows the grating equation at oblique incidence', () => {
+      // Plate normal at 30°: sin θ = sin θᵢ + m·λ/d, measured from the normal.
+      const r = trace([ent('laser', 1, 15, 0, { color: 'green' }), ent('grating', 6, 15, 30)], wide);
+      const fromNormal = dirs(r, 1).filter((a) => Math.abs(a) > 1e-6).map((a) => a - 30).sort((a, b) => a - b);
+      const si = Math.sin((-30 * Math.PI) / 180);
+      const expected = [si - 0.53, si + 0.53].filter((v) => Math.abs(v) < 1).map((v) => (Math.asin(v) * 180) / Math.PI).sort((a, b) => a - b);
+      expect(fromNormal.length).toBe(expected.length);
+      fromNormal.forEach((a, i) => expect(a).toBeCloseTo(expected[i], 6));
+    });
+
+    it('loses no light, even when one side order cannot exist', () => {
+      for (const angle of [0, 60]) {
+        const sinks = [ent('sink', 0, 0, 0, { radius: 0 })];
+        const r = trace([ent('laser', 1, 15, 0, { color: 'red' }), ent('grating', 6, 15, angle), ...sinks], wide);
+        // Sum the light leaving the grating (segments that start on it).
+        const out = r.segments.filter((g) => Math.abs(g.a.x - 6.5) < 0.5 && g.a.x > 5.5).reduce((s, g) => s + g.c[0] + g.c[1] + g.c[2], 0);
+        expect(out).toBeCloseTo(1, 6);
+      }
+    });
+  });
+
   describe('gates', () => {
     it('a gate stays shut until its photocell is powered', () => {
       const sink = ent('sink', 9, 3, 0, { required: 0.4 });

@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "id": "solar-lock",
+  "name": {
+    "en": "Solar Lock",
+    "de": "Sonnenschloss"
+  },
+  "intro": {
+    "en": "A flat mirror is not quite enough for the solar cell, and the far ring needs focused light too.",
+    "de": "Ein flacher Spiegel reicht der Solarzelle nicht ganz, und der ferne Ring braucht ebenfalls gebündeltes Licht."
+  },
+  "grid": {"w": 11, "h": 7},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 4, "angle": 0},
+    {"id": "p", "type": "photocell", "x": 5, "y": 2, "params": {"required": 0.2}},
+    {"type": "gate", "x": 8, "y": 0, "params": {"h": 7, "by": "p"}},
+    {"type": "sink", "x": 10, "y": 5, "params": {"required": 0.25, "radius": 0.15}}
+  ],
+  "inventory": [
+    {"type": "curvedMirror", "count": 1, "params": {"f": 1.5}},
+    {"type": "lens", "count": 1, "params": {"f": 3}},
+    {"type": "mirror", "count": 1}
+  ],
+  "solution": [
+    {"type": "curvedMirror", "params": {"f": 1.5}, "x": 5, "y": 4, "angle": 225},
+    {"type": "lens", "params": {"f": 3}, "x": 7, "y": 5, "angle": 0}
+  ]
+}

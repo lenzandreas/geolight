@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "id": "prism-or-grating",
+  "name": {
+    "en": "Prism or Grating?",
+    "de": "Prisma oder Gitter?"
+  },
+  "intro": {
+    "en": "A prism keeps each colour in one strong beam; a grating spreads it over three weaker ones. The red ring is hungry.",
+    "de": "Ein Prisma hält jede Farbe in einem starken Strahl, ein Gitter verteilt sie auf drei schwächere. Der rote Ring ist hungrig."
+  },
+  "grid": {"w": 12, "h": 10},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 5, "angle": 0},
+    {"type": "sink", "x": 10, "y": 8, "params": {"color": "red", "strict": true, "required": 0.15}},
+    {"type": "sink", "x": 4, "y": 0, "params": {"color": "blue", "strict": true, "required": 0.05}},
+    {"type": "wall", "x": 4, "y": 2}
+  ],
+  "inventory": [
+    {"type": "splitter", "count": 1},
+    {"type": "prism", "count": 1},
+    {"type": "grating", "count": 1}
+  ],
+  "solution": [
+    {"type": "splitter", "x": 2, "y": 5, "angle": 45},
+    {"type": "prism", "x": 4, "y": 5, "angle": 45},
+    {"type": "grating", "x": 2, "y": 4, "angle": 90}
+  ]
+}

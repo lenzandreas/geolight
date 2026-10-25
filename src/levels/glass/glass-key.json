@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "id": "glass-key",
+  "name": {
+    "en": "Glass Key",
+    "de": "Glasschlüssel"
+  },
+  "intro": {
+    "en": "Both openings are off-centre. Tilted glass shifts a beam sideways without turning it.",
+    "de": "Beide Öffnungen liegen außermittig. Schräges Glas versetzt einen Strahl, ohne ihn zu drehen."
+  },
+  "grid": {"w": 11, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 3, "angle": 0},
+    {"type": "slit", "x": 2, "y": 1, "angle": 90, "params": {"gap": 0.12, "offset": -0.155}},
+    {"id": "p", "type": "photocell", "x": 2, "y": 0, "params": {"required": 0.3}},
+    {"type": "slit", "x": 6, "y": 3, "angle": 0, "params": {"gap": 0.15, "offset": -0.25}},
+    {"type": "gate", "x": 8, "y": 0, "params": {"h": 7, "by": "p"}},
+    {"type": "sink", "x": 10, "y": 3, "params": {"required": 0.45}},
+    {"type": "wall", "x": 1, "y": 0, "params": {"w": 1, "h": 2}},
+    {"type": "wall", "x": 3, "y": 0, "params": {"w": 1, "h": 2}}
+  ],
+  "inventory": [
+    {"type": "splitter", "count": 1},
+    {"type": "block", "count": 2}
+  ],
+  "solution": [
+    {"type": "block", "x": 1, "y": 3, "angle": 45},
+    {"type": "splitter", "x": 2, "y": 3, "angle": 45},
+    {"type": "block", "x": 2, "y": 2, "angle": 60}
+  ]
+}

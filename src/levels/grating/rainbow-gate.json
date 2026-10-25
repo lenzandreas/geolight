@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "id": "rainbow-gate",
+  "name": {
+    "en": "Rainbow Gate",
+    "de": "Regenbogentor"
+  },
+  "intro": {
+    "en": "The straight beam must not reach the guard, yet it is the only beam strong enough to open the gate.",
+    "de": "Der gerade Strahl darf nicht zum Wächter, ist aber als einziger stark genug, um das Tor zu öffnen."
+  },
+  "grid": {"w": 12, "h": 9},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 4, "angle": 0},
+    {"id": "p", "type": "photocell", "x": 6, "y": 8, "params": {"required": 0.3}},
+    {"type": "gate", "x": 8, "y": 0, "params": {"h": 9, "by": "p"}},
+    {"type": "sensor", "x": 11, "y": 4},
+    {"type": "sink", "x": 9, "y": 8, "params": {"color": "green", "strict": true, "required": 0.1}},
+    {"type": "sink", "x": 11, "y": 0, "params": {"color": "blue", "strict": true, "required": 0.1}}
+  ],
+  "inventory": [
+    {"type": "grating", "count": 1},
+    {"type": "mirror", "count": 1}
+  ],
+  "solution": [
+    {"type": "grating", "x": 3, "y": 4, "angle": 0},
+    {"type": "mirror", "x": 6, "y": 4, "angle": 135}
+  ]
+}

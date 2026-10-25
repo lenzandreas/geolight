@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "id": "prism-lock",
+  "name": {
+    "en": "Prism Lock",
+    "de": "Prismenschloss"
+  },
+  "intro": {
+    "en": "Every colour has a job, except blue. The guards hate blue.",
+    "de": "Jede Farbe hat eine Aufgabe, nur Blau nicht. Die Wächter hassen Blau."
+  },
+  "grid": {"w": 12, "h": 9},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 4, "angle": 0},
+    {"id": "p", "type": "photocell", "x": 7, "y": 1, "params": {"required": 0.3}},
+    {"type": "gate", "x": 8, "y": 0, "params": {"h": 9, "by": "p"}},
+    {"type": "sensor", "x": 6, "y": 0},
+    {"type": "sink", "x": 11, "y": 0, "params": {"color": "red", "strict": true, "required": 0.3}},
+    {"type": "sensor", "x": 7, "y": 0},
+    {"type": "sensor", "x": 3, "y": 1}
+  ],
+  "inventory": [
+    {"type": "prism", "count": 1},
+    {"type": "filter", "count": 1, "params": {"color": "yellow"}},
+    {"type": "mirror", "count": 1}
+  ],
+  "solution": [
+    {"type": "filter", "params": {"color": "yellow"}, "x": 1, "y": 4, "angle": 0},
+    {"type": "prism", "x": 3, "y": 4, "angle": 75}
+  ]
+}

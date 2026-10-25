@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "id": "no-green",
+  "name": {
+    "en": "No Green",
+    "de": "Kein Grün"
+  },
+  "intro": {
+    "en": "The guards watch where green light would go. Take the green out before the grating splits the beam.",
+    "de": "Die Wächter achten darauf, wohin grünes Licht ginge. Nimm das Grün heraus, bevor das Gitter den Strahl teilt."
+  },
+  "grid": {"w": 12, "h": 9},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 4, "angle": 0},
+    {"type": "sink", "x": 8, "y": 8, "params": {"color": "red", "strict": true, "required": 0.1}},
+    {"type": "sink", "x": 11, "y": 0, "params": {"color": "blue", "strict": true, "required": 0.1}},
+    {"type": "sensor", "x": 6, "y": 6},
+    {"type": "sensor", "x": 6, "y": 2}
+  ],
+  "inventory": [
+    {"type": "grating", "count": 1},
+    {"type": "filter", "count": 1, "params": {"color": "magenta"}}
+  ],
+  "solution": [
+    {"type": "filter", "params": {"color": "magenta"}, "x": 1, "y": 4, "angle": 0},
+    {"type": "grating", "x": 3, "y": 4, "angle": 0}
+  ]
+}
