@@ -32,9 +32,13 @@ Each layer depends only on the layers below it. `core`, `level` and `game` never
 - **Entity:** everything on the board (`{ id, type, x, y, angle, params }`). Its behaviour comes from an **EntityType** in a registry. A type contributes:
   - `surfaces(e)`: segments or circles with an *interaction* function,
   - `emit(e)` (sources only): initial rays,
+  - `field(e)` (black holes): a gravity field that bends passing light,
+  - `isOpen(e, powered)` (gates): switchable structures that drop their surfaces while open,
   - metadata: category, defaults, rotational `symmetry`, `footprint`.
 - **Interaction:** what happens when a ray hits a surface: `absorb`, `mirror`, `splitter`, `filter`, `thinOptic` (an ideal lens or curved mirror, using the paraxial `slope −= h/f`), `refract` (Snell's law with total internal reflection and per-channel dispersion), `receiver` (targets). New physics means writing a new interaction.
 - **Light** is power per R/G/B channel plus an optional polarization axis. Filters multiply channels; polarizers apply Malus's law and set the axis; other optics keep it. The tracer also records each packet a receiver absorbs, so targets can ask for a polarization. Prisms split multi-channel rays into one ray per channel. The tracer is iterative (a stack, no recursion) and limited by depth, minimum power and segment count, so mirror loops can't hang it.
+- **Gravity:** inside a field's reach, light moves in short straight steps (a tenth of its distance to the centre) and turns after each one, so beams curve smoothly and still interact with everything they pass. Each step turns the ray by `rs·b/r³` per unit length, which over a straight pass adds up to the general-relativity deflection `2·rs/b`; on close passes the bent path dips closer and turns further, as in reality. Light that comes within the shadow (2.6·rs) is swallowed.
+- **Gates:** the tracer starts with every gate shut, traces, opens the gates whose photocells are powered and traces again until nothing changes. Opening a gate only adds light, so this ends after at most one extra trace per gate and gives the one consistent state.
 - **Rules** (`rules.ts`) turn received light into target status and a win. Goals are registered by name (`allTargets`, `anyTargets`), so new modes plug in.
 
 ### Levels (`src/level`, `src/levels`)
@@ -98,7 +102,7 @@ This is the headless state of one attempt: pieces, tray counts, snapshot undo/re
 
 ## Roadmap ideas
 
-- **More content:** polarisers (two crossed filters block light), portals/fibre optics, moving or rotating mirrors on timers, colour mixing (red + green targets that need yellow), one-way glass, solar cells that open doors, and fresnel losses on glass in a "realistic" world.
+- **More content:** portals/fibre optics, moving or rotating mirrors on timers, colour mixing (red + green targets that need yellow), one-way glass, solar cells that open doors, and fresnel losses on glass in a "realistic" world.
 - **Modes:** level editor with share codes (the level JSON plus the solver to verify solvability), a time-attack "catch the moving light" mode, and a sandbox. Daily puzzles could gain lenses and colours using the same generate-and-verify approach.
 - **Polish:** colour-blind patterns on coloured targets, light theme, haptics on mobile (via a platform adapter), and analytics-free play statistics.
 - **Tech:** move tracing into a Web Worker if levels grow very large, and add a WebGL renderer for richer bloom on capable devices.

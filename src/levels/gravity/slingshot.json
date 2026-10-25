@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "slingshot",
+  "name": {
+    "en": "Slingshot",
+    "de": "Swing-by"
+  },
+  "intro": {
+    "en": "Down and back up again: two black holes, one beam.",
+    "de": "Runter und wieder hoch: zwei Schwarze Löcher, ein Strahl."
+  },
+  "grid": {"w": 11, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 1, "angle": 0},
+    {"type": "wall", "x": 5, "y": 0, "params": {"w": 1, "h": 2}},
+    {"type": "sink", "x": 10, "y": 1}
+  ],
+  "inventory": [
+    {"type": "blackHole", "count": 2}
+  ],
+  "solution": [
+    {"type": "blackHole", "x": 2, "y": 2, "angle": 0},
+    {"type": "blackHole", "x": 6, "y": 2, "angle": 0}
+  ]
+}

@@ -5,7 +5,7 @@
 import type { LevelDef, Localized } from './schema';
 
 /** Placeable piece kinds, as the player sees them (a diverging lens counts as its own piece). */
-export type PieceKind = 'mirror' | 'splitter' | 'lens' | 'divergingLens' | 'curvedMirror' | 'filter' | 'prism' | 'block' | 'blocker' | 'polarizer';
+export type PieceKind = 'mirror' | 'splitter' | 'lens' | 'divergingLens' | 'curvedMirror' | 'filter' | 'prism' | 'block' | 'blocker' | 'polarizer' | 'blackHole';
 
 export interface WorldDef {
   id: string;
@@ -17,7 +17,7 @@ export interface WorldDef {
   levels: string[];
 }
 
-const PIECES = new Set<string>(['mirror', 'splitter', 'lens', 'curvedMirror', 'filter', 'prism', 'block', 'blocker', 'polarizer']);
+const PIECES = new Set<string>(['mirror', 'splitter', 'lens', 'curvedMirror', 'filter', 'prism', 'block', 'blocker', 'polarizer', 'blackHole']);
 
 /** Piece kind of an entity type, or null for sources, targets and structures. */
 export function pieceKind(type: string, params: Record<string, unknown> = {}): PieceKind | null {

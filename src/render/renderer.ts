@@ -8,7 +8,8 @@ import type { TargetStatus } from '../core/rules';
 import type { TraceResult } from '../core/tracer';
 import { getType } from '../core/registry';
 import { param, type Entity } from '../core/types';
-import { getDrawer, roundRect } from './drawers';
+import { drawWire, getDrawer, roundRect } from './drawers';
+import { gateInputs } from '../core/entities';
 import { lightColor, rgba, type Theme } from './theme';
 import { View } from './view';
 
@@ -217,7 +218,17 @@ export class Renderer {
 
     // Walls first, then the light, then everything else on top of the light.
     const time = s.time;
-    for (const e of s.pieces) if (e.type === 'wall') getDrawer('wall')?.(e, { ctx, theme: t, time });
+    // Wires from photocells to the gates they open, under everything else.
+    for (const g of s.pieces) {
+      if (g.type !== 'gate') continue;
+      const gw = param<number>(g, getType('gate'), 'w');
+      const gh = param<number>(g, getType('gate'), 'h');
+      for (const id of gateInputs(g)) {
+        const cell = s.pieces.find((p) => p.id === id);
+        if (cell) drawWire(ctx, centre(cell), { x: g.x + gw / 2, y: g.y + gh / 2 }, (s.statuses.get(id)?.progress ?? 0) > 0.995);
+      }
+    }
+    for (const e of s.pieces) if (e.type === 'wall' || e.type === 'gate') getDrawer(e.type)?.(e, { ctx, theme: t, time, open: s.trace.open?.has(e.id) });
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.drawImage(this.beams, 0, 0);
@@ -242,7 +253,7 @@ export class Renderer {
     const hungriest = Math.max(0, ...needs);
     const varied = hungriest > 0 && Math.min(...needs) < hungriest - 1e-9;
     for (const e of s.pieces) {
-      if (e.type === 'wall') continue;
+      if (e.type === 'wall' || e.type === 'gate') continue;
       const demand = e.type === 'sink' && varied ? need(e) / hungriest : undefined;
       getDrawer(e.type)?.(e, { ctx, theme: t, time, status: s.statuses.get(e.id), demand });
     }

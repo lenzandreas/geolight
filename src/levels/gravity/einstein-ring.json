@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "einstein-ring",
+  "name": {
+    "en": "Einstein Ring",
+    "de": "Einsteinring"
+  },
+  "intro": {
+    "en": "The target hides behind a wall. Bend the sunlight around it, from both sides at once.",
+    "de": "Das Ziel versteckt sich hinter einer Wand. Biege das Sonnenlicht um sie herum, von beiden Seiten zugleich."
+  },
+  "grid": {"w": 10, "h": 7},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 3, "angle": 0},
+    {"type": "wall", "x": 3, "y": 3},
+    {"type": "sink", "x": 8, "y": 3, "params": {"required": 0.12}}
+  ],
+  "inventory": [
+    {"type": "blackHole", "count": 1}
+  ],
+  "solution": [
+    {"type": "blackHole", "x": 5, "y": 3, "angle": 0}
+  ]
+}

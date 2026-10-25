@@ -3,7 +3,7 @@
  * physics so a different art style (or a WebGL renderer) can replace it.
  */
 import { resolveColor } from '../core/color';
-import { POLARIZER_RADIUS, SLIT_THICKNESS, THIN_LEN } from '../core/entities';
+import { PHOTOCELL_SIZE, POLARIZER_RADIUS, SHADOW_FACTOR, SLIT_THICKNESS, THIN_LEN } from '../core/entities';
 import { centre, regularPolygon, rotatedRect } from '../core/entities/shapes';
 import { getType } from '../core/registry';
 import type { TargetStatus } from '../core/rules';
@@ -21,6 +21,8 @@ export interface DrawContext {
    * (1 = the hungriest). Left out when every sink needs the same.
    */
   demand?: number;
+  /** Gates: currently open. */
+  open?: boolean;
 }
 
 export type Drawer = (e: Entity, d: DrawContext) => void;
@@ -87,6 +89,79 @@ registerDrawer('wall', (e, { ctx, theme }) => {
   ctx.lineWidth = 0.025;
   ctx.stroke();
 });
+
+/** Warm "powered" colour shared by photocells, their wires and gates, so the link reads at a glance. */
+export const POWER: [number, number, number] = [255, 200, 120];
+
+registerDrawer('gate', (e, { ctx, theme, open }) => {
+  const w = param<number>(e, getType('gate'), 'w');
+  const h = param<number>(e, getType('gate'), 'h');
+  const inset = 0.04;
+  roundRect(ctx, e.x + inset, e.y + inset, w - inset * 2, h - inset * 2, 0.14);
+  if (open) {
+    // Only a faint dashed outline remains where the gate was.
+    ctx.strokeStyle = rgba(POWER, 0.35);
+    ctx.lineWidth = 0.025;
+    ctx.setLineDash([0.07, 0.07]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    return;
+  }
+  ctx.fillStyle = theme.wall;
+  ctx.fill();
+  ctx.strokeStyle = rgba(POWER, 0.45);
+  ctx.lineWidth = 0.03;
+  ctx.stroke();
+  // Diagonal hazard stripes mark it as something that can open.
+  ctx.save();
+  roundRect(ctx, e.x + inset, e.y + inset, w - inset * 2, h - inset * 2, 0.14);
+  ctx.clip();
+  ctx.strokeStyle = rgba(POWER, 0.16);
+  ctx.lineWidth = 0.09;
+  ctx.beginPath();
+  for (let k = -h; k < w + h; k += 0.32) {
+    ctx.moveTo(e.x + k, e.y);
+    ctx.lineTo(e.x + k + h, e.y + h);
+  }
+  ctx.stroke();
+  ctx.restore();
+});
+
+registerDrawer('photocell', (e, { ctx, theme, status }) => {
+  const c = centre(e);
+  const s = PHOTOCELL_SIZE;
+  const on = (status?.progress ?? 0) > 0.995;
+  if (on) softGlow(ctx, c.x, c.y, 0.7, POWER, 0.45);
+  local(e, ctx, () => {
+    roundRect(ctx, -s / 2, -s / 2, s, s, 0.05);
+    ctx.fillStyle = theme.sinkWell;
+    ctx.fill();
+    ctx.strokeStyle = on ? rgba(POWER, 0.95) : theme.wallEdge;
+    ctx.lineWidth = 0.03;
+    ctx.stroke();
+    // Solar-cell grid, filling with colour as light arrives.
+    const p = status?.progress ?? 0;
+    ctx.fillStyle = rgba(POWER, 0.12 + 0.55 * p);
+    const q = s / 2 - 0.05;
+    for (const [x, y] of [[-q, -q], [0.01, -q], [-q, 0.01], [0.01, 0.01]]) {
+      ctx.fillRect(x, y, q - 0.01, q - 0.01);
+    }
+  });
+});
+
+/** Dotted wire from a photocell to the gate it opens. */
+export function drawWire(ctx: CanvasRenderingContext2D, from: { x: number; y: number }, to: { x: number; y: number }, on: boolean): void {
+  ctx.strokeStyle = rgba(POWER, on ? 0.45 : 0.16);
+  ctx.lineWidth = 0.025;
+  ctx.lineCap = 'round';
+  ctx.setLineDash([0.01, 0.09]);
+  ctx.beginPath();
+  ctx.moveTo(from.x, from.y);
+  ctx.lineTo(to.x, to.y);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.lineCap = 'butt';
+}
 
 registerDrawer('slit', (e, { ctx, theme }) => {
   const t = getType('slit');
@@ -451,6 +526,46 @@ registerDrawer('polarizer', (e, { ctx, theme }) => {
     ctx.stroke();
   }
   ctx.lineCap = 'butt';
+});
+
+registerDrawer('blackHole', (e, { ctx, time }) => {
+  const t = getType('blackHole');
+  const c = centre(e);
+  const rs = param<number>(e, t, 'rs');
+  const reach = param<number>(e, t, 'reach');
+  const shadow = SHADOW_FACTOR * rs;
+  // The reach of its pull: a faint lensing haze and a dotted rim.
+  const haze = ctx.createRadialGradient(c.x, c.y, shadow, c.x, c.y, reach);
+  haze.addColorStop(0, 'rgba(150, 120, 255, 0.10)');
+  haze.addColorStop(1, 'rgba(150, 120, 255, 0)');
+  ctx.fillStyle = haze;
+  ctx.beginPath();
+  ctx.arc(c.x, c.y, reach, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(170, 150, 255, 0.12)';
+  ctx.lineWidth = 0.02;
+  ctx.setLineDash([0.02, 0.1]);
+  ctx.lineCap = 'round';
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.lineCap = 'butt';
+  // Glowing photon ring, brighter on one slowly turning side (like a spinning disc).
+  softGlow(ctx, c.x, c.y, shadow * 1.7, [255, 190, 130], 0.35);
+  const spin = time * 0.6;
+  for (let i = 0; i < 24; i++) {
+    const a0 = spin + (i / 24) * Math.PI * 2;
+    const bright = 0.35 + 0.55 * (0.5 + 0.5 * Math.cos(a0 - spin - 0.6));
+    ctx.strokeStyle = `rgba(255, ${190 + 50 * bright | 0}, ${130 + 90 * bright | 0}, ${bright.toFixed(3)})`;
+    ctx.lineWidth = 0.05;
+    ctx.beginPath();
+    ctx.arc(c.x, c.y, shadow + 0.02, a0, a0 + (Math.PI * 2) / 24 + 0.01);
+    ctx.stroke();
+  }
+  // The shadow: everything inside is gone.
+  ctx.beginPath();
+  ctx.arc(c.x, c.y, shadow, 0, Math.PI * 2);
+  ctx.fillStyle = '#03040b';
+  ctx.fill();
 });
 
 registerDrawer('blocker', (e, { ctx, theme }) => {

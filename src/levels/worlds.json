@@ -61,5 +61,12 @@
     "object": "polarizer",
     "parents": ["prism", "glass", "diverging"],
     "levels": ["crossed", "paradox", "slow-turn", "sort-the-light", "polarized-rainbow", "squeeze-and-turn", "glass-paradox", "optical-bench"]
+  },
+  {
+    "id": "gravity",
+    "name": {"en": "Event Horizon", "de": "Ereignishorizont"},
+    "object": "blackHole",
+    "parents": ["concave", "prism"],
+    "levels": ["gentle-pull", "two-jobs", "einstein-ring", "slingshot", "power-up", "sorting-the-rainbow", "chain-reaction", "binary"]
   }
 ]

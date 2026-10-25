@@ -206,6 +206,26 @@ export const Polarizer: EntityType = {
   },
 };
 
+/** Light closer than this many Schwarzschild radii is captured (the black hole's shadow, 3√3/2). */
+export const SHADOW_FACTOR = (3 * Math.sqrt(3)) / 2;
+
+/**
+ * A black hole: no surfaces, only gravity. Passing light bends towards it (more the
+ * closer it passes) and light that comes within its shadow is swallowed.
+ * rs: Schwarzschild radius in cells. reach: how far its pull is counted.
+ */
+export const BlackHole: EntityType = {
+  id: 'blackHole',
+  category: 'optic',
+  defaults: { rs: 0.2, reach: 2 },
+  symmetry: 360,
+  surfaces() {},
+  field(e) {
+    const rs = param<number>(e, BlackHole, 'rs');
+    return { c: centre(e), rs, reach: param<number>(e, BlackHole, 'reach'), capture: SHADOW_FACTOR * rs };
+  },
+};
+
 /** A small absorbing block the player can place to shade things. */
 export const Blocker: EntityType = {
   id: 'blocker',
@@ -248,6 +268,21 @@ export const Slit: EntityType = {
   },
 };
 
+function blockCells(e: Entity, w: number, h: number): Array<[number, number]> {
+  const cells: Array<[number, number]> = [];
+  for (let i = 0; i < w; i++) for (let j = 0; j < h; j++) cells.push([e.x + i, e.y + j]);
+  return cells;
+}
+
+function blockSurfaces(e: Entity, w: number, h: number, out: Parameters<EntityType['surfaces']>[1]): void {
+  pushPolygon(out, e, [
+    { x: e.x, y: e.y },
+    { x: e.x + w, y: e.y },
+    { x: e.x + w, y: e.y + h },
+    { x: e.x, y: e.y + h },
+  ], absorb);
+}
+
 /** Axis-aligned absorbing wall covering w×h cells from its anchor cell. */
 export const Wall: EntityType = {
   id: 'wall',
@@ -255,25 +290,51 @@ export const Wall: EntityType = {
   defaults: { w: 1, h: 1 },
   symmetry: 360,
   footprint(e) {
-    const w = param<number>(e, Wall, 'w');
-    const h = param<number>(e, Wall, 'h');
-    const cells: Array<[number, number]> = [];
-    for (let i = 0; i < w; i++) for (let j = 0; j < h; j++) cells.push([e.x + i, e.y + j]);
-    return cells;
+    return blockCells(e, param(e, Wall, 'w'), param(e, Wall, 'h'));
   },
   surfaces(e, out) {
-    const w = param<number>(e, Wall, 'w');
-    const h = param<number>(e, Wall, 'h');
-    pushPolygon(out, e, [
-      { x: e.x, y: e.y },
-      { x: e.x + w, y: e.y },
-      { x: e.x + w, y: e.y + h },
-      { x: e.x, y: e.y + h },
-    ], absorb);
+    blockSurfaces(e, param(e, Wall, 'w'), param(e, Wall, 'h'), out);
   },
 };
 
-export const BUILTIN_TYPES: EntityType[] = [Laser, Bulb, Sun, Sink, Sensor, Mirror, Splitter, Filter, Lens, CurvedMirror, Prism, GlassBlock, Blocker, Wall, Slit, Polarizer];
+export const PHOTOCELL_SIZE = 0.5;
+
+/** A small solar panel. It is powered once it receives `required`; gates listen to it. */
+export const Photocell: EntityType = {
+  id: 'photocell',
+  category: 'structure',
+  defaults: { required: 0.1 },
+  symmetry: 360,
+  surfaces(e, out) {
+    pushPolygon(out, e, rotatedRect(e, PHOTOCELL_SIZE, PHOTOCELL_SIZE), receiver(e));
+  },
+};
+
+/** The ids a gate listens to. */
+export function gateInputs(e: Entity): string[] {
+  const by = param<string | string[]>(e, Gate, 'by');
+  return Array.isArray(by) ? by : by ? [by] : [];
+}
+
+/** A wall section (w×h cells) that opens while every receiver in `by` is powered. */
+export const Gate: EntityType = {
+  id: 'gate',
+  category: 'structure',
+  defaults: { w: 1, h: 1, by: [] },
+  symmetry: 360,
+  footprint(e) {
+    return blockCells(e, param(e, Gate, 'w'), param(e, Gate, 'h'));
+  },
+  surfaces(e, out) {
+    blockSurfaces(e, param(e, Gate, 'w'), param(e, Gate, 'h'), out);
+  },
+  isOpen(e, powered) {
+    const ids = gateInputs(e);
+    return ids.length > 0 && ids.every(powered);
+  },
+};
+
+export const BUILTIN_TYPES: EntityType[] = [Laser, Bulb, Sun, Sink, Sensor, Mirror, Splitter, Filter, Lens, CurvedMirror, Prism, GlassBlock, Blocker, Wall, Slit, Polarizer, BlackHole, Photocell, Gate];
 
 let registered = false;
 /** Idempotent registration of the built-in types. */

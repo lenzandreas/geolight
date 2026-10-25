@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "two-jobs",
+  "name": {
+    "en": "Two Jobs",
+    "de": "Zwei Aufgaben"
+  },
+  "intro": {
+    "en": "One black hole, two tasks: swallow one beam and bend the other.",
+    "de": "Ein Schwarzes Loch, zwei Aufgaben: einen Strahl verschlucken und den anderen ablenken."
+  },
+  "grid": {"w": 10, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 2, "angle": 0},
+    {"type": "splitter", "x": 3, "y": 2, "angle": 315},
+    {"type": "sensor", "x": 3, "y": 6},
+    {"type": "sink", "x": 9, "y": 5, "params": {"required": 0.45}}
+  ],
+  "inventory": [
+    {"type": "blackHole", "count": 1}
+  ],
+  "solution": [
+    {"type": "blackHole", "x": 3, "y": 3, "angle": 0}
+  ]
+}

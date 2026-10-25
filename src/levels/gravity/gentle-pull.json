@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "gentle-pull",
+  "name": {
+    "en": "Gentle Pull",
+    "de": "Sanfter Zug"
+  },
+  "intro": {
+    "en": "A black hole bends light that passes nearby: the closer, the stronger. Too close, and the light falls in.",
+    "de": "Ein Schwarzes Loch lenkt vorbeiziehendes Licht ab: je näher, desto stärker. Zu nah, und das Licht fällt hinein."
+  },
+  "grid": {"w": 10, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 4, "angle": 0},
+    {"type": "sink", "x": 9, "y": 1},
+    {"type": "wall", "x": 6, "y": 4, "params": {"w": 1, "h": 3}}
+  ],
+  "inventory": [
+    {"type": "blackHole", "count": 1}
+  ],
+  "solution": [
+    {"type": "blackHole", "x": 3, "y": 3, "angle": 0}
+  ]
+}
