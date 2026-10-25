@@ -54,5 +54,12 @@
     "object": "prism",
     "parents": ["filter"],
     "levels": ["rainbow", "blue-hour", "make-yellow", "purple-rain", "white-again", "aurora"]
+  },
+  {
+    "id": "polarizer",
+    "name": {"en": "Polarity", "de": "Polarität"},
+    "object": "polarizer",
+    "parents": ["prism", "glass", "diverging"],
+    "levels": ["crossed", "paradox", "slow-turn", "sort-the-light", "polarized-rainbow", "squeeze-and-turn", "glass-paradox", "optical-bench"]
   }
 ]

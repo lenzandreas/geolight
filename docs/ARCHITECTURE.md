@@ -34,7 +34,7 @@ Each layer depends only on the layers below it. `core`, `level` and `game` never
   - `emit(e)` (sources only): initial rays,
   - metadata: category, defaults, rotational `symmetry`, `footprint`.
 - **Interaction:** what happens when a ray hits a surface: `absorb`, `mirror`, `splitter`, `filter`, `thinOptic` (an ideal lens or curved mirror, using the paraxial `slope −= h/f`), `refract` (Snell's law with total internal reflection and per-channel dispersion), `receiver` (targets). New physics means writing a new interaction.
-- **Light** is power per R/G/B channel. Filters multiply channels. Prisms split multi-channel rays into one ray per channel. The tracer is iterative (a stack, no recursion) and limited by depth, minimum power and segment count, so mirror loops can't hang it.
+- **Light** is power per R/G/B channel plus an optional polarization axis. Filters multiply channels; polarizers apply Malus's law and set the axis; other optics keep it. The tracer also records each packet a receiver absorbs, so targets can ask for a polarization. Prisms split multi-channel rays into one ray per channel. The tracer is iterative (a stack, no recursion) and limited by depth, minimum power and segment count, so mirror loops can't hang it.
 - **Rules** (`rules.ts`) turn received light into target status and a win. Goals are registered by name (`allTargets`, `anyTargets`), so new modes plug in.
 
 ### Levels (`src/level`, `src/levels`)
@@ -55,7 +55,7 @@ Worlds form a tree defined in `src/levels/worlds.json`. Each world introduces on
 - inside an open world, at most 2 unsolved levels are open at once (`OPEN_LEVELS`), so one level can be skipped,
 - `next()` suggests the next level, preferring the current world.
 
-The star map (`src/ui/mapScreens.ts`) draws the tree with a tidy-tree layout and each world as a constellation, whose star layout is generated from the world's id (`src/ui/constellation.ts`).
+The star map (`src/ui/mapScreens.ts`) draws the tree with a tidy-tree layout; worlds with several parents are centred under all of them, with curved lines converging into them. Inside a world, `skyLayout` (`src/ui/constellation.ts`) snakes the level stars through a grid sized to the screen (no overlapping labels, lines never cross), with a stable per-world wobble so it still looks like a constellation.
 
 ### Daily puzzle (`src/level/daily.ts`)
 

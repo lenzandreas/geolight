@@ -8,7 +8,7 @@ Levels live in one folder per world, `src/levels/<world>/<id>.json`. Their order
 
 The rules, all enforced by `npm test`:
 
-- **One new piece per world.** `object` is the piece the world introduces (`mirror`, `splitter`, `lens`, `divergingLens`, `curvedMirror`, `block`, `filter`, `prism`). Every level in the world uses it, and may otherwise only use pieces introduced by the world's ancestors. Sources, targets, sensors, walls and slits are level features and can be used anywhere.
+- **One new piece per world.** `object` is the piece the world introduces (`mirror`, `splitter`, `lens`, `divergingLens`, `curvedMirror`, `block`, `filter`, `prism`, `polarizer`). A world may have several `parents`; it opens when each of them has 4 solved levels and can use all of their pieces. Every level in the world uses it, and may otherwise only use pieces introduced by the world's ancestors. Sources, targets, sensors, walls and slits are level features and can be used anywhere.
 - **At least 6 levels per world**, ordered from easy to hard.
 - Every level file is listed by exactly one world.
 
@@ -46,10 +46,10 @@ The test suite checks every level automatically.
 
 | type | params (defaults) |
 | --- | --- |
-| `laser` | `color` (`white`), `power` (1) |
+| `laser` | `color` (`white`), `power` (1), `pol` (null = unpolarized, or an axis in degrees) |
 | `bulb` | `color`, `power` (1), `rays` (720) |
 | `sun` | `color`, `power` (1), `width` (3 cells), `rays` (90) |
-| `sink` | `required` (0.9), `color` (`white`, i.e. accepts all), `strict` (false: off-colour light spoils it), `each` (false: every colour of `color` must bring an equal share, for mixing), `radius` (0.32) |
+| `sink` | `required` (0.9), `color` (`white`, i.e. accepts all), `strict` (false: off-colour light spoils it), `each` (false: every colour of `color` must bring an equal share, for mixing), `pol` (null, or an axis in degrees: only light polarized along it counts; with `strict` other light spoils it), `radius` (0.32) |
 | `sensor` | `limit` (0.02): more light than this blocks the win |
 | `mirror` | `reflectance` (1) |
 | `splitter` | `ratio` (0.5) |
@@ -58,6 +58,7 @@ The test suite checks every level automatically.
 | `curvedMirror` | `f` (1.5); its back absorbs |
 | `prism` | `n` per channel ([1.38, 1.5, 1.64]), `radius` (0.46) |
 | `block` | `n` (1.5), `size` (0.8) |
+| `polarizer` | none: a disc whose axis is its `angle` (mod 180°). Unpolarized light loses half its power, polarized light keeps cos²(angle difference) (Malus's law); either way it leaves polarized along the axis |
 | `blocker` | `size` (0.56) |
 | `wall` | `w`, `h` in cells (anchored at the top-left cell) |
 | `slit` | `gap` (0.2), `offset` (0): a one-cell barrier facing `angle` with an opening of `gap` cells, shifted sideways by `offset` |

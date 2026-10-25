@@ -13,10 +13,19 @@ export interface BeamSegment {
   root: number;
 }
 
+/** One packet of light absorbed by a receiver. */
+export interface Reception {
+  c: RGB;
+  /** Polarization axis in degrees, or null for unpolarized light. */
+  pol: number | null;
+}
+
 export interface TraceResult {
   segments: BeamSegment[];
   /** Light received per receiver entity id. */
   received: Map<string, RGB>;
+  /** The individual packets behind `received`, for rules that care about polarization. */
+  receptions: Map<string, Reception[]>;
   /** Total power emitted by all sources. */
   emitted: number;
   /** True if limits cut the trace short (useful for debugging levels). */
@@ -63,6 +72,7 @@ export function trace(entities: Entity[], opts: TraceOptions): TraceResult {
   const surfaces = collectSurfaces(entities, opts.width, opts.height);
   const segments: BeamSegment[] = [];
   const received = new Map<string, RGB>();
+  const receptions = new Map<string, Reception[]>();
   const stack: Ray[] = [];
   let emitted = 0;
   let truncated = false;
@@ -81,23 +91,33 @@ export function trace(entities: Entity[], opts: TraceOptions): TraceResult {
   const parentSurface = new Map<Ray, Surface>();
 
   const ctx: TraceContext = {
-    emit(parent, o, d, c) {
+    emit(parent, o, d, c, pol) {
       if (parent.depth + 1 > maxDepth) {
         truncated = true;
         return;
       }
       if (power(c) < minPower) return;
-      const ray: Ray = { o: addScaled(o, d, NUDGE), d, c, depth: parent.depth + 1, source: parent.source, root: parent.root };
+      const ray: Ray = {
+        o: addScaled(o, d, NUDGE),
+        d,
+        c,
+        depth: parent.depth + 1,
+        source: parent.source,
+        root: parent.root,
+        pol: pol === undefined ? parent.pol ?? null : pol,
+      };
       if (lastSurface && lastSurface.shape.kind === 'segment') parentSurface.set(ray, lastSurface);
       stack.push(ray);
     },
-    receive(entity, c) {
+    receive(entity, c, ray) {
       let acc = received.get(entity.id);
       if (!acc) {
         acc = black();
         received.set(entity.id, acc);
+        receptions.set(entity.id, []);
       }
       addInto(acc, c);
+      receptions.get(entity.id)!.push({ c: [...c] as RGB, pol: ray.pol ?? null });
     },
   };
 
@@ -128,5 +148,5 @@ export function trace(entities: Entity[], opts: TraceOptions): TraceResult {
     lastSurface = null;
   }
 
-  return { segments, received, emitted, truncated };
+  return { segments, received, receptions, emitted, truncated };
 }

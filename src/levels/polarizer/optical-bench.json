@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "id": "optical-bench",
+  "name": {
+    "en": "Optical Bench",
+    "de": "Optische Bank"
+  },
+  "intro": {
+    "en": "Everything at once. Hint: light that is already polarized is far easier to control.",
+    "de": "Alles auf einmal. Tipp: Bereits polarisiertes Licht lässt sich viel leichter lenken."
+  },
+  "grid": {"w": 12, "h": 10},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 2, "angle": 0},
+    {"type": "splitter", "x": 2, "y": 2, "angle": 135},
+    {"type": "polarizer", "x": 2, "y": 4, "angle": 0},
+    {"type": "polarizer", "x": 2, "y": 7, "angle": 90},
+    {"type": "sink", "x": 2, "y": 9, "params": {"required": 0.05}},
+    {"type": "prism", "x": 4, "y": 2, "angle": 45},
+    {"type": "sink", "x": 10, "y": 5, "params": {"color": "red", "pol": 0, "strict": true, "required": 0.07}},
+    {"type": "sink", "x": 9, "y": 8, "params": {"color": "blue", "pol": 45, "strict": true, "required": 0.035}},
+    {"type": "sensor", "x": 11, "y": 7},
+    {"type": "wall", "x": 0, "y": 4, "params": {"w": 2, "h": 6}},
+    {"type": "wall", "x": 3, "y": 4, "params": {"w": 2, "h": 6}}
+  ],
+  "inventory": [
+    {"type": "polarizer", "count": 4}
+  ],
+  "solution": [
+    {"type": "polarizer", "x": 2, "y": 5, "angle": 45},
+    {"type": "polarizer", "x": 3, "y": 2, "angle": 0},
+    {"type": "polarizer", "x": 7, "y": 6, "angle": 45},
+    {"type": "polarizer", "x": 9, "y": 6, "angle": 90}
+  ]
+}

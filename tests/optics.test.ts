@@ -110,6 +110,45 @@ describe('tracer', () => {
     expect(evaluate([sink], trace([red, green, sink], opts)).won).toBe(true);
   });
 
+  describe('polarization', () => {
+    const got = (r: ReturnType<typeof trace>, e: Entity) => (r.received.get(e.id) ?? [0, 0, 0]).reduce((a, b) => a + b, 0);
+
+    it('a polarizer halves unpolarized light', () => {
+      const sink = ent('sink', 9, 3);
+      expect(got(trace([ent('laser', 1, 3, 0), ent('polarizer', 5, 3, 0), sink], opts), sink)).toBeCloseTo(0.5);
+    });
+
+    it('crossed polarizers block everything', () => {
+      const sink = ent('sink', 9, 3);
+      const r = trace([ent('laser', 1, 3, 0), ent('polarizer', 3, 3, 0), ent('polarizer', 6, 3, 90), sink], opts);
+      expect(got(r, sink)).toBeCloseTo(0);
+    });
+
+    it('a third polarizer at 45° between crossed ones lets an eighth through', () => {
+      const sink = ent('sink', 9, 3);
+      const r = trace([ent('laser', 1, 3, 0), ent('polarizer', 3, 3, 0), ent('polarizer', 4, 3, 45), ent('polarizer', 6, 3, 90), sink], opts);
+      expect(got(r, sink)).toBeCloseTo(0.125);
+    });
+
+    it('follows Malus\'s law for polarized light, from any direction', () => {
+      const sink = ent('sink', 5, 7);
+      // Polarized laser travelling down through a polarizer 60° off its axis: cos²(60°) = 0.25.
+      const r = trace([ent('laser', 5, 1, 90, { pol: 30 }), ent('polarizer', 5, 4, 90), sink], opts);
+      expect(got(r, sink)).toBeCloseTo(0.25);
+    });
+
+    it('a polarization target only counts light along its axis', () => {
+      const sink = ent('sink', 9, 3, 0, { pol: 90, required: 0.4 });
+      const unpolarized = [ent('laser', 1, 3, 0), sink];
+      expect(evaluate(unpolarized, trace(unpolarized, opts)).won).toBe(false);
+      const aligned = [ent('laser', 1, 3, 0), ent('polarizer', 5, 3, 90), sink];
+      expect(evaluate(aligned, trace(aligned, opts)).won).toBe(true);
+      const strict = ent('sink', 9, 3, 0, { pol: 90, required: 0.2, strict: true });
+      const leaky = [ent('laser', 1, 3, 0), ent('polarizer', 5, 3, 60), strict];
+      expect(evaluate(leaky, trace(leaky, opts)).won).toBe(false);
+    });
+  });
+
   it('sensors fail the level when lit', () => {
     const sink = ent('sink', 9, 3);
     const sensor = ent('sensor', 5, 3);

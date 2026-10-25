@@ -8,7 +8,7 @@ import type { Progress } from '../game/progress';
 import { loc, t } from '../i18n';
 import type { LevelDef } from '../level/schema';
 import { depths, type WorldDef } from '../level/worlds';
-import { constellation } from './constellation';
+import { constellation, skyLayout } from './constellation';
 import { h, icon, iconButton } from './dom';
 import { pieceIcon } from './pieceIcon';
 
@@ -20,11 +20,16 @@ function svg<K extends keyof SVGElementTagNameMap>(tag: K, attrs: Record<string,
   return el;
 }
 
-/** Tidy tree layout: leaves get their own column, parents sit centred above their children. */
+/**
+ * Tidy tree layout: leaves get their own column, parents sit centred above their
+ * children. Worlds with several parents (joins) are laid out afterwards, centred
+ * under all their parents, one row below the deepest one.
+ */
 function treeLayout(worlds: WorldDef[]): { pos: Map<string, { col: number; row: number }>; cols: number; rows: number } {
   const depth = depths(worlds);
+  const isJoin = (w: WorldDef) => w.parents.length > 1;
   const children = new Map<string, WorldDef[]>();
-  for (const w of worlds) if (w.parents.length) children.set(w.parents[0], [...(children.get(w.parents[0]) ?? []), w]);
+  for (const w of worlds) if (w.parents.length && !isJoin(w)) children.set(w.parents[0], [...(children.get(w.parents[0]) ?? []), w]);
   const pos = new Map<string, { col: number; row: number }>();
   const place = (w: WorldDef, start: number): number => {
     const kids = children.get(w.id) ?? [];
@@ -39,6 +44,23 @@ function treeLayout(worlds: WorldDef[]): { pos: Map<string, { col: number; row: 
   };
   let cols = 0;
   for (const root of worlds.filter((w) => !w.parents.length)) cols += place(root, cols);
+  // Joins, in tree order so a join below another join finds its parents placed.
+  for (const w of worlds.filter(isJoin)) {
+    const cs = w.parents.map((p) => pos.get(p)!.col);
+    const col = cs.reduce((a, b) => a + b, 0) / cs.length;
+    const width = place(w, 0);
+    // Shift the join's subtree so the join itself lands at `col`.
+    const shift = col - pos.get(w.id)!.col;
+    const moved = new Set<string>();
+    const move = (id: string) => {
+      if (moved.has(id)) return;
+      moved.add(id);
+      pos.get(id)!.col += shift;
+      for (const k of children.get(id) ?? []) move(k.id);
+    };
+    move(w.id);
+    cols = Math.max(cols, Math.ceil(col + width / 2));
+  }
   return { pos, cols, rows: Math.max(...depth.values()) + 1 };
 }
 
@@ -86,7 +108,9 @@ export function mapScreen(o: MapScreenOptions): HTMLElement {
     for (const parent of w.parents) {
       const a = centre(parent);
       const b = centre(w.id);
-      lines.append(svg('line', { x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: campaign.worldOpen(w) ? 'open' : '' }));
+      // A soft S-curve: leaves the parent downwards and arrives at the child from above.
+      const mid = (a.y + b.y) / 2;
+      lines.append(svg('path', { d: `M${a.x},${a.y} C${a.x},${mid} ${b.x},${mid} ${b.x},${b.y}`, class: campaign.worldOpen(w) ? 'open' : '' }));
     }
   }
   for (const w of campaign.worlds) {
@@ -134,15 +158,15 @@ export interface WorldScreenOptions {
 export function worldScreen(o: WorldScreenOptions): HTMLElement {
   const { world, campaign } = o;
   const solved = (id: string) => !!o.progress.level(id);
-  const portrait = window.innerHeight > window.innerWidth;
-  const aspect = portrait ? 1.45 : 0.62;
-  const pts = constellation(world.id + (portrait ? ':p' : ':l'), world.levels.length, aspect);
-  const pad = 9;
-  const at = (i: number) => ({ x: pad + pts[i].x * (100 - 2 * pad), y: pad + pts[i].y * (100 - 2 * pad) });
+  // Lay the stars out for the space actually available below the header.
+  const availW = Math.min(820, window.innerWidth - 28);
+  const availH = Math.max(320, window.innerHeight - 150);
+  const layout = skyLayout(world.id, world.levels.length, availW, availH, window.innerWidth < 520 ? { w: 104, h: 112 } : { w: 132, h: 124 });
+  const at = (i: number) => layout.points[i];
 
-  const sky = h('div', { class: 'world-sky', style: `aspect-ratio:${1 / aspect}` });
-  const lines = svg('svg', { class: 'sky-lines', viewBox: '0 0 100 100', preserveAspectRatio: 'none', 'aria-hidden': 'true' });
-  for (let i = 1; i < pts.length; i++) {
+  const sky = h('div', { class: 'world-sky', style: `width:${layout.width}px;height:${layout.height}px` });
+  const lines = svg('svg', { class: 'sky-lines', viewBox: `0 0 ${layout.width} ${layout.height}`, 'aria-hidden': 'true' });
+  for (let i = 1; i < layout.points.length; i++) {
     const a = at(i - 1);
     const b = at(i);
     lines.append(svg('line', { x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: solved(world.levels[i - 1]) && solved(world.levels[i]) ? 'lit' : campaign.levelOpen(world.levels[i]) ? 'open' : '' }));
@@ -162,7 +186,7 @@ export function worldScreen(o: WorldScreenOptions): HTMLElement {
       {
         class: `star-btn ${done ? 'solved' : open ? 'open' : 'locked'} ${id === nextId ? 'next' : ''}`,
         type: 'button',
-        style: `left:${p.x}%;top:${p.y}%`,
+        style: `left:${p.x}px;top:${p.y}px`,
         disabled: !open,
         'aria-label': `${i + 1}. ${loc(level.name)}${open ? '' : ` (${t('locked')})`}`,
       },

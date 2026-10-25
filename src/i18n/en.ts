@@ -59,6 +59,7 @@ export const en = {
   piece_prism: 'Prism',
   piece_block: 'Glass block',
   piece_blocker: 'Shade',
+  piece_polarizer: 'Polarizer',
   piece_slit: 'Slit',
   keyboardHelp: 'Keys: arrows move · Q/E rotate · Del returns · Tab selects · Ctrl+Z undo',
   installed: 'Ready to play offline',

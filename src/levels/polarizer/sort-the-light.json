@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "id": "sort-the-light",
+  "name": {
+    "en": "Sort the Light",
+    "de": "Licht sortieren"
+  },
+  "intro": {
+    "en": "Two lasers swing at right angles and have been mixed together. One ring wants pure upright light, the other light at a slant. A slanted polarizer takes a share of both.",
+    "de": "Zwei Laser schwingen im rechten Winkel zueinander und wurden vermischt. Ein Ring will reines senkrechtes Licht, der andere schräges. Ein schräger Polarisator nimmt von beiden einen Teil."
+  },
+  "grid": {"w": 9, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 2, "angle": 0, "params": {"power": 0.5, "pol": 0}},
+    {"type": "laser", "x": 3, "y": 6, "angle": 270, "params": {"power": 0.5, "pol": 90}},
+    {"type": "splitter", "x": 3, "y": 2, "angle": 45},
+    {"type": "sink", "x": 0, "y": 0, "params": {"pol": 90, "strict": true, "required": 0.2}},
+    {"type": "sink", "x": 8, "y": 6, "params": {"pol": 45, "strict": true, "required": 0.2}},
+    {"type": "sensor", "x": 8, "y": 0},
+    {"type": "wall", "x": 5, "y": 4, "params": {"w": 2, "h": 3}}
+  ],
+  "inventory": [
+    {"type": "polarizer", "count": 2},
+    {"type": "mirror", "count": 2}
+  ],
+  "solution": [
+    {"type": "mirror", "x": 3, "y": 0, "angle": 135},
+    {"type": "polarizer", "x": 2, "y": 0, "angle": 90},
+    {"type": "mirror", "x": 8, "y": 2, "angle": 135},
+    {"type": "polarizer", "x": 8, "y": 4, "angle": 45}
+  ]
+}

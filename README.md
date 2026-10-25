@@ -2,11 +2,11 @@
 
 A calm, glowing 2D puzzle game about light. Place and rotate mirrors, lenses, prisms and filters to guide beams from lasers, light bulbs and sunlight into their targets. Avoid the sensors.
 
-- **52 levels in 8 worlds on a star map.** Each world is a constellation that introduces exactly one new piece: mirror, beam splitter, lens, concave mirror, diverging lens, glass block, colour filter and prism. The worlds form a tree. A world opens once 4 levels of its parent are solved, and two levels are open at a time inside a world, so being stuck never blocks you completely.
+- **60 levels in 9 worlds on a star map.** Each world is a constellation that introduces exactly one new piece: mirror, beam splitter, lens, concave mirror, diverging lens, glass block, colour filter, prism and polarizer. The worlds form a tree. A world opens once 4 levels of each parent are solved, and two levels are open at a time inside a world, so being stuck never blocks you completely. The last world, *Polarity*, needs three worlds at once and combines their pieces with polarizers (including the famous three-polarizer paradox).
 - **Daily puzzle:** a new level every day, generated from the date (the same for everyone), gentle on Mondays and trickier at the weekend, with a streak counter.
 - **Sources:** laser (a sharp beam), light bulb (diffuse light that has to be gathered), sunlight (a wide parallel band), all in any colour.
-- **Pieces:** mirror, beam splitter, converging and diverging lens, concave mirror, prism (splits white light into colours), colour filter, glass block, shade.
-- **Targets:** rings that need enough light (of one colour, or a mix such as yellow = red + green) and sensor eyes that must stay dark.
+- **Pieces:** mirror, beam splitter, converging and diverging lens, concave mirror, prism (splits white light into colours), colour filter, glass block, polarizer, shade.
+- **Targets:** rings that need enough light (of one colour, a mix such as yellow = red + green, or one polarization) and sensor eyes that must stay dark.
 - **Obstacles:** walls and slits with narrow, sometimes off-centre openings.
 - Works with mouse, touch and keyboard, in English and German. It plays offline once installed (PWA) and idles at zero CPU when nothing moves.
 

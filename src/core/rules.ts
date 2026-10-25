@@ -4,7 +4,7 @@
  */
 import { dotRGB, power, resolveColor, type RGB } from './color';
 import { getType } from './registry';
-import type { TraceResult } from './tracer';
+import type { Reception, TraceResult } from './tracer';
 import { param, type Entity } from './types';
 
 export interface TargetStatus {
@@ -50,14 +50,26 @@ registerGoal('anyTargets', (targets, goal) => {
 const TOLERANCE = 1e-6;
 const CONTAMINATION_LIMIT = 0.02;
 
-export function targetStatus(e: Entity, received: RGB | undefined): TargetStatus | null {
-  const r: RGB = received ? [...received] as RGB : [0, 0, 0];
+/** Same polarization axis (mod 180°)? */
+const sameAxis = (a: number, b: number) => Math.abs(((a - b) % 180 + 270) % 180 - 90) < 0.5;
+
+export function targetStatus(e: Entity, received: RGB | undefined, receptions: Reception[] = []): TargetStatus | null {
+  let r: RGB = received ? [...received] as RGB : [0, 0, 0];
   if (e.type === 'sink') {
     const t = getType('sink');
     const mask = resolveColor(param(e, t, 'color'));
     const required = param<number>(e, t, 'required');
+    const wantPol = param<number | null>(e, t, 'pol');
+    let offPol = 0;
+    if (wantPol !== null && wantPol !== undefined) {
+      // Only light polarized along the sink's axis counts; the rest is "off" light.
+      const aligned: RGB = [0, 0, 0];
+      for (const p of receptions) if (p.pol !== null && sameAxis(p.pol, wantPol)) for (let i = 0; i < 3; i++) aligned[i] += p.c[i];
+      offPol = power(r) - power(aligned);
+      r = aligned;
+    }
     const value = dotRGB(r, mask);
-    const off = power(r) - value;
+    const off = power(r) - value + offPol;
     const contaminated = param<boolean>(e, t, 'strict') && off > CONTAMINATION_LIMIT;
     let progress = required > 0 ? Math.min(1, value / required) : 1;
     let met = value + TOLERANCE >= required;
@@ -81,7 +93,7 @@ export function targetStatus(e: Entity, received: RGB | undefined): TargetStatus
 export function evaluate(entities: Entity[], result: TraceResult, goal: GoalDef = { type: 'allTargets' }): Evaluation {
   const targets: TargetStatus[] = [];
   for (const e of entities) {
-    const s = targetStatus(e, result.received.get(e.id));
+    const s = targetStatus(e, result.received.get(e.id), result.receptions.get(e.id));
     if (s) targets.push(s);
   }
   const rule = goals.get(goal.type) ?? goals.get('allTargets')!;

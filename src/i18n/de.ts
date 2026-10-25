@@ -61,6 +61,7 @@ export const de: Strings = {
   piece_prism: 'Prisma',
   piece_block: 'Glasblock',
   piece_blocker: 'Schatten',
+  piece_polarizer: 'Polarisator',
   piece_slit: 'Spalt',
   keyboardHelp: 'Tasten: Pfeile bewegen · Q/E drehen · Entf zurücklegen · Tab wählt · Strg+Z rückgängig',
   installed: 'Offline spielbereit',
