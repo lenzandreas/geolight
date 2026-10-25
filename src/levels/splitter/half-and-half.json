@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "half-and-half",
+  "name": {
+    "en": "Half and Half",
+    "de": "Halbe-halbe"
+  },
+  "intro": {
+    "en": "A half-silvered mirror sends half the light on and reflects the other half. Light both rings at once.",
+    "de": "Ein halbdurchlässiger Spiegel lässt die Hälfte des Lichts durch und spiegelt die andere Hälfte. Lass beide Ringe zugleich leuchten."
+  },
+  "grid": {"w": 8, "h": 6},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 2, "angle": 0},
+    {"type": "sink", "x": 7, "y": 2, "params": {"required": 0.45}},
+    {"type": "sink", "x": 4, "y": 5, "params": {"required": 0.45}},
+    {"type": "wall", "x": 6, "y": 4, "params": {"w": 2, "h": 2}}
+  ],
+  "inventory": [
+    {"type": "splitter", "count": 1}
+  ],
+  "solution": [
+    {"type": "splitter", "x": 4, "y": 2, "angle": 135}
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "id": "relay",
+  "name": {
+    "en": "Relay",
+    "de": "Staffellauf"
+  },
+  "intro": {
+    "en": "Past the slit, light spreads out again. A second lens can catch it and bring it together once more. Which lens goes where?",
+    "de": "Hinter dem Spalt fächert das Licht wieder auf. Eine zweite Linse fängt es ein und bündelt es erneut. Welche Linse gehört wohin?"
+  },
+  "grid": {"w": 11, "h": 7},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 3, "angle": 0, "params": {"width": 0.8, "rays": 40}},
+    {"type": "wall", "x": 5, "y": 0, "params": {"w": 1, "h": 3}},
+    {"type": "slit", "x": 5, "y": 3, "angle": 0, "params": {"gap": 0.14}},
+    {"type": "wall", "x": 5, "y": 4, "params": {"w": 1, "h": 3}},
+    {"type": "sink", "x": 9, "y": 3, "params": {"required": 0.8, "radius": 0.16}}
+  ],
+  "inventory": [
+    {"type": "lens", "count": 1, "params": {"f": 2}},
+    {"type": "lens", "count": 1, "params": {"f": 1}}
+  ],
+  "solution": [
+    {"type": "lens", "params": {"f": 2}, "x": 3, "y": 3, "angle": 0},
+    {"type": "lens", "params": {"f": 1}, "x": 7, "y": 3, "angle": 0}
+  ]
+}

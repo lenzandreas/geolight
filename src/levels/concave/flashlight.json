@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "id": "flashlight",
+  "name": {
+    "en": "Flashlight",
+    "de": "Taschenlampe"
+  },
+  "intro": {
+    "en": "A curved mirror catches the light a bulb sends backwards. Its dark side swallows light.",
+    "de": "Ein Hohlspiegel fängt das Licht ein, das nach hinten fällt. Seine dunkle Rückseite schluckt Licht."
+  },
+  "grid": {"w": 11, "h": 7},
+  "entities": [
+    {"type": "bulb", "x": 2, "y": 3},
+    {"type": "sink", "x": 9, "y": 3, "params": {"required": 0.09}},
+    {"type": "wall", "x": 0, "y": 0, "params": {"w": 1, "h": 2}},
+    {"type": "wall", "x": 0, "y": 5, "params": {"w": 1, "h": 2}}
+  ],
+  "inventory": [
+    {"type": "curvedMirror", "count": 1, "params": {"f": 1}},
+    {"type": "lens", "count": 1, "params": {"f": 1.5}}
+  ],
+  "solution": [
+    {"type": "curvedMirror", "params": {"f": 1}, "x": 1, "y": 3, "angle": 0},
+    {"type": "lens", "params": {"f": 1.5}, "x": 7, "y": 3, "angle": 0}
+  ]
+}

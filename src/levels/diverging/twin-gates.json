@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "id": "twin-gates",
+  "name": {
+    "en": "Twin Gates",
+    "de": "Zwillingstore"
+  },
+  "intro": {
+    "en": "Slim the beam first, then share it. Both gates are narrow.",
+    "de": "Mach den Strahl zuerst schmal und teile ihn dann. Beide Tore sind eng."
+  },
+  "grid": {"w": 9, "h": 7},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 3, "angle": 0, "params": {"width": 0.8, "rays": 40}},
+    {"type": "wall", "x": 6, "y": 2, "params": {"w": 1, "h": 1}},
+    {"type": "slit", "x": 6, "y": 3, "angle": 0, "params": {"gap": 0.44}},
+    {"type": "wall", "x": 6, "y": 4, "params": {"w": 1, "h": 3}},
+    {"type": "wall", "x": 0, "y": 1, "params": {"w": 4, "h": 1}},
+    {"type": "slit", "x": 4, "y": 1, "angle": 90, "params": {"gap": 0.44}},
+    {"type": "wall", "x": 5, "y": 1, "params": {"w": 2, "h": 1}},
+    {"type": "sink", "x": 8, "y": 3, "params": {"required": 0.45, "radius": 0.24}},
+    {"type": "sink", "x": 4, "y": 0, "params": {"required": 0.45, "radius": 0.24}}
+  ],
+  "inventory": [
+    {"type": "lens", "count": 1, "params": {"f": 2}},
+    {"type": "lens", "count": 1, "params": {"f": -1}},
+    {"type": "splitter", "count": 1}
+  ],
+  "solution": [
+    {"type": "lens", "params": {"f": 2}, "x": 1, "y": 3, "angle": 0},
+    {"type": "lens", "params": {"f": -1}, "x": 2, "y": 3, "angle": 0},
+    {"type": "splitter", "x": 4, "y": 3, "angle": 45}
+  ]
+}

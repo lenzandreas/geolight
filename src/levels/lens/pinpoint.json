@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "id": "pinpoint",
+  "name": {
+    "en": "Pinpoint",
+    "de": "Punktgenau"
+  },
+  "intro": {
+    "en": "Two needle-thin slits and a tiny ring. Every lens has exactly one right distance.",
+    "de": "Zwei hauchdünne Spalte und ein winziger Ring. Jede Linse hat genau einen richtigen Abstand."
+  },
+  "grid": {"w": 13, "h": 7},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 3, "angle": 0, "params": {"width": 0.6, "rays": 36}},
+    {"type": "wall", "x": 4, "y": 0, "params": {"w": 1, "h": 3}},
+    {"type": "slit", "x": 4, "y": 3, "angle": 0, "params": {"gap": 0.08}},
+    {"type": "wall", "x": 4, "y": 4, "params": {"w": 1, "h": 3}},
+    {"type": "wall", "x": 8, "y": 0, "params": {"w": 1, "h": 3}},
+    {"type": "slit", "x": 8, "y": 3, "angle": 0, "params": {"gap": 0.08}},
+    {"type": "wall", "x": 8, "y": 4, "params": {"w": 1, "h": 3}},
+    {"type": "sink", "x": 12, "y": 3, "params": {"required": 0.9, "radius": 0.07}}
+  ],
+  "inventory": [
+    {"type": "lens", "count": 1, "params": {"f": 2}},
+    {"type": "lens", "count": 2, "params": {"f": 1}}
+  ],
+  "solution": [
+    {"type": "lens", "params": {"f": 2}, "x": 2, "y": 3, "angle": 0},
+    {"type": "lens", "params": {"f": 1}, "x": 6, "y": 3, "angle": 0},
+    {"type": "lens", "params": {"f": 1}, "x": 10, "y": 3, "angle": 0}
+  ]
+}

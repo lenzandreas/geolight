@@ -1,12 +1,23 @@
 # Writing levels
 
-Levels live in `src/levels/NN-name.json` and load in file-name order. The test suite checks every level automatically.
+Levels live in one folder per world, `src/levels/<world>/<id>.json`. Their order and the world tree are defined in `src/levels/worlds.json`:
+
+```json
+{ "id": "splitter", "name": { "en": "Forks", "de": "Gabelungen" }, "object": "splitter", "parents": ["mirror"], "levels": ["half-and-half", "fork", "…"] }
+```
+
+The rules, all enforced by `npm test`:
+
+- **One new piece per world.** `object` is the piece the world introduces (`mirror`, `splitter`, `lens`, `divergingLens`, `curvedMirror`, `block`, `filter`, `prism`). Every level in the world uses it, and may otherwise only use pieces introduced by the world's ancestors. Sources, targets, sensors, walls and slits are level features and can be used anywhere.
+- **At least 6 levels per world**, ordered from easy to hard.
+- Every level file is listed by exactly one world.
+
+The test suite checks every level automatically.
 
 ```json
 {
   "schema": 1,
   "id": "fork",
-  "world": 1,
   "name": { "en": "A Fork in the Beam", "de": "Gabelung" },
   "intro": { "en": "…", "de": "…" },
   "grid": { "w": 10, "h": 7 },

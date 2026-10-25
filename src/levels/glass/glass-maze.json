@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "id": "glass-maze",
+  "name": {
+    "en": "Glass Maze",
+    "de": "Glaslabyrinth"
+  },
+  "intro": {
+    "en": "Off-centre, around the corner, back to the centre, and shared. Mind the eye.",
+    "de": "Aus der Mitte, um die Ecke, zurück in die Mitte und geteilt. Achte auf das Auge."
+  },
+  "grid": {"w": 10, "h": 9},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 1, "angle": 0},
+    {"type": "wall", "x": 4, "y": 0, "params": {"w": 1, "h": 1}},
+    {"type": "slit", "x": 4, "y": 1, "angle": 0, "params": {"gap": 0.1, "offset": 0.155}},
+    {"type": "wall", "x": 4, "y": 2, "params": {"w": 1, "h": 2}},
+    {"type": "wall", "x": 0, "y": 4, "params": {"w": 6, "h": 1}},
+    {"type": "slit", "x": 6, "y": 4, "angle": 90, "params": {"gap": 0.1, "offset": 0}},
+    {"type": "wall", "x": 7, "y": 4, "params": {"w": 3, "h": 1}},
+    {"type": "sensor", "x": 3, "y": 6},
+    {"type": "sink", "x": 9, "y": 6, "params": {"required": 0.45}},
+    {"type": "sink", "x": 6, "y": 8, "params": {"required": 0.45}}
+  ],
+  "inventory": [
+    {"type": "block", "count": 2},
+    {"type": "mirror", "count": 1},
+    {"type": "splitter", "count": 1}
+  ],
+  "solution": [
+    {"type": "block", "x": 1, "y": 1, "angle": 30},
+    {"type": "block", "x": 5, "y": 1, "angle": 60},
+    {"type": "mirror", "x": 6, "y": 1, "angle": 135},
+    {"type": "splitter", "x": 6, "y": 6, "angle": 135}
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "id": "observatory",
+  "name": {
+    "en": "Observatory",
+    "de": "Sternwarte"
+  },
+  "intro": {
+    "en": "Squeeze the sunlight through the slit, gather it again, fold it around the corner, and let only red reach the tiny ring.",
+    "de": "Zwäng das Sonnenlicht durch den Spalt, sammle es wieder, lenk es um die Ecke und lass nur Rot in den winzigen Ring."
+  },
+  "grid": {"w": 11, "h": 7},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 2, "angle": 0, "params": {"width": 0.8, "rays": 40}},
+    {"type": "wall", "x": 4, "y": 0, "params": {"w": 1, "h": 2}},
+    {"type": "slit", "x": 4, "y": 2, "angle": 0, "params": {"gap": 0.14}},
+    {"type": "wall", "x": 4, "y": 3, "params": {"w": 1, "h": 4}},
+    {"type": "wall", "x": 10, "y": 0, "params": {"w": 1, "h": 7}},
+    {"type": "wall", "x": 6, "y": 5, "params": {"w": 2, "h": 2}},
+    {"type": "sensor", "x": 7, "y": 3},
+    {"type": "sink", "x": 9, "y": 5, "params": {"color": "red", "strict": true, "required": 0.27, "radius": 0.16}}
+  ],
+  "inventory": [
+    {"type": "lens", "count": 1, "params": {"f": 2}},
+    {"type": "lens", "count": 1, "params": {"f": 1.5}},
+    {"type": "mirror", "count": 1},
+    {"type": "filter", "count": 1, "params": {"color": "red"}},
+    {"type": "filter", "count": 1, "params": {"color": "green"}}
+  ],
+  "solution": [
+    {"type": "lens", "params": {"f": 2}, "x": 2, "y": 2, "angle": 0},
+    {"type": "lens", "params": {"f": 1.5}, "x": 6, "y": 2, "angle": 0},
+    {"type": "mirror", "x": 9, "y": 2, "angle": 135},
+    {"type": "filter", "params": {"color": "red"}, "x": 9, "y": 3, "angle": 90}
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "condenser",
+  "name": {
+    "en": "Condenser",
+    "de": "Kondensor"
+  },
+  "intro": {
+    "en": "A lens right next to a bulb can turn its light into a straight beam. Then send that beam far away.",
+    "de": "Eine Linse dicht an der Glühbirne macht aus ihrem Licht einen geraden Strahl. Den kannst du dann weit schicken."
+  },
+  "grid": {"w": 11, "h": 7},
+  "entities": [
+    {"type": "bulb", "x": 1, "y": 3},
+    {"type": "sink", "x": 9, "y": 3, "params": {"required": 0.1, "radius": 0.15}}
+  ],
+  "inventory": [
+    {"type": "lens", "count": 1, "params": {"f": 1}},
+    {"type": "lens", "count": 1, "params": {"f": 2}}
+  ],
+  "solution": [
+    {"type": "lens", "params": {"f": 1}, "x": 2, "y": 3, "angle": 0},
+    {"type": "lens", "params": {"f": 2}, "x": 7, "y": 3, "angle": 0}
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "gather-the-glow",
+  "name": {
+    "en": "Gather the Glow",
+    "de": "Sammle das Leuchten"
+  },
+  "intro": {
+    "en": "A bulb shines everywhere at once. A lens can gather its light into a single point.",
+    "de": "Eine Glühbirne leuchtet in alle Richtungen. Eine Linse bündelt ihr Licht auf einen Punkt."
+  },
+  "grid": {"w": 10, "h": 7},
+  "entities": [
+    {"type": "bulb", "x": 1, "y": 3},
+    {"type": "sink", "x": 8, "y": 3, "params": {"required": 0.06}}
+  ],
+  "inventory": [
+    {"type": "lens", "count": 1, "params": {"f": 1.5}}
+  ],
+  "solution": [
+    {"type": "lens", "params": {"f": 1.5}, "x": 3, "y": 3, "angle": 0}
+  ]
+}

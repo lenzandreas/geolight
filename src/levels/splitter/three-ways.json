@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "id": "three-ways",
+  "name": {
+    "en": "Three Ways",
+    "de": "Drei Wege"
+  },
+  "intro": {
+    "en": "Split a half again and each part gets a quarter. Mind how much each ring needs.",
+    "de": "Teilst du eine Hälfte noch einmal, bekommt jeder Teil ein Viertel. Achte darauf, wie viel jeder Ring braucht."
+  },
+  "grid": {"w": 10, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 3, "angle": 0},
+    {"type": "sink", "x": 9, "y": 3, "params": {"required": 0.45}},
+    {"type": "sink", "x": 6, "y": 0, "params": {"required": 0.2}},
+    {"type": "sink", "x": 8, "y": 6, "params": {"required": 0.2}},
+    {"type": "wall", "x": 3, "y": 0, "params": {"w": 1, "h": 2}},
+    {"type": "wall", "x": 3, "y": 5, "params": {"w": 1, "h": 2}}
+  ],
+  "inventory": [
+    {"type": "splitter", "count": 2},
+    {"type": "mirror", "count": 1}
+  ],
+  "solution": [
+    {"type": "splitter", "x": 6, "y": 3, "angle": 45},
+    {"type": "splitter", "x": 6, "y": 1, "angle": 45},
+    {"type": "mirror", "x": 8, "y": 1, "angle": 135}
+  ]
+}

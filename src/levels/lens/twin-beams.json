@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "id": "twin-beams",
+  "name": {
+    "en": "Twin Beams",
+    "de": "Zwillingsstrahlen"
+  },
+  "intro": {
+    "en": "Tame the bulb into one straight beam first. Then share it between two small rings.",
+    "de": "Bändige die Glühbirne zuerst zu einem geraden Strahl. Dann teile ihn zwischen zwei kleinen Ringen auf."
+  },
+  "grid": {"w": 11, "h": 8},
+  "entities": [
+    {"type": "bulb", "x": 1, "y": 3},
+    {"type": "sink", "x": 9, "y": 3, "params": {"required": 0.045, "radius": 0.15}},
+    {"type": "sink", "x": 5, "y": 7, "params": {"required": 0.045, "radius": 0.15}},
+    {"type": "wall", "x": 0, "y": 5, "params": {"w": 3, "h": 3}},
+    {"type": "wall", "x": 7, "y": 5, "params": {"w": 4, "h": 3}}
+  ],
+  "inventory": [
+    {"type": "lens", "count": 1, "params": {"f": 1}},
+    {"type": "lens", "count": 2, "params": {"f": 2}},
+    {"type": "splitter", "count": 1}
+  ],
+  "solution": [
+    {"type": "lens", "params": {"f": 1}, "x": 2, "y": 3, "angle": 0},
+    {"type": "splitter", "x": 5, "y": 3, "angle": 135},
+    {"type": "lens", "params": {"f": 2}, "x": 7, "y": 3, "angle": 0},
+    {"type": "lens", "params": {"f": 2}, "x": 5, "y": 5, "angle": 90}
+  ]
+}

@@ -2,7 +2,7 @@
 
 A calm, glowing 2D puzzle game about light. Place and rotate mirrors, lenses, prisms and filters to guide beams from lasers, light bulbs and sunlight into their targets. Avoid the sensors.
 
-- **26 levels** in five worlds: *Reflections*, *Gathering Light*, *Colours*, *Optical Tricks* and *Lens Craft*, from a one-mirror tutorial to focusing sunlight through slits, relaying it with lens chains and telescopes, taming a light bulb into a beam, and mixing colours.
+- **52 levels in 8 worlds on a star map.** Each world is a constellation that introduces exactly one new piece: mirror, beam splitter, lens, concave mirror, diverging lens, glass block, colour filter and prism. The worlds form a tree. A world opens once 4 levels of its parent are solved, and two levels are open at a time inside a world, so being stuck never blocks you completely.
 - **Daily puzzle:** a new level every day, generated from the date (the same for everyone), gentle on Mondays and trickier at the weekend, with a streak counter.
 - **Sources:** laser (a sharp beam), light bulb (diffuse light that has to be gathered), sunlight (a wide parallel band), all in any colour.
 - **Pieces:** mirror, beam splitter, converging and diverging lens, concave mirror, prism (splits white light into colours), colour filter, glass block, shade.
@@ -14,8 +14,8 @@ A calm, glowing 2D puzzle game about light. Place and rotate mirrors, lenses, pr
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173  (dev-only extras: ?solve applies a level's solution; every level is unlocked via #/level/<id>; any day's puzzle via #/daily/YYYY-MM-DD)
-npm test           # optics, session, progress and level-pack tests (every level is checked to be solvable)
+npm run dev        # http://localhost:5173  (dev-only extras: ?solve applies a level's solution; ?unlock opens the whole star map; #/level/<id> opens any level; #/daily/YYYY-MM-DD any day's puzzle)
+npm test           # optics, session, progress, world-structure and level-pack tests (every level is checked to be solvable)
 npm run build      # static site in dist/ (open from any web server or sub-path)
 npm run preview    # serve the production build
 ```
@@ -43,10 +43,10 @@ One-time setup: in the repository on GitHub, go to **Settings → Pages → Buil
 src/
   core/        headless optics engine: math, tracer, interactions, entity types, rules
   level/       level schema, validation, brute-force solver
-  levels/      the level pack: one JSON file per level
+  levels/      the level pack: one folder per world, worlds.json defines the world tree
   game/        session (placement, undo, hints) and saved progress
   render/      Canvas 2D renderer, per-type drawers, theme, view transform
-  ui/          screens (menu, level select, game, settings) and input
+  ui/          screens (menu, star map, world view, game, settings) and input
   audio/       procedural Web Audio sound effects
   i18n/        string tables (en, de)
   platform/    storage adapter and service worker template

@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "id": "newtonian",
+  "name": {
+    "en": "Newtonian",
+    "de": "Newton-Teleskop"
+  },
+  "intro": {
+    "en": "Telescopes fold light with dishes. Turn and focus the sunlight into the slit, then catch it again below.",
+    "de": "Teleskope falten Licht mit Schalen. Lenk und bündle das Sonnenlicht in den Spalt und fang es darunter wieder auf."
+  },
+  "grid": {"w": 10, "h": 9},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 1, "angle": 0, "params": {"width": 0.6, "rays": 36}},
+    {"type": "wall", "x": 0, "y": 3, "params": {"w": 7, "h": 1}},
+    {"type": "slit", "x": 7, "y": 3, "angle": 90, "params": {"gap": 0.1}},
+    {"type": "wall", "x": 8, "y": 3, "params": {"w": 2, "h": 1}},
+    {"type": "sensor", "x": 7, "y": 8},
+    {"type": "sink", "x": 6, "y": 6, "params": {"required": 0.9, "radius": 0.1}}
+  ],
+  "inventory": [
+    {"type": "curvedMirror", "count": 1, "params": {"f": 1.5}},
+    {"type": "lens", "count": 1, "params": {"f": 1}},
+    {"type": "mirror", "count": 2}
+  ],
+  "solution": [
+    {"type": "curvedMirror", "params": {"f": 1.5}, "x": 7, "y": 1, "angle": 135},
+    {"type": "lens", "params": {"f": 1}, "x": 7, "y": 5, "angle": 90},
+    {"type": "mirror", "x": 7, "y": 6, "angle": 45}
+  ]
+}

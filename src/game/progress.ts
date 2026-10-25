@@ -70,10 +70,6 @@ export class Progress {
     return n;
   }
 
-  isUnlocked(index: number, ids: string[]): boolean {
-    return index === 0 || !!this.data.levels[ids[index - 1]] || !!this.data.levels[ids[index]];
-  }
-
   updateSettings(patch: Partial<Settings>): void {
     this.data.settings = { ...this.data.settings, ...patch };
     this.save();

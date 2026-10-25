@@ -44,7 +44,8 @@ export interface SolutionStep {
 export interface LevelDef {
   schema: number;
   id: string;
-  world: number;
+  /** Unused since worlds are defined in src/levels/worlds.json; kept optional for old files. */
+  world?: number;
   name: Localized;
   /** Shown when the level starts. */
   intro?: Localized;

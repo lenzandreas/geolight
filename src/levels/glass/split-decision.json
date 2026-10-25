@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "id": "split-decision",
+  "name": {
+    "en": "Split Decision",
+    "de": "Geteilte Entscheidung"
+  },
+  "intro": {
+    "en": "Two halves, two keyholes, each off-centre in its own way.",
+    "de": "Zwei Hälften, zwei Schlüssellöcher, jedes auf seine Art aus der Mitte verschoben."
+  },
+  "grid": {"w": 9, "h": 8},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 1, "angle": 0},
+    {"type": "wall", "x": 6, "y": 0, "params": {"w": 1, "h": 1}},
+    {"type": "slit", "x": 6, "y": 1, "angle": 0, "params": {"gap": 0.1, "offset": 0.155}},
+    {"type": "wall", "x": 6, "y": 2, "params": {"w": 1, "h": 2}},
+    {"type": "sink", "x": 8, "y": 1, "params": {"required": 0.45}},
+    {"type": "wall", "x": 0, "y": 5, "params": {"w": 2, "h": 1}},
+    {"type": "slit", "x": 2, "y": 5, "angle": 90, "params": {"gap": 0.1, "offset": 0.155}},
+    {"type": "wall", "x": 3, "y": 5, "params": {"w": 3, "h": 1}},
+    {"type": "sink", "x": 2, "y": 7, "params": {"required": 0.45}}
+  ],
+  "inventory": [
+    {"type": "splitter", "count": 1},
+    {"type": "block", "count": 2}
+  ],
+  "solution": [
+    {"type": "splitter", "x": 2, "y": 1, "angle": 135},
+    {"type": "block", "x": 3, "y": 1, "angle": 30},
+    {"type": "block", "x": 2, "y": 3, "angle": 30}
+  ]
+}

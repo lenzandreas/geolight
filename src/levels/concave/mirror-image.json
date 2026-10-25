@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "mirror-image",
+  "name": {
+    "en": "Mirror Image",
+    "de": "Spiegelbild"
+  },
+  "intro": {
+    "en": "Light from a lamp, caught by a dish, meets again on the other side, like a reflection of the lamp itself.",
+    "de": "Licht einer Lampe, von einer Schale gefangen, trifft sich auf der anderen Seite wieder, wie ein Spiegelbild der Lampe."
+  },
+  "grid": {"w": 9, "h": 5},
+  "entities": [
+    {"type": "bulb", "x": 1, "y": 1},
+    {"type": "wall", "x": 0, "y": 2, "params": {"w": 2, "h": 1}},
+    {"type": "sink", "x": 1, "y": 3, "params": {"required": 0.04}}
+  ],
+  "inventory": [
+    {"type": "curvedMirror", "count": 1, "params": {"f": 1.5}}
+  ],
+  "solution": [
+    {"type": "curvedMirror", "params": {"f": 1.5}, "x": 4, "y": 2, "angle": 180}
+  ]
+}

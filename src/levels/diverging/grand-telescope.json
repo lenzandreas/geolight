@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "id": "grand-telescope",
+  "name": {
+    "en": "Grand Telescope",
+    "de": "Großes Teleskop"
+  },
+  "intro": {
+    "en": "Slim the red sunset light, steer it through both gates without waking the guard, and focus it onto the smallest ring yet.",
+    "de": "Mach das rote Abendlicht schmal, lenk es durch beide Tore, ohne die Wache zu wecken, und bündle es auf den kleinsten Ring bisher."
+  },
+  "grid": {"w": 12, "h": 8},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 1, "angle": 0, "params": {"width": 0.8, "rays": 40, "color": "red"}},
+    {"type": "wall", "x": 5, "y": 0, "params": {"w": 1, "h": 1}},
+    {"type": "slit", "x": 5, "y": 1, "angle": 0, "params": {"gap": 0.44}},
+    {"type": "wall", "x": 5, "y": 2, "params": {"w": 1, "h": 2}},
+    {"type": "sensor", "x": 10, "y": 1},
+    {"type": "wall", "x": 0, "y": 4, "params": {"w": 7, "h": 1}},
+    {"type": "slit", "x": 7, "y": 4, "angle": 90, "params": {"gap": 0.44}},
+    {"type": "wall", "x": 8, "y": 4, "params": {"w": 4, "h": 1}},
+    {"type": "sink", "x": 10, "y": 6, "params": {"color": "red", "strict": true, "required": 0.9, "radius": 0.07}}
+  ],
+  "inventory": [
+    {"type": "lens", "count": 2, "params": {"f": 2}},
+    {"type": "lens", "count": 1, "params": {"f": -1}},
+    {"type": "mirror", "count": 2}
+  ],
+  "solution": [
+    {"type": "lens", "params": {"f": 2}, "x": 1, "y": 1, "angle": 0},
+    {"type": "lens", "params": {"f": -1}, "x": 2, "y": 1, "angle": 0},
+    {"type": "mirror", "x": 7, "y": 1, "angle": 135},
+    {"type": "mirror", "x": 7, "y": 6, "angle": 135},
+    {"type": "lens", "params": {"f": 2}, "x": 8, "y": 6, "angle": 0}
+  ]
+}

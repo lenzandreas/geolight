@@ -47,6 +47,16 @@ The **solver** searches placements, but only on cells the light currently crosse
 2. its reference solution wins with 3 stars,
 3. multi-piece levels can't be cheesed with a single piece.
 
+### Worlds and progression (`src/level/worlds.ts`, `src/game/campaign.ts`)
+
+Worlds form a tree defined in `src/levels/worlds.json`. Each world introduces one piece and lists its levels in order. `Campaign` holds the progression rules over "is this level solved?", independent of storage and UI:
+
+- a world opens once each parent world has 4 levels solved (`UNLOCK_AFTER`),
+- inside an open world, at most 2 unsolved levels are open at once (`OPEN_LEVELS`), so one level can be skipped,
+- `next()` suggests the next level, preferring the current world.
+
+The star map (`src/ui/mapScreens.ts`) draws the tree with a tidy-tree layout and each world as a constellation, whose star layout is generated from the world's id (`src/ui/constellation.ts`).
+
 ### Daily puzzle (`src/level/daily.ts`)
 
 A seeded generator turns the date into a level. It walks a laser path with right-angle turns, puts a mirror at each turn and a sink at the end, then hides the mirrors in the tray (or bolts some down at a wrong angle). Depending on the weekday it also adds sensors, splitters with a second sink, decoy pieces and walls. Every candidate is verified (unsolved at the start, solved by its own path, no one-piece shortcut) before it is used, and the same date always produces the same puzzle.
@@ -80,7 +90,8 @@ This is the headless state of one attempt: pieces, tray counts, snapshot undo/re
 | a new object (e.g. portal, polariser, grating) | register an `EntityType` in `core/entities`, a drawer in `render/drawers.ts`, and a name in `i18n` |
 | new physics | write an `Interaction` in `core/interactions.ts` |
 | a new game mode or win condition | `registerGoal('name', rule)` and set `"goal": { "type": "name" }` in a level |
-| a level | drop a JSON file into `src/levels/` (see `docs/LEVELS.md`); tests check it automatically |
+| a level | drop a JSON file into its world folder and list it in `src/levels/worlds.json` (see `docs/LEVELS.md`); tests check it automatically |
+| a world | add a folder and an entry in `worlds.json` with its new piece and parent(s); the star map lays it out automatically |
 | a language | add `i18n/<lang>.ts` and register it in `LANGUAGES` |
 | a theme | create another `Theme` object (`render/theme.ts`) |
 | a platform (app stores) | wrap `dist/` with Capacitor or Tauri and swap `platform/storage.ts` if needed |

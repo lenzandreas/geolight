@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "id": "bend",
+  "name": {
+    "en": "Bend",
+    "de": "Knick"
+  },
+  "intro": {
+    "en": "A beam through the middle of a lens goes straight on. Off-centre, it bends. Nudge it off-centre first.",
+    "de": "Ein Strahl durch die Mitte einer Linse läuft geradeaus. Außerhalb der Mitte knickt er ab. Schubs ihn erst aus der Mitte."
+  },
+  "grid": {"w": 12, "h": 6},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 3, "angle": 0},
+    {"type": "wall", "x": 6, "y": 0, "params": {"w": 1, "h": 2}},
+    {"type": "wall", "x": 6, "y": 4, "params": {"w": 1, "h": 2}},
+    {"type": "sensor", "x": 11, "y": 3},
+    {"type": "sink", "x": 10, "y": 2, "params": {"radius": 0.2}}
+  ],
+  "inventory": [
+    {"type": "block", "count": 1},
+    {"type": "lens", "count": 1, "params": {"f": 1}}
+  ],
+  "solution": [
+    {"type": "block", "x": 1, "y": 3, "angle": 30},
+    {"type": "lens", "params": {"f": 1}, "x": 3, "y": 3, "angle": 0}
+  ]
+}
