@@ -38,6 +38,8 @@ const GLOW_DOWNSCALE = 5;
 /** Paths emitted weaker than this (fractions of a diffuse source) are drawn as glow only. */
 const STRONG_RAY = 0.02;
 const WEAK_LAYERS = 24;
+/** Blur (CSS px) applied when the glow layer is scaled up, so halos fade out instead of stepping. */
+const GLOW_BLUR = 3;
 
 export class Renderer {
   readonly view = new View();
@@ -163,7 +165,10 @@ export class Renderer {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
+    // Browsers without canvas filters (Safari before 18) ignore this and keep the plain upscale.
+    ctx.filter = `blur(${GLOW_BLUR * this.dpr}px)`;
     ctx.drawImage(this.glow, 0, 0, this.beams.width, this.beams.height);
+    ctx.filter = 'none';
     this.view.apply(ctx, this.dpr);
     if (this.quality === 'high') stroke(ctx, 'strong', 0.1, 0.12, 0.15);
     stroke(ctx, 'strong', 0.045, 0.85, 0.6);
