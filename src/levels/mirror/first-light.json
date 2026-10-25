@@ -9,6 +9,7 @@
     "en": "Drag the mirror into the beam, then tap it to turn it. Guide the light into the glowing ring.",
     "de": "Zieh den Spiegel in den Strahl und tippe ihn an, um ihn zu drehen. Lenke das Licht in den leuchtenden Ring."
   },
+  "introOnStart": true,
   "grid": {"w": 8, "h": 5},
   "entities": [
     {"type": "laser", "x": 0, "y": 1, "angle": 0},
