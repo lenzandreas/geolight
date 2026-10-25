@@ -233,10 +233,12 @@ export class Renderer {
     }
 
     const need = (e: Entity) => param<number>(e, getType('sink'), 'required');
-    const hungriest = Math.max(0, ...s.pieces.filter((e) => e.type === 'sink').map(need));
+    const needs = s.pieces.filter((e) => e.type === 'sink').map(need);
+    const hungriest = Math.max(0, ...needs);
+    const varied = hungriest > 0 && Math.min(...needs) < hungriest - 1e-9;
     for (const e of s.pieces) {
       if (e.type === 'wall') continue;
-      const demand = e.type === 'sink' && hungriest > 0 ? need(e) / hungriest : 1;
+      const demand = e.type === 'sink' && varied ? need(e) / hungriest : undefined;
       getDrawer(e.type)?.(e, { ctx, theme: t, time, status: s.statuses.get(e.id), demand });
     }
 
