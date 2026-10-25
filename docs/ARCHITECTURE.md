@@ -35,7 +35,7 @@ Each layer depends only on the layers below it. `core`, `level` and `game` never
   - `field(e)` (black holes): a gravity field that bends passing light,
   - `isOpen(e, powered)` (gates): switchable structures that drop their surfaces while open,
   - metadata: category, defaults, rotational `symmetry`, `footprint`.
-- **Interaction:** what happens when a ray hits a surface: `absorb`, `mirror`, `splitter`, `filter`, `thinOptic` (an ideal lens or curved mirror, using the paraxial `slope −= h/f`), `refract` (Snell's law with total internal reflection and per-channel dispersion), `receiver` (targets). New physics means writing a new interaction.
+- **Interaction:** what happens when a ray hits a surface: `absorb`, `mirror`, `splitter`, `filter`, `thinOptic` (an ideal lens or curved mirror, using the paraxial `slope −= h/f`), `refract` (Snell's law with total internal reflection and per-channel dispersion), `polarize` (Malus's law), `grating` (the grating equation per colour, with each channel standing for one wavelength), `receiver` (targets). New physics means writing a new interaction.
 - **Light** is power per R/G/B channel plus an optional polarization axis. Filters multiply channels; polarizers apply Malus's law and set the axis; other optics keep it. The tracer also records each packet a receiver absorbs, so targets can ask for a polarization. Prisms split multi-channel rays into one ray per channel. The tracer is iterative (a stack, no recursion) and limited by depth, minimum power and segment count, so mirror loops can't hang it.
 - **Gravity:** inside a field's reach, light moves in short straight steps (a tenth of its distance to the centre) and turns after each one, so beams curve smoothly and still interact with everything they pass. Each step turns the ray by `rs·b/r³` per unit length, which over a straight pass adds up to the general-relativity deflection `2·rs/b`; on close passes the bent path dips closer and turns further, as in reality. Light that comes within the shadow (2.6·rs) is swallowed.
 - **Gates:** the tracer starts with every gate shut, traces, opens the gates whose photocells are powered and traces again until nothing changes. Opening a gate only adds light, so this ends after at most one extra trace per gate and gives the one consistent state.
@@ -74,7 +74,7 @@ This is the headless state of one attempt: pieces, tray counts, snapshot undo/re
 - Canvas 2D with the device pixel ratio capped at 2 (1.25 on "low" quality).
 - **Cached layers:** the board background is redrawn only on resize. The beam layer is redrawn only when the traced light changes.
 - **Beams:** segments are batched into a handful of `Path2D`s by colour and brightness. The bloom comes from strokes drawn into a 1/5-resolution canvas, upscaled with a light blur so the halos fade out smoothly. This happens only when the light changes and costs almost nothing.
-- **Diffuse light:** hundreds of weak rays are spread over 24 interleaved paths, so where rays crowd together (near a bulb, at a focus) they really do get brighter.
+- **Diffuse light:** hundreds of weak rays are added up in a floating-point buffer at glow resolution (each ray deposits its power along its length), smeared to the ray width and mapped to pixels once with a soft curve. Where rays crowd together (near a bulb, at a focus) they really do get brighter, and since nothing is rounded per ray there are no spikes, stripes or moiré.
 - **On-demand frames:** a `requestAnimationFrame` loop runs only while something animates (rotation tweens, meters filling, the win celebration) and then stops.
 - Portrait screens get the board rotated by 90°, so cells stay large on phones. Input goes through the same view transform.
 - Visuals live in `drawers.ts`, keyed by entity type and separate from physics. A new art style or a WebGL renderer can replace them.
@@ -91,7 +91,7 @@ This is the headless state of one attempt: pieces, tray counts, snapshot undo/re
 
 | To add… | Do this |
 | --- | --- |
-| a new object (e.g. portal, polariser, grating) | register an `EntityType` in `core/entities`, a drawer in `render/drawers.ts`, and a name in `i18n` |
+| a new object (e.g. wave plate, phosphor, corner reflector) | register an `EntityType` in `core/entities`, a drawer in `render/drawers.ts`, and a name in `i18n` |
 | new physics | write an `Interaction` in `core/interactions.ts` |
 | a new game mode or win condition | `registerGoal('name', rule)` and set `"goal": { "type": "name" }` in a level |
 | a level | drop a JSON file into its world folder and list it in `src/levels/worlds.json` (see `docs/LEVELS.md`); tests check it automatically |

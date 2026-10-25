@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "id": "colour-lock",
+  "name": {
+    "en": "Colour Lock",
+    "de": "Farbschloss"
+  },
+  "intro": {
+    "en": "Half for the lock, a quarter each for red and green.",
+    "de": "Die Hälfte fürs Schloss, je ein Viertel für Rot und Grün."
+  },
+  "grid": {"w": 11, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 3, "angle": 0},
+    {"id": "p", "type": "photocell", "x": 2, "y": 0, "params": {"required": 0.3}},
+    {"type": "gate", "x": 5, "y": 0, "params": {"h": 7, "by": "p"}},
+    {"type": "sink", "x": 7, "y": 0, "params": {"color": "red", "strict": true, "required": 0.08}},
+    {"type": "sink", "x": 10, "y": 3, "params": {"color": "green", "strict": true, "required": 0.08}}
+  ],
+  "inventory": [
+    {"type": "splitter", "count": 2},
+    {"type": "filter", "count": 1, "params": {"color": "red"}},
+    {"type": "filter", "count": 1, "params": {"color": "green"}}
+  ],
+  "solution": [
+    {"type": "splitter", "x": 2, "y": 3, "angle": 45},
+    {"type": "splitter", "x": 7, "y": 3, "angle": 45},
+    {"type": "filter", "params": {"color": "red"}, "x": 7, "y": 2, "angle": 90},
+    {"type": "filter", "params": {"color": "green"}, "x": 8, "y": 3, "angle": 0}
+  ]
+}

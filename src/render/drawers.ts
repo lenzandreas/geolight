@@ -404,6 +404,28 @@ registerDrawer('filter', (e, { ctx, theme }) => {
   });
 });
 
+registerDrawer('grating', (e, { ctx, theme }) => {
+  local(e, ctx, () => {
+    // A thin glass plate with fine rulings and a faint rainbow sheen along it.
+    roundRect(ctx, -0.05, -H, 0.1, THIN_LEN, 0.04);
+    const g = ctx.createLinearGradient(0, -H, 0, H);
+    theme.channels.forEach((c, i) => g.addColorStop(i / 2, rgba(c, 0.35)));
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = theme.glassEdge;
+    ctx.lineWidth = 0.02;
+    ctx.stroke();
+    ctx.strokeStyle = rgba([235, 240, 255], 0.55);
+    ctx.lineWidth = 0.012;
+    ctx.beginPath();
+    for (let y = -H + 0.06; y < H - 0.03; y += 0.055) {
+      ctx.moveTo(-0.035, y);
+      ctx.lineTo(0.035, y);
+    }
+    ctx.stroke();
+  });
+});
+
 registerDrawer('lens', (e, { ctx, theme }) => {
   const f = param<number>(e, getType('lens'), 'f');
   local(e, ctx, () => {

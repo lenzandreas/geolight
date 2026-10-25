@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "id": "wide-open",
+  "name": {
+    "en": "Wide Open",
+    "de": "Weit offen"
+  },
+  "intro": {
+    "en": "Both solar cells must catch the same thin sunbeam. Spread it, then gather what passes the gate.",
+    "de": "Beide Solarzellen müssen denselben schmalen Sonnenstrahl fangen. Weite ihn auf und sammle dann, was durchs Tor kommt."
+  },
+  "grid": {"w": 11, "h": 9},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 4, "angle": 0, "params": {"width": 1, "rays": 40}},
+    {"id": "a", "type": "photocell", "x": 7, "y": 2, "params": {"required": 0.1}},
+    {"id": "b", "type": "photocell", "x": 7, "y": 6, "params": {"required": 0.1}},
+    {"type": "gate", "x": 8, "y": 0, "params": {"h": 9, "by": ["a", "b"]}},
+    {"type": "sink", "x": 10, "y": 4, "params": {"required": 0.25}}
+  ],
+  "inventory": [
+    {"type": "lens", "count": 1, "params": {"f": -1}},
+    {"type": "lens", "count": 1, "params": {"f": 2}},
+    {"type": "mirror", "count": 1}
+  ],
+  "solution": [
+    {"type": "lens", "params": {"f": -1}, "x": 3, "y": 4, "angle": 0},
+    {"type": "lens", "params": {"f": 2}, "x": 5, "y": 4, "angle": 0}
+  ]
+}

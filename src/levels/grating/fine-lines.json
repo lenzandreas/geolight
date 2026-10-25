@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "fine-lines",
+  "name": {
+    "en": "Fine Lines",
+    "de": "Feine Linien"
+  },
+  "intro": {
+    "en": "A grating is ruled with a thousand lines per millimetre. Light leaves it in three beams: one straight on, and one to each side, split into colours.",
+    "de": "Ein Gitter trägt tausend feine Linien pro Millimeter. Licht verlässt es in drei Strahlen: einer geradeaus und je einer zur Seite, in Farben zerlegt."
+  },
+  "grid": {"w": 10, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 3, "angle": 0},
+    {"type": "sink", "x": 7, "y": 6, "params": {"color": "green", "strict": true, "required": 0.1}}
+  ],
+  "inventory": [
+    {"type": "grating", "count": 1}
+  ],
+  "solution": [
+    {"type": "grating", "x": 2, "y": 3, "angle": 0}
+  ]
+}

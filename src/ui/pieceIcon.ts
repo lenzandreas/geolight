@@ -3,7 +3,7 @@ import { getDrawer } from '../render/drawers';
 import type { Theme } from '../render/theme';
 
 /** Default facing for new pieces, chosen so they visibly do something when dropped. */
-export const DEFAULT_ANGLE: Record<string, number> = { mirror: 45, splitter: 45, curvedMirror: 180, prism: 0 };
+export const DEFAULT_ANGLE: Record<string, number> = { mirror: 45, splitter: 45, curvedMirror: 180, prism: 0, grating: 0 };
 
 /** Render a piece into a small canvas for the tray, reusing the board drawers. */
 export function pieceIcon(type: string, params: Record<string, unknown>, theme: Theme, size = 44): HTMLCanvasElement {

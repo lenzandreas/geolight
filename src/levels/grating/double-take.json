@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "id": "double-take",
+  "name": {
+    "en": "Double Take",
+    "de": "Doppelt gebeugt"
+  },
+  "intro": {
+    "en": "A side beam that meets a second grating splits again. Only light diffracted twice can reach this ring.",
+    "de": "Ein Seitenstrahl, der auf ein zweites Gitter trifft, teilt sich erneut. Nur zweimal gebeugtes Licht erreicht diesen Ring."
+  },
+  "grid": {"w": 11, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 3, "angle": 0},
+    {"type": "wall", "x": 5, "y": 0, "params": {"w": 1, "h": 2}},
+    {"type": "wall", "x": 5, "y": 5, "params": {"w": 1, "h": 2}},
+    {"type": "sink", "x": 5, "y": 2, "params": {"color": "green", "strict": true, "required": 0.03}}
+  ],
+  "inventory": [
+    {"type": "grating", "count": 2}
+  ],
+  "solution": [
+    {"type": "grating", "x": 1, "y": 3, "angle": 15},
+    {"type": "grating", "x": 3, "y": 2, "angle": 120}
+  ]
+}

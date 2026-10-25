@@ -131,6 +131,41 @@ export function polarize(centre: Vec, axis: number): Interaction {
   };
 }
 
+/** Wavelength in nanometres that stands for each light channel (red, green, blue). */
+export const WAVELENGTH: RGB = [650, 530, 450];
+
+/**
+ * Transmission diffraction grating with `spacing` nanometres between lines. Light
+ * leaves in three orders: straight on (m = 0, all colours together) and to either side
+ * (m = ±1), where each colour follows the grating equation sin θ = sin θᵢ + m·λ/spacing,
+ * so red turns the most. Each order carries a third of the light; an order that can't
+ * exist (|sin θ| > 1) gives its share to the straight beam, so no light is lost.
+ */
+export function grating(spacing: number): Interaction {
+  return (ray, hit, ctx) => {
+    const n = surfaceNormal(hit.surface);
+    const t = { x: -n.y, y: n.x };
+    const side = Math.sign(dot(ray.d, n)) || 1;
+    const along = dot(ray.d, t);
+    const straight: RGB = [ray.c[0] / 3, ray.c[1] / 3, ray.c[2] / 3];
+    for (let ch = 0; ch < 3; ch++) {
+      if (ray.c[ch] <= 0) continue;
+      for (const m of [-1, 1]) {
+        const s = along + (m * WAVELENGTH[ch]) / spacing;
+        if (Math.abs(s) >= 1) {
+          straight[ch] += ray.c[ch] / 3;
+          continue;
+        }
+        const c: RGB = [0, 0, 0];
+        c[ch] = ray.c[ch] / 3;
+        const k = Math.sqrt(1 - s * s) * side;
+        ctx.emit(ray, hit.point, { x: n.x * k + t.x * s, y: n.y * k + t.y * s }, c);
+      }
+    }
+    ctx.emit(ray, hit.point, ray.d, straight);
+  };
+}
+
 /** Absorbs and reports light to the owning entity (sinks, sensors, solar cells...). */
 export function receiver(entity: Entity): Interaction {
   return (ray, _hit, ctx) => ctx.receive(entity, ray.c, ray);
