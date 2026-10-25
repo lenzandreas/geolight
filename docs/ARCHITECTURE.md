@@ -69,7 +69,7 @@ This is the headless state of one attempt: pieces, tray counts, snapshot undo/re
 
 - Canvas 2D with the device pixel ratio capped at 2 (1.25 on "low" quality).
 - **Cached layers:** the board background is redrawn only on resize. The beam layer is redrawn only when the traced light changes.
-- **Beams:** segments are batched into a handful of `Path2D`s by colour and brightness. The bloom comes from strokes drawn into a 1/5-resolution canvas and upscaled. This is a soft blur that works on every browser and costs almost nothing.
+- **Beams:** segments are batched into a handful of `Path2D`s by colour and brightness. The bloom comes from strokes drawn into a 1/5-resolution canvas, upscaled with a light blur so the halos fade out smoothly. This happens only when the light changes and costs almost nothing.
 - **Diffuse light:** hundreds of weak rays are spread over 24 interleaved paths, so where rays crowd together (near a bulb, at a focus) they really do get brighter.
 - **On-demand frames:** a `requestAnimationFrame` loop runs only while something animates (rotation tweens, meters filling, the win celebration) and then stops.
 - Portrait screens get the board rotated by 90°, so cells stay large on phones. Input goes through the same view transform.

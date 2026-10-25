@@ -6,7 +6,8 @@ import { power } from '../core/color';
 import { centre } from '../core/entities/shapes';
 import type { TargetStatus } from '../core/rules';
 import type { TraceResult } from '../core/tracer';
-import type { Entity } from '../core/types';
+import { getType } from '../core/registry';
+import { param, type Entity } from '../core/types';
 import { getDrawer, roundRect } from './drawers';
 import { lightColor, rgba, type Theme } from './theme';
 import { View } from './view';
@@ -37,6 +38,8 @@ const GLOW_DOWNSCALE = 5;
 /** Paths emitted weaker than this (fractions of a diffuse source) are drawn as glow only. */
 const STRONG_RAY = 0.02;
 const WEAK_LAYERS = 24;
+/** Blur (CSS px) applied when the glow layer is scaled up, so halos fade out instead of stepping. */
+const GLOW_BLUR = 3;
 
 export class Renderer {
   readonly view = new View();
@@ -162,7 +165,10 @@ export class Renderer {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
+    // Browsers without canvas filters (Safari before 18) ignore this and keep the plain upscale.
+    ctx.filter = `blur(${GLOW_BLUR * this.dpr}px)`;
     ctx.drawImage(this.glow, 0, 0, this.beams.width, this.beams.height);
+    ctx.filter = 'none';
     this.view.apply(ctx, this.dpr);
     if (this.quality === 'high') stroke(ctx, 'strong', 0.1, 0.12, 0.15);
     stroke(ctx, 'strong', 0.045, 0.85, 0.6);
@@ -231,9 +237,14 @@ export class Renderer {
       ctx.setLineDash([]);
     }
 
+    const need = (e: Entity) => param<number>(e, getType('sink'), 'required');
+    const needs = s.pieces.filter((e) => e.type === 'sink').map(need);
+    const hungriest = Math.max(0, ...needs);
+    const varied = hungriest > 0 && Math.min(...needs) < hungriest - 1e-9;
     for (const e of s.pieces) {
       if (e.type === 'wall') continue;
-      getDrawer(e.type)?.(e, { ctx, theme: t, time, status: s.statuses.get(e.id) });
+      const demand = e.type === 'sink' && varied ? need(e) / hungriest : undefined;
+      getDrawer(e.type)?.(e, { ctx, theme: t, time, status: s.statuses.get(e.id), demand });
     }
 
     if (s.floating) {

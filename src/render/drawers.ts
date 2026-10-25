@@ -16,6 +16,11 @@ export interface DrawContext {
   /** Seconds, for gentle idle animation (0 when motion is reduced). */
   time: number;
   status?: TargetStatus;
+  /**
+   * Sinks: this sink's requirement as a share of the largest one on the board
+   * (1 = the hungriest). Left out when every sink needs the same.
+   */
+  demand?: number;
 }
 
 export type Drawer = (e: Entity, d: DrawContext) => void;
@@ -175,7 +180,7 @@ registerDrawer('sun', (e, { ctx, theme }) => {
 
 /* ---------- Targets ---------- */
 
-registerDrawer('sink', (e, { ctx, theme, time, status }) => {
+registerDrawer('sink', (e, { ctx, theme, time, status, demand }) => {
   const t = getType('sink');
   const c = centre(e);
   const r = param<number>(e, t, 'radius');
@@ -191,17 +196,21 @@ registerDrawer('sink', (e, { ctx, theme, time, status }) => {
   ctx.arc(c.x, c.y, r, 0, Math.PI * 2);
   ctx.fillStyle = theme.sinkWell;
   ctx.fill();
-  // Track and progress arc.
-  ctx.lineWidth = 0.06;
-  ctx.strokeStyle = rgba(col, 0.38);
+  // Track and progress arc. When sinks need different amounts the band is a "tank":
+  // its thickness grows inwards with the requirement, the outer edge stays put.
+  const band = demand === undefined ? 0.06 : Math.max(0.03, 0.13 * demand);
+  const rb = r + 0.03 - band / 2;
+  const top = -Math.PI / 2;
+  ctx.lineWidth = band;
+  ctx.strokeStyle = rgba(col, demand === undefined ? 0.38 : 0.3);
   ctx.beginPath();
-  ctx.arc(c.x, c.y, r, 0, Math.PI * 2);
+  ctx.arc(c.x, c.y, rb, 0, Math.PI * 2);
   ctx.stroke();
   if (progress > 0.001) {
     ctx.strokeStyle = rgba(col, ok ? 1 : 0.85);
-    ctx.lineCap = 'round';
+    ctx.lineCap = band > 0.07 ? 'butt' : 'round';
     ctx.beginPath();
-    ctx.arc(c.x, c.y, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * progress);
+    ctx.arc(c.x, c.y, rb, top, top + Math.PI * 2 * progress);
     ctx.stroke();
     ctx.lineCap = 'butt';
   }

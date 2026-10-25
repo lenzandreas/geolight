@@ -76,4 +76,5 @@ Colours can be names (`white`, `red`, `green`, `blue`, `yellow`, `cyan`, `magent
 1. Give the level a reference `solution`. Steps with `type` place tray pieces; steps with `id` turn pre-placed ones. Hints reveal it one step at a time.
 2. Run `npm test`. It checks that the level is unsolved at the start, that the solution wins with 3 stars, and that multi-piece levels can't be solved with a single piece.
 3. Use `npm run dev` and open `#/level/<id>` (add `?solve` to see the solution) to check that it looks right.
-4. For diffuse sources (bulbs), choose `required` values from experiment. The solver API (`src/level/solver.ts`) helps there: rings show progress relative to `required`.
+4. If sinks need different amounts, players see it: each ring's band is drawn as thick as its `required`, relative to the largest one on the board.
+5. For diffuse sources (bulbs), choose `required` values from experiment. The solver API (`src/level/solver.ts`) helps there: rings show progress relative to `required`.
