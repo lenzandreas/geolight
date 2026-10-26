@@ -16,6 +16,7 @@ A calm, glowing 2D puzzle game about light. Place and rotate mirrors, lenses, pr
 npm install
 npm run dev        # http://localhost:5173  (dev-only extras: ?solve applies a level's solution; ?unlock opens the whole star map; #/level/<id> opens any level; #/daily/YYYY-MM-DD any day's puzzle)
 npm test           # optics, session, progress, world-structure and level-pack tests (every level is checked to be solvable)
+npm run report     # level report: how many perfect solutions each level has, and whether any beats par (slow)
 npm run build      # static site in dist/ (open from any web server or sub-path)
 npm run preview    # serve the production build
 ```

@@ -34,6 +34,8 @@ export const en = {
   hintShown: 'The ghost shows where a piece belongs.',
   solved: 'Solved!',
   solvedText: 'The light found its way.',
+  parMissed: 'It can be done with {n} pieces. Can you find how?',
+  parMissedOne: 'It can be done with a single piece. Can you find how?',
   next: 'Next level',
   replay: 'Play again',
   allDone: 'You lit every level. More light coming soon!',

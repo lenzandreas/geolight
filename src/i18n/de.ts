@@ -36,6 +36,8 @@ export const de: Strings = {
   hintShown: 'Der Schatten zeigt, wohin ein Teil gehört.',
   solved: 'Geschafft!',
   solvedText: 'Das Licht hat seinen Weg gefunden.',
+  parMissed: 'Es geht auch mit {n} Teilen. Findest du heraus, wie?',
+  parMissedOne: 'Es geht auch mit einem einzigen Teil. Findest du heraus, wie?',
   next: 'Nächstes Level',
   replay: 'Nochmal',
   allDone: 'Du hast jedes Level erleuchtet. Bald gibt es mehr Licht!',

@@ -6,23 +6,23 @@
     "de": "Lila Regen"
   },
   "intro": {
-    "en": "Violet is red and blue, the two ends of the rainbow. Green has no business here, least of all in the eye.",
-    "de": "Violett ist Rot und Blau, die beiden Enden des Regenbogens. Grün hat hier nichts verloren, schon gar nicht im Auge."
+    "en": "Violet is red and blue, the two ends of the rainbow. Green has no business here, least of all in the eye. Does the rainbow really need a filter to lose its middle?",
+    "de": "Violett ist Rot und Blau, die beiden Enden des Regenbogens. Grün hat hier nichts verloren, schon gar nicht im Auge. Braucht der Regenbogen wirklich einen Filter, um seine Mitte loszuwerden?"
   },
-  "grid": {"w": 11, "h": 9},
+  "grid": {"w": 6, "h": 6},
+  "par": 2,
   "entities": [
     {"type": "laser", "x": 1, "y": 1, "angle": 0},
     {"type": "prism", "x": 2, "y": 1, "angle": 45},
     {"type": "sink", "x": 3, "y": 1, "params": {"color": "magenta", "each": true, "strict": true, "required": 0.6}},
-    {"type": "sensor", "x": 7, "y": 5}
+    {"type": "sensor", "x": 4, "y": 2}
   ],
   "inventory": [
     {"type": "mirror", "count": 2},
     {"type": "filter", "count": 1, "params": {"color": "magenta"}}
   ],
   "solution": [
-    {"type": "mirror", "x": 6, "y": 3, "angle": 30},
-    {"type": "mirror", "x": 4, "y": 3, "angle": 60},
-    {"type": "filter", "params": {"color": "magenta"}, "x": 5, "y": 3, "angle": 30}
+    {"type": "mirror", "x": 3, "y": 2, "angle": 45},
+    {"type": "mirror", "x": 2, "y": 0, "angle": 60}
   ]
 }

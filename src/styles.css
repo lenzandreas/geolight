@@ -779,6 +779,9 @@ button {
 .star-btn .mini-stars span {
   font-size: 0.7rem;
 }
+.win-par {
+  font-size: 0.9rem;
+}
 .win-news {
   color: var(--accent-strong) !important;
   font-weight: 600;

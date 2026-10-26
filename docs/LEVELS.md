@@ -83,3 +83,24 @@ Colours can be names (`white`, `red`, `green`, `blue`, `yellow`, `cyan`, `magent
 4. Black holes act at a distance, so the solver also tries them next to lit cells. Levels with sunlight or bulbs plus black holes trace slowly; keep their trays small.
 5. If sinks need different amounts, players see it: each ring's band is drawn as thick as its `required`, relative to the largest one on the board.
 6. For diffuse sources (bulbs), choose `required` values from experiment. The solver API (`src/level/solver.ts`) helps there: rings show progress relative to `required`.
+7. Run `REPORT_LEVELS=<id> npm run report` (see below) to see how loose the level is.
+
+## The level report
+
+`npm run report` runs the solver on every laser level (or the ones in `REPORT_LEVELS=a,b`) and prints how many perfect solutions each has, the fewest pieces any solution needs, and how many traces the solver needed to find the first one. It flags:
+
+- **BEATS-PAR**: a solution needs fewer pieces than par, so the level is easier than intended (and some tray piece is never needed).
+- **LOOSE**: 10 or more perfect layouts, so almost any reasonable try works. A layout is where the pieces go, ignoring their angles. A piece that can sit anywhere along a straight stretch of beam (a glass block, a polarizer) still counts once per cell, so read a LOOSE level's solutions before tightening it.
+- **PARTIAL / UNSOLVED**: the search budget ran out (raise it with `REPORT_NODES`), so the counts are lower bounds.
+
+Early levels in a world can be loose. For the later ones, aim for one to three perfect solutions.
+
+## Making levels challenging
+
+A level gets harder when the first idea a player has almost works, not when the board gets bigger. Some techniques that work with the existing pieces:
+
+- **Decoys and a tight par.** Put pieces in the tray that the 3-star solution doesn't use, and set `par`. The obvious route then wins with 2 stars, and the win card tells players that fewer pieces are enough (`colour-keys`, `purple-rain`).
+- **A piece used in an unexpected way.** A grating turned steeply loses one rainbow, and that light goes into the straight beam (`white-stays-white`). Light can go back through a prism a second time (`purple-rain`). Other examples: a single-colour laser through a prism or grating as a mirror at an odd angle, or a black hole that swings a beam right round.
+- **Exact amounts.** Choose `required` so that only one way of splitting the light reaches it (½, ¼, ⅑, cos²), and use `each` and `strict` so that nearly right fails.
+- **Pre-placed pieces as misdirection.** Use `rotate` pieces that start at a tempting angle, and `free` pieces that have to be moved (the solver only turns pre-placed pieces, so check those levels by hand).
+- **Narrow approaches.** Put photocells and rings in niches between walls, so that only one beam direction reaches them. This cuts the number of solutions more than extra walls in open space.

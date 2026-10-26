@@ -338,6 +338,9 @@ export class GameScreen {
       starRow.append(s);
     }
     const info = this.opts.winCard();
+    // Tell players why a star is missing when they used more pieces than needed (decoys in the tray make this common).
+    const { par, placedCount } = this.session;
+    const parNote = par > 0 && placedCount > par ? (par === 1 ? t('parMissedOne') : t('parMissed', { n: par })) : null;
     const next = h('button', { class: 'btn primary', type: 'button' }, info.nextLabel);
     next.addEventListener('click', () => info.next());
     const card = h(
@@ -346,6 +349,7 @@ export class GameScreen {
       h('h2', { id: 'win-title' }, t('solved')),
       starRow,
       h('p', {}, info.text),
+      parNote ? h('p', { class: 'win-par' }, parNote) : null,
       info.news ? h('p', { class: 'win-news' }, info.news) : null,
       h('div', { class: 'card-actions' }, h('button', { class: 'btn', type: 'button', onclick: () => this.opts.onReplay() }, t('replay')), next),
     );
