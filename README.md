@@ -2,7 +2,7 @@
 
 A calm, glowing 2D puzzle game about light. Place and rotate mirrors, lenses, prisms and filters to guide beams from lasers, light bulbs and sunlight into their targets. Avoid the sensors.
 
-- **83 levels in 11 worlds on a star map.** Each world is a constellation that introduces exactly one new piece: mirror, beam splitter, lens, concave mirror, diverging lens, glass block, colour filter, prism, polarizer, black hole and diffraction grating. The worlds form a tree. A world opens once 4 levels of each parent are solved, and two levels are open at a time inside a world, so being stuck never blocks you completely. Three worlds need several parents at once and combine their pieces: *Polarity* (polarizers, including the famous three-polarizer paradox), *Event Horizon* (black holes that bend light along curved paths, with gravitational lensing, Einstein rings and twin holes whose pulls cancel) and *Spectra* (diffraction gratings that split one beam into three and bend red the most, the reverse of a prism).
+- **83 levels in 11 worlds on a star map.** Each world is a constellation that introduces exactly one new piece: mirror, beam splitter, lens, concave mirror, diverging lens, glass block, colour filter, prism, polarizer, black hole and diffraction grating. The worlds form a tree. A world opens once 4 levels of each parent are solved, and two levels are open at a time inside a world, so being stuck never blocks you completely. Two worlds need several parents at once and combine their pieces: *Polarity* (polarizers, including the famous three-polarizer paradox) and *Event Horizon* (black holes that bend light along curved paths, with gravitational lensing, Einstein rings and twin holes whose pulls cancel). *Spectra* follows the prisms with diffraction gratings, which split one beam into three and bend red the most, the reverse of a prism.
 - **Daily puzzle:** a new level every day, generated from the date (the same for everyone), gentle on Mondays and trickier at the weekend, with a streak counter.
 - **Sources:** laser (a sharp beam), light bulb (diffuse light that has to be gathered), sunlight (a wide parallel band), all in any colour.
 - **Pieces:** mirror, beam splitter, converging and diverging lens, concave mirror, prism (splits white light into colours), colour filter, glass block, polarizer, black hole (bends passing light, swallows what comes too close), diffraction grating (one beam in, three out: straight on, plus a rainbow to each side), shade.
@@ -35,7 +35,7 @@ One-time setup: in the repository on GitHub, go to **Settings → Pages → Buil
 | Rotate | click a selected piece, scroll wheel, right click, or drag the round handle | tap a selected piece, or drag the handle | Q / E |
 | Return to the tray | drag onto the tray | drag onto the tray | Delete |
 | Undo / redo | buttons | buttons | Ctrl+Z / Ctrl+Shift+Z |
-| Hint | 💡 button | 💡 button | H |
+| Hint (first the level's tip, then where pieces go) | 💡 button | 💡 button | H |
 
 ## Project layout
 

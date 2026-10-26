@@ -47,8 +47,10 @@ export interface LevelDef {
   /** Unused since worlds are defined in src/levels/worlds.json; kept optional for old files. */
   world?: number;
   name: Localized;
-  /** Shown when the level starts. */
+  /** A short tip: the first hint (free), before any placement hints. */
   intro?: Localized;
+  /** Show the intro as soon as the level starts (for tutorial levels that explain the controls). */
+  introOnStart?: boolean;
   grid: { w: number; h: number };
   /** Rotation snap in degrees (default 15). */
   rotationStep?: number;

@@ -92,6 +92,9 @@ function miniSky(world: WorldDef, solved: (id: string) => boolean): SVGSVGElemen
   return el;
 }
 
+/** Narrowest column (px) before the map scrolls sideways instead of squeezing the boxes further. */
+const MIN_COLUMN = 64;
+
 export interface MapScreenOptions {
   campaign: Campaign;
   progress: Progress;
@@ -104,19 +107,25 @@ export function mapScreen(o: MapScreenOptions): HTMLElement {
   const { campaign } = o;
   const solved = (id: string) => !!o.progress.level(id);
   const { pos, cols, rows } = treeLayout(campaign.worlds);
-  const ROW = 168;
-  const sky = h('div', { class: 'sky-map', style: `height:${rows * ROW}px` });
-  const lines = svg('svg', { class: 'sky-lines', viewBox: `0 0 ${cols * 100} ${rows * ROW}`, preserveAspectRatio: 'none', 'aria-hidden': 'true' });
+  // Lay out in real pixels for the space available: on narrow screens the boxes get compact,
+  // and only if even compact boxes don't fit does the map scroll sideways.
+  const avail = Math.min(760, window.innerWidth - 24);
+  const compact = avail / cols < 110;
+  const colW = Math.max(MIN_COLUMN, avail / cols);
+  const width = colW * cols;
+  const nodeW = Math.min(128, colW - (compact ? 4 : 6));
+  const nodeH = compact ? 96 : 118;
+  const ROW = nodeH + (compact ? 44 : 50);
+  const sky = h('div', { class: `sky-map ${compact ? 'compact' : ''}`, style: `width:${width}px;height:${rows * ROW}px` });
+  const lines = svg('svg', { class: 'sky-lines', viewBox: `0 0 ${width} ${rows * ROW}`, 'aria-hidden': 'true' });
   sky.append(lines);
-  const centre = (id: string) => {
-    const p = pos.get(id)!;
-    return { x: (p.col + 0.5) * 100, y: p.row * ROW + 46 };
-  };
+  const x = (id: string) => (pos.get(id)!.col + 0.5) * colW;
+  const top = (id: string) => pos.get(id)!.row * ROW;
   for (const w of campaign.worlds) {
     for (const parent of w.parents) {
-      const a = centre(parent);
-      const b = centre(w.id);
-      // A soft S-curve: leaves the parent downwards and arrives at the child from above.
+      // A soft S-curve from the bottom of the parent's box to the top of the child's.
+      const a = { x: x(parent), y: top(parent) + nodeH };
+      const b = { x: x(w.id), y: top(w.id) };
       const mid = (a.y + b.y) / 2;
       lines.append(svg('path', { d: `M${a.x},${a.y} C${a.x},${mid} ${b.x},${mid} ${b.x},${b.y}`, class: campaign.worldOpen(w) ? 'open' : '' }));
     }
@@ -133,7 +142,7 @@ export function mapScreen(o: MapScreenOptions): HTMLElement {
       {
         class: `world-node ${open ? 'open' : 'locked'} ${done === w.levels.length ? 'complete' : ''}`,
         type: 'button',
-        style: `left:${((p.col + 0.5) / cols) * 100}%;top:${p.row * ROW}px;width:${Math.min(160, 100 / cols * 3.6)}px`,
+        style: `left:${(p.col + 0.5) * colW}px;top:${p.row * ROW}px;width:${nodeW}px;height:${nodeH}px`,
         'aria-label': label,
         title: label,
       },

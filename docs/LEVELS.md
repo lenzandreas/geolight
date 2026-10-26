@@ -77,7 +77,7 @@ Colours can be names (`white`, `red`, `green`, `blue`, `yellow`, `cyan`, `magent
 
 ## Checklist
 
-1. Give the level a reference `solution`. Steps with `type` place tray pieces; steps with `id` turn pre-placed ones. Hints reveal it one step at a time.
+1. Give the level a reference `solution`. Steps with `type` place tray pieces; steps with `id` turn pre-placed ones. The `intro` text is the first hint (free, it doesn't cost a star); after it, hints reveal the solution one step at a time. Set `"introOnStart": true` only for tutorial levels whose text explains the controls.
 2. Run `npm test`. It checks that the level is unsolved at the start, that the solution wins with 3 stars, and that multi-piece levels can't be solved with a single piece.
 3. Use `npm run dev` and open `#/level/<id>` (add `?solve` to see the solution) to check that it looks right.
 4. Black holes act at a distance, so the solver also tries them next to lit cells. Levels with sunlight or bulbs plus black holes trace slowly; keep their trays small.

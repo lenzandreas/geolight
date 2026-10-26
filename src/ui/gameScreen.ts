@@ -76,6 +76,8 @@ export class GameScreen {
   private selectedId: string | null = null;
   private hoverId: string | null = null;
   private hint: Entity | null = null;
+  /** The level's text tip has been shown (it is the first, free hint). */
+  private tipShown = false;
   private hintUntil = 0;
   private wonAt: number | null = null;
   private prevStatus = new Map<string, boolean>();
@@ -137,7 +139,10 @@ export class GameScreen {
       this.refreshTray();
       this.updateButtons();
       this.showWinOverlay(starsFor(this.session));
-    } else if (level.intro && !this.session.canUndo) this.showToast(loc(level.intro), 0);
+    } else if (level.intro && level.introOnStart && !this.session.canUndo) {
+      this.showToast(loc(level.intro), 0);
+      this.tipShown = true;
+    }
   }
 
   /** Re-read settings that affect rendering. */
@@ -407,6 +412,13 @@ export class GameScreen {
   }
 
   private showHint(): void {
+    // The level's text comes first and is free; later hints show where pieces go.
+    const intro = this.session.level.intro;
+    if (intro && !this.tipShown) {
+      this.tipShown = true;
+      this.showToast(loc(intro), 0);
+      return;
+    }
     const step = this.session.nextHint();
     if (!step) {
       this.showToast(t('noHint'), 2500);

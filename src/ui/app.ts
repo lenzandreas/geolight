@@ -150,20 +150,21 @@ export class App {
   }
 
   private map(): Screen {
-    const el = mapScreen({
-      campaign: this.campaign(),
-      progress: this.progress,
-      onBack: () => this.go({ name: 'menu' }),
-      onSettings: () => this.openSettings(),
-      onWorld: (w) => this.go({ name: 'world', id: w.id }),
-    });
-    return { el };
+    return this.rebuildOnResize(() =>
+      mapScreen({
+        campaign: this.campaign(),
+        progress: this.progress,
+        onBack: () => this.go({ name: 'menu' }),
+        onSettings: () => this.openSettings(),
+        onWorld: (w) => this.go({ name: 'world', id: w.id }),
+      }),
+    );
   }
 
   private world(id: string): Screen {
     const campaign = this.campaign();
     const world = campaign.world(id)!;
-    const build = () =>
+    return this.rebuildOnResize(() =>
       worldScreen({
         world,
         levels: LEVELS,
@@ -175,13 +176,21 @@ export class App {
           if (this.live?.id === level.id && this.live.session.won) this.live = null;
           this.go({ name: 'game', id: level.id });
         },
-      });
+      }),
+    );
+  }
+
+  /** Screens whose layout depends on the available space are rebuilt after resizing settles. */
+  private rebuildOnResize(build: () => HTMLElement): Screen {
     const screen: Screen = { el: build() };
-    // The star layout depends on the available space: rebuild after resizing settles.
     let timer = 0;
+    let size = { w: window.innerWidth, h: window.innerHeight };
     const onResize = () => {
       clearTimeout(timer);
       timer = window.setTimeout(() => {
+        // Ignore the address bar sliding in and out on phones (a small height change), so scrolling isn't reset.
+        if (window.innerWidth === size.w && Math.abs(window.innerHeight - size.h) < 150) return;
+        size = { w: window.innerWidth, h: window.innerHeight };
         const fresh = build();
         screen.el.replaceWith(fresh);
         screen.el = fresh;
