@@ -10,6 +10,7 @@
     "de": "Ein Laser öffnet das Tor, der andere geht hindurch. Die Solarzelle schaut nur nach unten."
   },
   "grid": {"w": 10, "h": 7},
+  "par": 2,
   "entities": [
     {"type": "laser", "x": 0, "y": 0, "angle": 0},
     {"type": "laser", "x": 0, "y": 6, "angle": 0},
@@ -26,7 +27,6 @@
   ],
   "solution": [
     {"type": "mirror", "x": 4, "y": 6, "angle": 45},
-    {"type": "mirror", "x": 8, "y": 0, "angle": 135},
-    {"type": "mirror", "x": 8, "y": 5, "angle": 135}
+    {"type": "mirror", "x": 6, "y": 0, "angle": 120}
   ]
 }

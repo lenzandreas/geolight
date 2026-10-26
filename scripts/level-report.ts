@@ -13,7 +13,9 @@
  * Flags:
  *   BEATS-PAR  a solution uses fewer tray pieces than par: the level is easier than intended
  *              ("fewest" is the smallest such count; otherwise par, once any solution is found)
- *   LOOSE      many par solutions (≥ 10): almost any reasonable try works
+ *   LOOSE      many par layouts (≥ 10): almost any reasonable try works. A layout is where the
+ *              pieces go, ignoring their angles: turning a filter or using a polarizer's
+ *              other diagonal is not a different idea
  *   PARTIAL    the budget ran out, so the counts are lower bounds
  *   UNSOLVED   no solution found within the budget (the reference solution is checked by the tests)
  */
@@ -32,14 +34,14 @@ const LOOSE = 10;
 
 test('level report', () => {
   const worldOf = new Map(WORLDS.flatMap((w) => w.levels.map((id) => [id, w.id] as const)));
-  const rows: string[][] = [['world', 'level', 'par', 'tray', 'par solutions', 'fewest', 'first at', 'flags']];
+  const rows: string[][] = [['world', 'level', 'par', 'tray', 'par solutions', 'layouts', 'fewest', 'first at', 'flags']];
   for (const level of LEVELS) {
     if (only && !only.has(level.id)) continue;
     const par = new Session(level).par;
     const tray = level.inventory.reduce((n, i) => n + i.count, 0);
     const diffuse = level.entities.some((e) => e.type === 'bulb' || e.type === 'sun');
     if (diffuse && env.REPORT_DIFFUSE !== '1') {
-      rows.push([worldOf.get(level.id) ?? '', level.id, String(par), String(tray), '–', '–', '–', 'skipped (diffuse light)']);
+      rows.push([worldOf.get(level.id) ?? '', level.id, String(par), String(tray), '–', '–', '–', '–', 'skipped (diffuse light)']);
       continue;
     }
     // A separate search for the first solution: how many traces until the solver finds one.
@@ -53,9 +55,10 @@ test('level report', () => {
         break;
       }
     }
+    const layouts = new Set(all.solutions.map((s) => s.map((step) => `${step.id ?? step.type}@${step.x},${step.y}`).sort().join('|'))).size;
     const flags: string[] = [];
     if (fewest !== null && fewest < par) flags.push('BEATS-PAR');
-    if (all.solutions.length >= LOOSE) flags.push('LOOSE');
+    if (layouts >= LOOSE) flags.push('LOOSE');
     if (!all.exhausted && all.solutions.length < maxSolutions) flags.push('PARTIAL');
     if (!all.solutions.length) flags.push('UNSOLVED');
     rows.push([
@@ -64,6 +67,7 @@ test('level report', () => {
       String(par),
       tray > par ? `${tray} (+${tray - par})` : String(tray),
       `${all.solutions.length}${all.solutions.length >= maxSolutions || !all.exhausted ? '+' : ''}`,
+      String(layouts),
       fewest === null ? '–' : String(fewest),
       first.solutions.length ? String(first.nodes) : '–',
       flags.join(' '),

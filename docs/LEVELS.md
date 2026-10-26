@@ -90,7 +90,7 @@ Colours can be names (`white`, `red`, `green`, `blue`, `yellow`, `cyan`, `magent
 `npm run report` runs the solver on every laser level (or the ones in `REPORT_LEVELS=a,b`) and prints how many perfect solutions each has, the fewest pieces any solution needs, and how many traces the solver needed to find the first one. It flags:
 
 - **BEATS-PAR**: a solution needs fewer pieces than par, so the level is easier than intended (and some tray piece is never needed).
-- **LOOSE**: 10 or more perfect solutions, so almost any reasonable try works.
+- **LOOSE**: 10 or more perfect layouts, so almost any reasonable try works. A layout is where the pieces go, ignoring their angles. A piece that can sit anywhere along a straight stretch of beam (a glass block, a polarizer) still counts once per cell, so read a LOOSE level's solutions before tightening it.
 - **PARTIAL / UNSOLVED**: the search budget ran out (raise it with `REPORT_NODES`), so the counts are lower bounds.
 
 Early levels in a world can be loose. For the later ones, aim for one to three perfect solutions.

@@ -16,7 +16,9 @@
     {"type": "sink", "x": 6, "y": 0, "params": {"required": 0.2}},
     {"type": "sink", "x": 8, "y": 6, "params": {"required": 0.2}},
     {"type": "wall", "x": 3, "y": 0, "params": {"w": 1, "h": 2}},
-    {"type": "wall", "x": 3, "y": 5, "params": {"w": 1, "h": 2}}
+    {"type": "wall", "x": 3, "y": 5, "params": {"w": 1, "h": 2}},
+    {"type": "wall", "x": 7, "y": 2},
+    {"type": "wall", "x": 7, "y": 5}
   ],
   "inventory": [
     {"type": "splitter", "count": 2},
