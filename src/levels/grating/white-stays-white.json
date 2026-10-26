@@ -6,21 +6,24 @@
     "de": "Weiß bleibt weiß"
   },
   "intro": {
-    "en": "The straight beam keeps all its colours. Feed the white ring with it, and fold a green side beam into its own ring.",
-    "de": "Der gerade Strahl behält alle Farben. Versorge damit den weißen Ring und lenke einen grünen Seitenstrahl in seinen eigenen."
+    "en": "The white ring wants twice what a grating's straight beam carries. Turn the grating steeply and watch the straight beam.",
+    "de": "Der weiße Ring will doppelt so viel, wie der gerade Strahl eines Gitters trägt. Dreh das Gitter steil und beobachte den geraden Strahl."
   },
-  "grid": {"w": 11, "h": 7},
+  "grid": {"w": 11, "h": 8},
   "entities": [
-    {"type": "laser", "x": 0, "y": 1, "angle": 0},
-    {"type": "sink", "x": 10, "y": 1, "params": {"color": "white", "each": true, "strict": true, "required": 0.3}},
-    {"type": "sink", "x": 7, "y": 2, "params": {"color": "green", "strict": true, "required": 0.1}}
+    {"type": "laser", "x": 0, "y": 3, "angle": 0},
+    {"type": "sink", "x": 10, "y": 3, "params": {"color": "white", "each": true, "strict": true, "required": 0.6}},
+    {"type": "sink", "x": 9, "y": 6, "params": {"color": "green", "strict": true, "required": 0.1}},
+    {"type": "wall", "x": 1, "y": 2, "params": {"w": 9, "h": 1}},
+    {"type": "wall", "x": 1, "y": 4, "params": {"w": 2, "h": 1}},
+    {"type": "wall", "x": 5, "y": 4, "params": {"w": 5, "h": 1}}
   ],
   "inventory": [
     {"type": "grating", "count": 1},
     {"type": "mirror", "count": 1}
   ],
   "solution": [
-    {"type": "grating", "x": 2, "y": 1, "angle": 0},
-    {"type": "mirror", "x": 5, "y": 3, "angle": 90}
+    {"type": "grating", "x": 2, "y": 3, "angle": 45},
+    {"type": "mirror", "x": 8, "y": 7, "angle": 90}
   ]
 }

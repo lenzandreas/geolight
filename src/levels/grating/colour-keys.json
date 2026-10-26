@@ -6,23 +6,29 @@
     "de": "Farbschlüssel"
   },
   "intro": {
-    "en": "The gate needs both solar cells lit. One of them hides behind the laser.",
-    "de": "Das Tor braucht beide Solarzellen. Eine davon versteckt sich hinter dem Laser."
+    "en": "The gate needs both solar cells lit, and one of them hides behind the laser. A beam splitter makes two beams. How many does a grating make?",
+    "de": "Das Tor braucht beide Solarzellen, und eine versteckt sich hinter dem Laser. Ein Strahlteiler macht zwei Strahlen. Wie viele macht ein Gitter?"
   },
   "grid": {"w": 11, "h": 7},
+  "par": 2,
   "entities": [
-    {"type": "laser", "x": 0, "y": 3, "angle": 0},
-    {"id": "a", "type": "photocell", "x": 8, "y": 0, "params": {"required": 0.1}},
+    {"type": "laser", "x": 1, "y": 3, "angle": 0},
+    {"id": "a", "type": "photocell", "x": 6, "y": 0, "params": {"required": 0.1}},
+    {"type": "wall", "x": 5, "y": 0, "params": {"w": 1, "h": 1}},
+    {"type": "wall", "x": 7, "y": 0, "params": {"w": 1, "h": 1}},
     {"id": "b", "type": "photocell", "x": 0, "y": 5, "params": {"required": 0.1}},
-    {"type": "gate", "x": 8, "y": 2, "params": {"h": 3, "by": ["a", "b"]}},
+    {"type": "wall", "x": 0, "y": 4, "params": {"w": 2, "h": 1}},
+    {"type": "wall", "x": 0, "y": 6, "params": {"w": 2, "h": 1}},
+    {"type": "gate", "x": 8, "y": 0, "params": {"h": 7, "by": ["a", "b"]}},
     {"type": "sink", "x": 10, "y": 3, "params": {"color": "white", "each": true, "strict": true, "required": 0.3}}
   ],
   "inventory": [
     {"type": "grating", "count": 1},
-    {"type": "mirror", "count": 1}
+    {"type": "splitter", "count": 1},
+    {"type": "mirror", "count": 2}
   ],
   "solution": [
-    {"type": "grating", "x": 2, "y": 3, "angle": 0},
-    {"type": "mirror", "x": 5, "y": 5, "angle": 15}
+    {"type": "grating", "x": 3, "y": 3, "angle": 0},
+    {"type": "mirror", "x": 6, "y": 5, "angle": 15}
   ]
 }
