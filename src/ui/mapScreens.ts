@@ -7,7 +7,7 @@ import type { Campaign } from '../game/campaign';
 import type { Progress } from '../game/progress';
 import { loc, t } from '../i18n';
 import type { LevelDef } from '../level/schema';
-import { depths, type WorldDef } from '../level/worlds';
+import { depths, featuredPieces, type WorldDef } from '../level/worlds';
 import { constellation, skyLayout } from './constellation';
 import { h, icon, iconButton } from './dom';
 import { pieceIcon } from './pieceIcon';
@@ -215,11 +215,19 @@ export function worldScreen(o: WorldScreenOptions): HTMLElement {
     sky.append(btn);
   });
 
+  const pieces = featuredPieces(campaign.worlds, world);
+  const names = pieces.map((p) => t(`piece_${p}` as Parameters<typeof t>[0]));
   const intro = h(
     'p',
     { class: 'world-intro' },
-    pieceIcon(world.object === 'divergingLens' ? 'lens' : world.object, world.object === 'divergingLens' ? { f: -1 } : {}, NIGHT, 28),
-    h('span', {}, t('worldIntroduces', { piece: t(`piece_${world.object}` as Parameters<typeof t>[0]) })),
+    ...pieces.map((p) => pieceIcon(p === 'divergingLens' ? 'lens' : p, p === 'divergingLens' ? { f: -1 } : {}, NIGHT, 28)),
+    h(
+      'span',
+      {},
+      world.object
+        ? t('worldIntroduces', { piece: names[0] })
+        : t('worldCombines', { pieces: names.slice(0, -1).join(', '), last: names[names.length - 1] }),
+    ),
   );
   return h(
     'section',

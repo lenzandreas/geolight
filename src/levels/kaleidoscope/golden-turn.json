@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "id": "golden-turn",
+  "name": {
+    "en": "Golden Turn",
+    "de": "Goldene Wende"
+  },
+  "intro": {
+    "en": "The solar cell needs the whole straight beam, so nothing may turn the light before the grating. The rest of the rainbow, folded back, needs a quarter turn.",
+    "de": "Die Solarzelle braucht den ganzen geraden Strahl, also darf vor dem Gitter nichts das Licht drehen. Der Rest des Regenbogens, zurückgefaltet, braucht eine Vierteldrehung."
+  },
+  "grid": {"w": 10, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 4, "angle": 0, "params": {"pol": 90}},
+    {"id": "p", "type": "photocell", "x": 6, "y": 4, "params": {"required": 0.3}},
+    {"type": "gate", "x": 7, "y": 0, "params": {"h": 7, "by": "p"}},
+    {"type": "sink", "x": 9, "y": 3, "params": {"color": "yellow", "each": true, "strict": true, "pol": 0, "required": 0.018, "radius": 0.45}}
+  ],
+  "inventory": [
+    {"type": "grating", "count": 2},
+    {"type": "polarizer", "count": 2}
+  ],
+  "solution": [
+    {"type": "grating", "x": 2, "y": 4, "angle": 15},
+    {"type": "grating", "x": 3, "y": 3, "angle": 15},
+    {"type": "polarizer", "x": 4, "y": 3, "angle": 45},
+    {"type": "polarizer", "x": 5, "y": 3, "angle": 0}
+  ]
+}

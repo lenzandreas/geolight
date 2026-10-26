@@ -12,6 +12,7 @@ export const en = {
   starMap: 'Star map',
   worldLockedHint: 'Solve {n} levels in {world} to open it',
   worldIntroduces: 'New here: {piece}',
+  worldCombines: 'Nothing new: {pieces} meets {last}',
   worldOpened: 'New constellation open: {world}',
   worldComplete: 'Constellation complete!',
   toMap: 'Star map',

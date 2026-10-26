@@ -75,5 +75,11 @@
     "object": "grating",
     "parents": ["prism"],
     "levels": ["fine-lines", "upside-down-rainbow", "white-stays-white", "colour-keys", "no-green", "double-take", "prism-or-grating", "rainbow-gate"]
+  },
+  {
+    "id": "kaleidoscope",
+    "name": {"en": "Kaleido\u00adscope", "de": "Kaleido\u00adskop"},
+    "parents": ["polarizer", "grating"],
+    "levels": ["late-turn", "steep-light", "fold-the-rainbow", "combination-lock", "elbow-room", "golden-turn", "full-circle"]
   }
 ]

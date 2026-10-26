@@ -14,6 +14,7 @@ export const de: Strings = {
   starMap: 'Sternkarte',
   worldLockedHint: 'Löse {n} Level in {world}, um es zu öffnen',
   worldIntroduces: 'Neu hier: {piece}',
+  worldCombines: 'Nichts Neues: {pieces} trifft {last}',
   worldOpened: 'Neues Sternbild offen: {world}',
   worldComplete: 'Sternbild vollständig!',
   toMap: 'Sternkarte',

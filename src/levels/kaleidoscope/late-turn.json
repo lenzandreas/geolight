@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "id": "late-turn",
+  "name": {
+    "en": "Late Turn",
+    "de": "Späte Drehung"
+  },
+  "intro": {
+    "en": "The green ring wants the laser's own polarization, the white ring wants it turned a quarter. Turn only the beam that needs it.",
+    "de": "Der grüne Ring will die Polarisation des Lasers, der weiße will sie um eine Vierteldrehung gedreht. Dreh nur den Strahl, der es braucht."
+  },
+  "grid": {"w": 9, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 3, "angle": 0, "params": {"pol": 90}},
+    {"type": "sink", "x": 6, "y": 3, "params": {"color": "white", "each": true, "strict": true, "pol": 0, "required": 0.075}},
+    {"type": "sink", "x": 8, "y": 6, "params": {"color": "green", "strict": true, "pol": 90, "required": 0.1}}
+  ],
+  "inventory": [
+    {"type": "grating", "count": 1},
+    {"type": "polarizer", "count": 2}
+  ],
+  "solution": [
+    {"type": "grating", "x": 3, "y": 3, "angle": 0},
+    {"type": "polarizer", "x": 4, "y": 3, "angle": 45},
+    {"type": "polarizer", "x": 5, "y": 3, "angle": 0}
+  ]
+}

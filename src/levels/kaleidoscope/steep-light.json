@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "id": "steep-light",
+  "name": {
+    "en": "Steep Light",
+    "de": "Steiles Licht"
+  },
+  "intro": {
+    "en": "Polarized light is half the light, and the white ring wants a third of the laser. Where does a grating keep more than a third in its straight beam?",
+    "de": "Polarisiertes Licht ist halbes Licht, und der weiße Ring will ein Drittel des Lasers. Wann behält ein Gitter mehr als ein Drittel im geraden Strahl?"
+  },
+  "grid": {"w": 11, "h": 8},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 3, "angle": 0},
+    {"type": "sink", "x": 10, "y": 3, "params": {"color": "white", "each": true, "strict": true, "pol": 0, "required": 0.3}},
+    {"type": "sink", "x": 9, "y": 7, "params": {"color": "blue", "strict": true, "pol": 0, "required": 0.05}},
+    {"type": "wall", "x": 1, "y": 2, "params": {"w": 9, "h": 1}},
+    {"type": "wall", "x": 1, "y": 4, "params": {"w": 2, "h": 1}},
+    {"type": "wall", "x": 6, "y": 4, "params": {"w": 4, "h": 1}}
+  ],
+  "inventory": [
+    {"type": "grating", "count": 1},
+    {"type": "polarizer", "count": 1},
+    {"type": "mirror", "count": 1}
+  ],
+  "solution": [
+    {"type": "polarizer", "x": 1, "y": 3, "angle": 0},
+    {"type": "grating", "x": 2, "y": 3, "angle": 45}
+  ]
+}

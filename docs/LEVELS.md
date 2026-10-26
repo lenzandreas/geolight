@@ -9,6 +9,7 @@ Levels live in one folder per world, `src/levels/<world>/<id>.json`. Their order
 The rules, all enforced by `npm test`:
 
 - **One new piece per world.** `object` is the piece the world introduces (`mirror`, `splitter`, `lens`, `divergingLens`, `curvedMirror`, `block`, `filter`, `prism`, `polarizer`, `blackHole`, `grating`). A world may have several `parents`; it opens when each of them has 4 solved levels and can use all of their pieces. Every level in the world uses it, and may otherwise only use pieces introduced by the world's ancestors. Sources, targets, sensors, walls, slits, photocells and gates are level features and can be used anywhere.
+- **Combining worlds.** A world with two or more `parents` may leave out `object`. It introduces nothing and combines its parents' pieces instead: every level uses each parent's piece (in the tray or pre-placed), and may use anything from the ancestors. *Kaleidoscope* (polarizer + grating) is one. Keep these worlds hard; they are for players who know both pieces well.
 - **At least 6 levels per world**, ordered from easy to hard.
 - Every level file is listed by exactly one world.
 

@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "id": "combination-lock",
+  "name": {
+    "en": "Combination Lock",
+    "de": "Zahlenschloss"
+  },
+  "intro": {
+    "en": "Every piece is in place, only the angles are wrong. The red ring wants a quarter turn, and the white ring wants a third of the laser.",
+    "de": "Jedes Teil steht schon richtig, nur die Winkel nicht. Der rote Ring will eine Vierteldrehung, und der weiße Ring ein Drittel des Lasers."
+  },
+  "grid": {"w": 12, "h": 9},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 6, "angle": 0},
+    {"id": "p0", "type": "polarizer", "x": 1, "y": 6, "angle": 90, "lock": "rotate"},
+    {"id": "g", "type": "grating", "x": 2, "y": 6, "angle": 0, "lock": "rotate"},
+    {"id": "p1", "type": "polarizer", "x": 4, "y": 4, "angle": 0, "lock": "rotate"},
+    {"id": "p2", "type": "polarizer", "x": 5, "y": 3, "angle": 0, "lock": "rotate"},
+    {"id": "p3", "type": "polarizer", "x": 8, "y": 6, "angle": 45, "lock": "rotate"},
+    {"type": "sink", "x": 6, "y": 2, "params": {"color": "red", "strict": true, "pol": 90, "required": 0.013}},
+    {"type": "sink", "x": 11, "y": 6, "params": {"color": "white", "each": true, "strict": true, "pol": 0, "required": 0.32}}
+  ],
+  "inventory": [],
+  "solution": [
+    {"id": "p0", "x": 1, "y": 6, "angle": 0},
+    {"id": "g", "x": 2, "y": 6, "angle": 120},
+    {"id": "p1", "x": 4, "y": 4, "angle": 45},
+    {"id": "p2", "x": 5, "y": 3, "angle": 90},
+    {"id": "p3", "x": 8, "y": 6, "angle": 0}
+  ]
+}
