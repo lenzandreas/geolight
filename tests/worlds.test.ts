@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { LEVELS, UNLISTED, WORLDS } from '../src/levels';
-import { ancestors, piecesUsed } from '../src/level/worlds';
+import { ancestors, featuredPieces, piecesUsed } from '../src/level/worlds';
 import { Campaign, OPEN_LEVELS, UNLOCK_AFTER } from '../src/game/campaign';
 
 describe('world structure', () => {
@@ -12,8 +12,12 @@ describe('world structure', () => {
 
   it('has one root and a unique new piece per world', () => {
     expect(WORLDS.filter((w) => w.parents.length === 0).length).toBe(1);
-    const objects = WORLDS.map((w) => w.object);
+    const objects = WORLDS.filter((w) => w.object).map((w) => w.object);
     expect(new Set(objects).size).toBe(objects.length);
+  });
+
+  it('only lets worlds with several parents go without a new piece', () => {
+    for (const w of WORLDS.filter((w) => !w.object)) expect(w.parents.length, w.id).toBeGreaterThanOrEqual(2);
   });
 
   for (const world of WORLDS) {
@@ -22,12 +26,14 @@ describe('world structure', () => {
         expect(world.levels.length).toBeGreaterThanOrEqual(6);
       });
 
-      it('introduces exactly one new piece, which every level uses', () => {
+      it(world.object ? 'introduces exactly one new piece, which every level uses' : "combines its parents' pieces in every level", () => {
         const known = new Set(WORLDS.filter((w) => ancestors(WORLDS, world.id).has(w.id)).map((w) => w.object));
-        known.add(world.object);
+        if (world.object) known.add(world.object);
+        const featured = featuredPieces(WORLDS, world);
+        expect(featured.length).toBe(world.object ? 1 : world.parents.length);
         for (const id of world.levels) {
           const used = piecesUsed(LEVELS.find((l) => l.id === id)!);
-          expect(used.has(world.object), `${id} should use ${world.object}`).toBe(true);
+          for (const piece of featured) expect(used.has(piece), `${id} should use ${piece}`).toBe(true);
           for (const piece of used) expect(known.has(piece), `${id} uses ${piece} before it is introduced`).toBe(true);
         }
       });

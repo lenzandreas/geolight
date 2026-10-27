@@ -1,6 +1,7 @@
 /**
  * Worlds group levels around one newly introduced piece and form a tree
  * (a constellation map): a world opens once its parent worlds are mostly solved.
+ * A world without a piece of its own combines its parents' pieces instead.
  */
 import type { LevelDef, Localized } from './schema';
 
@@ -10,8 +11,8 @@ export type PieceKind = 'mirror' | 'splitter' | 'lens' | 'divergingLens' | 'curv
 export interface WorldDef {
   id: string;
   name: Localized;
-  /** The one new piece this world introduces. */
-  object: PieceKind;
+  /** The one new piece this world introduces; absent for a world that combines its parents' pieces. */
+  object?: PieceKind;
   parents: string[];
   /** Level ids in play order. */
   levels: string[];
@@ -34,6 +35,12 @@ export function piecesUsed(level: LevelDef): Set<PieceKind> {
     if (k) out.add(k);
   }
   return out;
+}
+
+/** The pieces a world is about: its own, or for a combining world, each parent's. */
+export function featuredPieces(worlds: WorldDef[], world: WorldDef): PieceKind[] {
+  if (world.object) return [world.object];
+  return world.parents.map((id) => worlds.find((w) => w.id === id)?.object).filter((o): o is PieceKind => !!o);
 }
 
 /** Worlds from the root down, each after all of its parents. */

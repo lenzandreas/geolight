@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "id": "elbow-room",
+  "name": {
+    "en": "Elbow Room",
+    "de": "Ellbogenfreiheit"
+  },
+  "intro": {
+    "en": "Green and blue leave the grating almost together, yet they want different polarizations. Give them some room.",
+    "de": "Grün und Blau verlassen das Gitter fast gemeinsam, wollen aber verschiedene Polarisationen. Verschaff ihnen etwas Platz."
+  },
+  "grid": {"w": 12, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 5, "angle": 0, "params": {"pol": 45}},
+    {"type": "grating", "x": 1, "y": 5, "angle": 0},
+    {"type": "sink", "x": 11, "y": 5, "params": {"color": "white", "each": true, "strict": true, "pol": 45, "required": 0.3}},
+    {"type": "sink", "x": 8, "y": 0, "params": {"color": "green", "strict": true, "pol": 0, "required": 0.05}},
+    {"type": "sink", "x": 11, "y": 0, "params": {"color": "blue", "strict": true, "pol": 90, "required": 0.05}}
+  ],
+  "inventory": [
+    {"type": "lens", "count": 1, "params": {"f": -1.5}},
+    {"type": "polarizer", "count": 2}
+  ],
+  "solution": [
+    {"type": "lens", "params": {"f": -1.5}, "x": 3, "y": 4, "angle": 0},
+    {"type": "polarizer", "x": 5, "y": 2, "angle": 0},
+    {"type": "polarizer", "x": 7, "y": 2, "angle": 90}
+  ]
+}

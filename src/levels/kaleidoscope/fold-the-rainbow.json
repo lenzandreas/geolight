@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "id": "fold-the-rainbow",
+  "name": {
+    "en": "Fold the Rainbow",
+    "de": "Regenbogen falten"
+  },
+  "intro": {
+    "en": "A grating bends red away from the beam. A second grating, met at just the right angle, bends it back.",
+    "de": "Ein Gitter lenkt Rot vom Strahl ab. Ein zweites, im richtigen Winkel getroffen, lenkt es zurück."
+  },
+  "grid": {"w": 10, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 4, "angle": 0},
+    {"type": "sink", "x": 9, "y": 3, "params": {"color": "yellow", "each": true, "strict": true, "pol": 0, "required": 0.035, "radius": 0.45}},
+    {"type": "wall", "x": 6, "y": 4, "params": {"w": 4, "h": 1}}
+  ],
+  "inventory": [
+    {"type": "grating", "count": 2},
+    {"type": "polarizer", "count": 1},
+    {"type": "filter", "count": 1, "params": {"color": "yellow"}}
+  ],
+  "solution": [
+    {"type": "polarizer", "x": 1, "y": 4, "angle": 0},
+    {"type": "grating", "x": 2, "y": 4, "angle": 0},
+    {"type": "grating", "x": 3, "y": 3, "angle": 0}
+  ]
+}
