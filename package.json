@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "report": "vitest run --config scripts/report.config.ts"
+    "report": "vitest run --config scripts/report.config.ts",
+    "level": "node scripts/level.mjs"
   },
   "devDependencies": {
     "typescript": "5.9.3",
