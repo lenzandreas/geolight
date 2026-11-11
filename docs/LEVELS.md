@@ -80,28 +80,33 @@ Colours can be names (`white`, `red`, `green`, `blue`, `yellow`, `cyan`, `magent
 
 1. Give the level a reference `solution`. Steps with `type` place tray pieces; steps with `id` turn pre-placed ones. The `intro` text is the first hint (free, it doesn't cost a star); after it, hints reveal the solution one step at a time. Set `"introOnStart": true` only for tutorial levels whose text explains the controls.
 2. Run `npm test`. It checks that the level is unsolved at the start, that the solution wins with 3 stars, and that multi-piece levels can't be solved with a single piece.
-3. Use `npm run dev` and open `#/level/<id>` (add `?solve` to see the solution) to check that it looks right.
+3. Use `npm run level -- show <id> --solve` for a text picture of the board with its light, or `npm run dev` and open `#/level/<id>` (add `?solve` to see the solution) to check that it looks right.
 4. Black holes act at a distance, so the solver also tries them next to lit cells. Levels with sunlight or bulbs plus black holes trace slowly; keep their trays small.
 5. If sinks need different amounts, players see it: each ring's band is drawn as thick as its `required`, relative to the largest one on the board.
 6. For diffuse sources (bulbs), choose `required` values from experiment. The solver API (`src/level/solver.ts`) helps there: rings show progress relative to `required`.
-7. Run `REPORT_LEVELS=<id> npm run report` (see below) to see how loose the level is.
+7. Run `npm run level -- check <id or file>` to see whether the level has a shortcut, how many solutions it has and how hard it is. [LEVEL-DESIGN.md](LEVEL-DESIGN.md) is a step-by-step procedure built on these commands.
 
-## The level report
+## The solver, the hunt and the level report
 
-`npm run report` runs the solver on every laser level (or the ones in `REPORT_LEVELS=a,b`) and prints how many perfect solutions each has, the fewest pieces any solution needs, and how many traces the solver needed to find the first one. It flags:
+The solver (`src/level/solver.ts`) is exhaustive: it tries tray pieces wherever the light goes, turns `rotate` pieces once light reaches them and moves `free` pieces. It visits each set of placements once and drops placements the light doesn't touch. The cost still grows about 300-fold per tray piece, so it proves things for up to about 3 tray pieces within a minute. Pieces that can only be turned are cheap.
+
+For bigger trays there is the **hunt** (`solve(level, { hunt: true })`). Of the placements of one piece that leave the same light on the board (a filter at another angle, a polarizer one cell further along its beam) it follows only the first, and it tries the placements that fill the rings most first. Every solution it reports is real. It can miss a solution in which such a piece has to stand in one particular cell because another beam crosses the alternatives, so "none found" is strong evidence and not proof.
+
+`npm run report` runs both on every laser level (or the ones in `REPORT_LEVELS=a,b`; `REPORT_DIFFUSE=1` adds bulbs and sunlight) and prints how many par solutions each has, how many different layouts they are, the fewest pieces any solution needs, and how many boards a progress-chasing search tries before it finds a solution. Two solutions are the same layout when the light travels along the same lines. It flags:
 
 - **BEATS-PAR**: a solution needs fewer pieces than par, so the level is easier than intended (and some tray piece is never needed).
-- **LOOSE**: 10 or more perfect layouts, so almost any reasonable try works. A layout is where the pieces go, ignoring their angles. A piece that can sit anywhere along a straight stretch of beam (a glass block, a polarizer) still counts once per cell, so read a LOOSE level's solutions before tightening it.
+- **LOOSE**: 10 or more layouts, so almost any reasonable try works.
+- **HUNT**: the exact search ran out of budget and the hunt was used.
 - **PARTIAL / UNSOLVED**: the search budget ran out (raise it with `REPORT_NODES`), so the counts are lower bounds.
 
-Early levels in a world can be loose. For the later ones, aim for one to three perfect solutions.
+Early levels in a world can be loose. For the later ones, aim for one to three layouts.
 
 ## Making levels challenging
 
-A level gets harder when the first idea a player has almost works, not when the board gets bigger. Some techniques that work with the existing pieces:
+A level gets harder when the first idea a player has almost works, not when the board gets bigger. [LEVEL-DESIGN.md](LEVEL-DESIGN.md) has the full list of what makes a level hard and a procedure for building one. Some techniques that work with the existing pieces:
 
 - **Decoys and a tight par.** Put pieces in the tray that the 3-star solution doesn't use, and set `par`. The obvious route then wins with 2 stars, and the win card tells players that fewer pieces are enough (`colour-keys`, `purple-rain`).
 - **A piece used in an unexpected way.** A grating turned steeply loses one rainbow, and that light goes into the straight beam (`white-stays-white`). Light can go back through a prism a second time (`purple-rain`). Other examples: a single-colour laser through a prism or grating as a mirror at an odd angle, or a black hole that swings a beam right round.
 - **Exact amounts.** Choose `required` so that only one way of splitting the light reaches it (½, ¼, ⅑, cos²), and use `each` and `strict` so that nearly right fails.
-- **Pre-placed pieces as misdirection.** Use `rotate` pieces that start at a tempting angle, and `free` pieces that have to be moved (the solver only turns pre-placed pieces, so check those levels by hand).
+- **Pre-placed pieces as misdirection.** Use `rotate` pieces that start at a tempting angle, and `free` pieces that have to be moved.
 - **Narrow approaches.** Put photocells and rings in niches between walls, so that only one beam direction reaches them. This cuts the number of solutions more than extra walls in open space.

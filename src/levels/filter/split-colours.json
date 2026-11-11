@@ -1,0 +1,127 @@
+{
+  "schema": 1,
+  "id": "split-colours",
+  "name": {
+    "en": "Split Colours",
+    "de": "Farben trennen"
+  },
+  "intro": {
+    "en": "Two colours, two rings in the corners of the walls, and a mirror that is already in the wrong place.",
+    "de": "Zwei Farben, zwei Ringe in den Nischen der Wände und ein Spiegel, der schon an der falschen Stelle steht."
+  },
+  "grid": {
+    "w": 10,
+    "h": 7
+  },
+  "par": 3,
+  "entities": [
+    {
+      "type": "laser",
+      "x": 0,
+      "y": 3,
+      "angle": 0
+    },
+    {
+      "id": "m1",
+      "type": "mirror",
+      "x": 2,
+      "y": 0,
+      "angle": 135,
+      "lock": "rotate"
+    },
+    {
+      "type": "sink",
+      "x": 9,
+      "y": 0,
+      "params": {
+        "color": "red",
+        "strict": true,
+        "required": 0.15
+      }
+    },
+    {
+      "type": "sink",
+      "x": 9,
+      "y": 3,
+      "params": {
+        "color": "green",
+        "strict": true,
+        "required": 0.15
+      }
+    },
+    {
+      "type": "wall",
+      "x": 9,
+      "y": 1,
+      "params": {
+        "w": 1,
+        "h": 2
+      }
+    },
+    {
+      "type": "wall",
+      "x": 9,
+      "y": 4,
+      "params": {
+        "w": 1,
+        "h": 3
+      }
+    }
+  ],
+  "inventory": [
+    {
+      "type": "splitter",
+      "count": 1
+    },
+    {
+      "type": "filter",
+      "count": 1,
+      "params": {
+        "color": "red"
+      }
+    },
+    {
+      "type": "filter",
+      "count": 1,
+      "params": {
+        "color": "green"
+      }
+    },
+    {
+      "type": "mirror",
+      "count": 1
+    }
+  ],
+  "solution": [
+    {
+      "type": "splitter",
+      "x": 2,
+      "y": 3,
+      "angle": 45
+    },
+    {
+      "id": "m1",
+      "x": 2,
+      "y": 0,
+      "angle": 45
+    },
+    {
+      "type": "filter",
+      "params": {
+        "color": "red"
+      },
+      "x": 6,
+      "y": 0,
+      "angle": 0
+    },
+    {
+      "type": "filter",
+      "params": {
+        "color": "green"
+      },
+      "x": 6,
+      "y": 3,
+      "angle": 0
+    }
+  ]
+}
