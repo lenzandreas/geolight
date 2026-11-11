@@ -11,7 +11,8 @@ import { trace, type TraceResult } from '../core/tracer';
 import type { Entity } from '../core/types';
 import { Session, slotKey, starsFor } from '../game/session';
 import type { LevelDef, SolutionStep } from './schema';
-import { anglesFor, litCells, progressOf, solve } from './solver';
+import { pointSegmentDistance } from '../core/geometry';
+import { anglesFor, litCells, solve } from './solver';
 import { parseLevel } from './validate';
 import { ancestors, featuredPieces, pieceKind, piecesUsed, type WorldDef } from './worlds';
 
@@ -75,9 +76,9 @@ export function setUp(level: LevelDef, moves: Moves = {}): { entities: Entity[];
     const [x, y] = (at ?? '').split(',').map(Number);
     if (!Number.isInteger(x) || !Number.isInteger(y)) throw new Error(`--place ${m}: write it as type@x,y@angle`);
     if (!s.inGrid(x, y)) throw new Error(`--place ${m}: outside the ${level.grid.w}x${level.grid.h} grid`);
-    if (s.pieceAt(x, y)) throw new Error(`--place ${m}: cell ${x},${y} is taken by ${s.pieceAt(x, y)!.type}`);
+    if (s.pieceAt(x, y)) throw new Error(`--place ${m}: cell ${x},${y} is taken by ${s.pieceAt(x, y)!.type} (id ${s.pieceAt(x, y)!.id}). To turn a pre-placed piece use --turn ${s.pieceAt(x, y)!.id}@angle`);
     if (!s.place(slotKey(type, params), x, y, Number(angle))) {
-      notes.push(`${spec} is not in the tray (or the tray has run out); placed it anyway`);
+      if (!notes.some((n) => n.startsWith('Some placed'))) notes.push('Some placed pieces are not in the tray (yet). That is fine while you are designing.');
       entities.push({ id: `x${extra++}`, type, x, y, angle: Number(angle), params });
     }
   }
@@ -206,6 +207,114 @@ export function describe(level: LevelDef, moves: Moves = {}): string {
   return out.join('\n');
 }
 
+/* ---------- A player who chases progress ---------- */
+
+/**
+ * How good a board looks to a hasty player: fuller rings are better, and for a ring
+ * that gets nothing yet, light passing closer to it is better. A tripped sensor looks bad.
+ */
+export function looksGood(entities: Entity[], t: TraceResult, ev: Evaluation, w: number, h: number): number {
+  let sum = 0;
+  let n = 0;
+  let bad = 0;
+  const diagonal = Math.hypot(w, h);
+  for (const s of ev.targets) {
+    if (s.kind === 'sensor' && !s.ok) bad += 0.5;
+    if (s.kind !== 'sink') continue;
+    n++;
+    // Light of the wrong colour on a strict ring still looks like being nearly there.
+    if (s.contaminated) {
+      sum += 0.5;
+      continue;
+    }
+    if (s.value > 1e-6) {
+      sum += 0.5 + 0.5 * s.progress;
+      continue;
+    }
+    const e = entities.find((x) => x.id === s.id)!;
+    const c = { x: e.x + 0.5, y: e.y + 0.5 };
+    let d = diagonal;
+    for (const seg of t.segments) d = Math.min(d, pointSegmentDistance(c, seg.a, seg.b));
+    sum += 0.5 * (1 - d / diagonal);
+  }
+  return (n ? sum / n : 0) - bad;
+}
+
+/**
+ * Plays the level the way a hasty player does: make the move that fills the rings most,
+ * keeping the `width` best boards after every move. Returns the smallest of the given
+ * widths that reaches a win within par, or null if none does. Width 1 means the level
+ * solves itself; null means the best-looking moves lead away from the solution.
+ */
+export function greedyWidth(level: LevelDef, par: number, widths: number[], ms = 15000): number | null {
+  const { w, h } = level.grid;
+  const step = level.rotationStep ?? 15;
+  const board = { width: w, height: h };
+  const start = new Session(level).pieces as Entity[];
+  const turnable = new Set(start.filter((_, i) => level.entities[i].lock === 'rotate' || level.entities[i].lock === 'free').filter((e) => getType(e.type).symmetry !== 360).map((e) => e.id));
+  const slots = level.inventory.map((i) => ({ key: slotKey(i.type, i.params), type: i.type, params: i.params ?? {}, count: i.count }));
+  const deadline = Date.now() + ms;
+  interface State { entities: Entity[]; used: number[]; turned: Set<string>; score: number; t: TraceResult }
+  const keyOf = (es: Entity[]) => es.map((e) => `${e.type}${JSON.stringify(e.params)}@${e.x},${e.y},${e.angle}`).sort().join('|');
+  for (const width of widths) {
+    const first = trace(start, board);
+    let won = false;
+    let frontier: State[] = [{ entities: start, used: slots.map(() => 0), turned: new Set(), score: 0, t: first }];
+    const seen = new Set<string>();
+    for (let depth = 0; depth < par + turnable.size && frontier.length; depth++) {
+      const next: State[] = [];
+      for (const st of frontier) {
+        const lit = litCells(st.t, w, h);
+        const occ = new Set<number>();
+        for (const e of st.entities) for (const [x, y] of footprint(e)) occ.add(y * w + x);
+        const consider = (entities: Entity[], used: number[], turned: Set<string>, id: string): boolean => {
+          if (Date.now() > deadline) return false;
+          const k = keyOf(entities);
+          if (seen.has(k)) return false;
+          seen.add(k);
+          const t = trace(entities, board);
+          if (!t.touched.has(id) && !turned.has(id)) return false;
+          const ev = evaluate(entities, t, level.goal);
+          if (ev.won) return true;
+          next.push({ entities, used, turned, score: looksGood(entities, t, ev, w, h), t });
+          return false;
+        };
+        for (const e of st.entities) {
+          if (!turnable.has(e.id) || st.turned.has(e.id) || !lit.has(Math.round(e.y) * w + Math.round(e.x))) continue;
+          for (const a of anglesFor(e.type, step)) {
+            if (a === e.angle) continue;
+            if (consider(st.entities.map((x) => (x === e ? { ...x, angle: a } : x)), st.used, new Set([...st.turned, e.id]), e.id)) return width;
+          }
+        }
+        if (st.used.reduce((a, b) => a + b, 0) >= par) continue;
+        slots.forEach((slot, i) => {
+          if (st.used[i] >= slot.count) return;
+          const field = getType(slot.type).field;
+          const reach = field ? Math.ceil(field({ id: '', type: slot.type, x: 0, y: 0, angle: 0, params: slot.params }).reach) : 0;
+          for (let c = 0; c < w * h; c++) {
+            if (occ.has(c)) continue;
+            const x = c % w;
+            const y = Math.floor(c / w);
+            let near = lit.has(c);
+            for (let dx = -reach; dx <= reach && !near; dx++) for (let dy = -reach; dy <= reach && !near; dy++) near = x + dx >= 0 && x + dx < w && lit.has((y + dy) * w + x + dx);
+            if (!near) continue;
+            for (const a of anglesFor(slot.type, step)) {
+              const id = `g${st.entities.length}`;
+              const used = st.used.map((n, j) => (j === i ? n + 1 : n));
+              if (consider([...st.entities, { id, type: slot.type, x, y, angle: a, params: slot.params }], used, st.turned, id)) won = true;
+            }
+          }
+        });
+        if (won) return width;
+      }
+      next.sort((a, b) => b.score - a.score);
+      frontier = next.slice(0, width);
+    }
+    if (Date.now() > deadline) return null;
+  }
+  return null;
+}
+
 /* ---------- The check ---------- */
 
 export interface CheckOptions {
@@ -238,18 +347,26 @@ function applySteps(level: LevelDef, steps: SolutionStep[]): { entities: Entity[
  * taking another route does not.
  */
 export function ideaKey(level: LevelDef, steps: SolutionStep[]): string {
-  const { t } = applySteps(level, steps);
+  const { t, entities } = applySteps(level, steps);
   const q = (v: number, m: number) => Math.round(v * m);
+  // Only light that ends up in a ring or a solar cell is part of the idea; stray beams are not.
+  const useful = new Array<boolean>(t.segments.length).fill(false);
+  const goals = new Set(entities.filter((e) => e.type === 'sink' || e.type === 'photocell').map((e) => e.id));
+  t.segments.forEach((s, i) => {
+    if (!s.hit || !goals.has(s.hit)) return;
+    for (let j: number | undefined = i; j !== undefined && !useful[j]; j = t.segments[j].parent) useful[j] = true;
+  });
   const lines = new Set<string>();
-  for (const s of t.segments) {
+  t.segments.forEach((s, i) => {
+    if (!useful[i]) return;
     const dx = s.b.x - s.a.x;
     const dy = s.b.y - s.a.y;
     const len = Math.hypot(dx, dy);
-    if (len < 1e-6) continue;
+    if (len < 1e-6) return;
     // Distance of the line from the origin; together with the heading it names the line whatever piece cuts it.
     const offset = (s.a.x * dy - s.a.y * dx) / len;
     lines.add(`${q((Math.atan2(dy, dx) * 180) / Math.PI, 2)},${q(offset, 50)},${q(s.c[0], 200)},${q(s.c[1], 200)},${q(s.c[2], 200)},${s.pol === null ? '' : q(s.pol, 1)}`);
-  }
+  });
   return [...lines].sort().join(';');
 }
 
@@ -394,7 +511,7 @@ export function check(raw: unknown, opts: CheckOptions = {}): CheckResult {
   }
   const others = [...layouts].filter(([k]) => k !== refLayout);
   const total = others.length + 1;
-  if (!shortcut) out.push(`Par solutions: ${total}${counted === 'partial' ? ' or more (search ran out of time)' : counted === 'hunt' ? ' (hunt)' : ''} different layout(s), the reference one included. Placements that leave the same light (a piece slid along its beam) count once.`);
+  if (!shortcut) out.push(`Par solutions: ${total}${counted === 'partial' ? ' or more (the search ran out of time, so there may be others; --deep searches longer)' : counted === 'hunt' ? ' (hunt)' : ''} different layout(s), the reference one included. Placements that leave the same light (a piece slid along its beam) count once.`);
   others.slice(0, 5).forEach(([, s]) => out.push(`  other: ${s.filter((x) => x.type || solution.some((y) => y.id === x.id)).map(stepText).join(' + ')}`));
   const LOOSE = 4;
   const loose = total >= LOOSE;
@@ -435,7 +552,7 @@ export function check(raw: unknown, opts: CheckOptions = {}): CheckResult {
     else advice.push(hint);
   };
   out.push('', 'Challenge checklist:');
-  point(par >= 3 || solution.filter((s) => s.id).length >= 3, `needs 3 or more moves (par ${par}, ${solution.filter((s) => s.id).length} piece(s) to turn)`, 'Add a step: a second ring, a pre-placed piece with lock "rotate" at a wrong angle, or a wall that forces one more turn.');
+  point(par >= 3 || solution.filter((s) => s.id).length >= 3, `needs 3 or more tray pieces, or 3 or more pieces to turn (par ${par}, ${solution.filter((s) => s.id).length} to turn)`, 'Add a step: a second ring, a pre-placed piece with lock "rotate" at a wrong angle, or a wall that forces one more turn.');
   point(trayCount > par, `decoys in the tray (${trayCount - par})`, 'Add 1 or 2 decoy pieces to "inventory" and keep "par" at the solution size. Run the check again: a decoy may open a shortcut.');
   point(total === 1 && counted !== 'partial', `exactly one layout wins (${total}${counted === 'partial' ? '+' : ''})`, 'Close the other par layouts (see the "other:" lines) with walls, sensors or exact amounts.');
 
@@ -446,7 +563,8 @@ export function check(raw: unknown, opts: CheckOptions = {}): CheckResult {
     const rest = [...solution];
     const value = (steps: SolutionStep[]) => {
       try {
-        return progressOf(applySteps(level, steps).ev);
+        const a = applySteps(level, steps);
+        return looksGood(a.entities, a.t, a.ev, w, h);
       } catch {
         return -Infinity;
       }
@@ -467,18 +585,20 @@ export function check(raw: unknown, opts: CheckOptions = {}): CheckResult {
       doneSteps.push(rest.splice(bestI, 1)[0]);
     }
   }
-  point(blind >= 1, `steps that show no progress when made (${blind} of ${solution.length})`, 'Make one step pay off only later: send the light away from the rings first, or put a piece where its light is still blocked until another piece is placed.');
+  point(blind >= 1, `steps that neither fill a ring nor bring light nearer to one when made (${blind} of ${solution.length})`, 'Make one step pay off only later: send the light away from the rings first, or put a piece where its light is still blocked until another piece is placed.');
 
-  const guided = solve(level, { maxPieces: par, maxSolutions: 1, maxNodes: Infinity, maxMs: ms, hunt: true });
-  const effort = guided.solutions.length ? guided.nodes : Infinity;
-  point(effort >= 3000, `following the brightest rings does not lead to the solution quickly (guided search needed ${effort === Infinity ? 'more than the time limit' : effort + ' boards'})`, 'The solution is found by simply chasing progress. Add a tempting route that almost works: a ring that the direct beam reaches with too little light, or a sensor on the direct route.', effort >= 30000 ? 2 : 1);
+  const width = greedyWidth(level, par, [1, 3, 10, 30], ms);
+  point(width !== 1 && width !== 3, width === null
+    ? 'chasing fuller rings and nearer light does not find the solution, even when the 30 best-looking boards are kept at every step'
+    : `chasing fuller rings and nearer light ${width === 1 ? 'finds the solution directly' : `finds the solution only when the ${width} best-looking boards are kept at every step`}`,
+    'A player who always makes the move that fills the rings most solves it. Add a tempting route that almost works: a ring that the direct beam reaches with too little light, or a sensor on the direct route, so that the best-looking move is wrong.', width === null ? 2 : 1);
 
   const exact = solved.ev.targets.some((t) => {
     const e = solved.entities.find((x) => x.id === t.id)!;
     return t.kind === 'sink' && (e.params.strict === true || e.params.each === true || (e.params.pol !== undefined && e.params.pol !== null) || t.value < 1.15 * t.threshold) && t.threshold < 0.85;
   });
   point(exact, 'exact amounts or colours (a ring that is strict, mixed, polarized, or needs nearly all the light the solution brings)', 'Set a ring\'s "required" just below what the solution delivers (see `show --solve`), or make it "strict" so that extra colours spoil it.');
-  point(solved.ev.targets.some((t) => t.kind === 'sensor') && par1.nearMisses + guided.nearMisses > 0, `a sensor to avoid, and dead ends that look almost solved (${par1.nearMisses + guided.nearMisses})`, 'Put a sensor where the obvious route sends light (for example straight behind the first turn).');
+  point(solved.ev.targets.some((t) => t.kind === 'sensor') && par1.nearMisses > 0, `a sensor to avoid, and boards that look almost solved but are not (${par1.nearMisses} found)`, 'Put a sensor where the obvious route sends light (for example straight behind the first turn).');
 
   let forgiving = 0;
   for (const step of solution) {

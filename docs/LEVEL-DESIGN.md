@@ -15,7 +15,9 @@ npm run level -- check <id or file.json>
 
 - `show` prints the board as text, with the light on it, a table of what every ring and sensor receives, and a list of every beam (where it starts, its direction, its colour and power, what it ends on). `--place` puts a piece on the board for this one picture only; it does not change the file. You can repeat `--place`. A piece with parameters is written `"filter:color=red@5,4@0"`.
 - `check` tests the level and ends with `VERDICT: PASS` or `VERDICT: FAIL`, a numbered list of problems and a list of fixes. It takes up to a minute. Add `--deep` for a longer search on big levels.
-- Coordinates: `x` grows to the right, `y` grows **down**, both start at 0. Angles: 0 = right, 90 = down, 180 = left, 270 = up. A mirror's angle is the direction its face points: a mirror at 45 or 135 turns a horizontal beam vertical. If you are not sure which, try both with `show --place` and look.
+- `--place` only works on an empty cell. To turn a piece that is already on the board, use `--turn id@angle` (the "Pieces on the board" table shows the ids).
+- Coordinates: `x` grows to the right, `y` grows **down**, both start at 0. Angles: 0 = right, 90 = down, 180 = left, 270 = up. A wall at `x,y` covers that one cell unless it has `"params": {"w": …, "h": …}`.
+- Mirrors and splitters: for a beam travelling **right**, angle 45 sends it **up** and angle 135 sends it **down**. For a beam travelling **left**, 45 sends it down and 135 sends it up. A splitter does the same with half of the light and lets the other half go straight on. Other angles (15, 30, 60, …) give slanted beams. If you are not sure, try the angle with `show --place` and look.
 
 Never work out by hand where light goes. Run `show` and read it.
 
@@ -127,7 +129,13 @@ Work through the problems it lists, top to bottom. After every change run `show 
 
 A wall that blocks an unwanted solution can also block yours, and a new decoy can open a new shortcut. That is why every change is followed by `show --solve` and `check`.
 
-Stop when the verdict is `PASS` with a challenge of **5/8 or more**, or 4/8 with exactly one layout. If you have changed the level six times and it still fails, the idea does not work on this board: go back to step 3 with a different path.
+Reading the rest of the output:
+
+- `Par solutions: N or more (the search ran out of time …)` means the count is a lower bound. Run `check <file> --deep` once at the end to search longer.
+- `other:` lines are different winning layouts. A solution that differs only in stray light, or in a filter slid along its beam, is not listed. A second `strict` ring on the unwanted light is another way to remove one.
+- The challenge score counts the items of the checklist (one of them can count twice). It is a rough measure made by a program that plays the level hastily, not a guarantee that people find the level hard. Treat 5/8 as the minimum, not as the goal.
+
+Stop when the verdict is `PASS` with a challenge of **5/8 or more** and at most 3 layouts, and `check --deep` still passes. If you have changed the level six times and it still fails, the idea does not work on this board: go back to step 3 with a different path.
 
 ### Step 7. Register and test
 

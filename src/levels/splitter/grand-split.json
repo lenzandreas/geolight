@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "grand-split",
+  "name": { "en": "Grand Split", "de": "Große Teilung" },
+  "intro": { "en": "Three rings need light, but the straight road is blocked.", "de": "Drei Ringe brauchen Licht, aber der gerade Weg ist versperrt." },
+  "grid": { "w": 10, "h": 7 },
+  "entities": [
+    { "type": "laser", "x": 0, "y": 3, "angle": 0 },
+    { "type": "sink", "x": 9, "y": 3, "params": { "required": 0.24 } },
+    { "type": "sink", "x": 6, "y": 0, "params": { "required": 0.24 } },
+    { "type": "sink", "x": 9, "y": 1, "params": { "required": 0.45 } },
+    { "type": "wall", "x": 7, "y": 2, "params": { "w": 2, "h": 1 } },
+    { "type": "wall", "x": 1, "y": 2, "params": { "w": 2, "h": 1 } },
+    { "type": "wall", "x": 2, "y": 1, "params": { "w": 1, "h": 1 } },
+    { "type": "wall", "x": 4, "y": 2, "params": { "w": 2, "h": 1 } },
+    { "type": "wall", "x": 5, "y": 0, "params": { "w": 1, "h": 1 } }
+  ],
+  "inventory": [{ "type": "splitter", "count": 2 }, { "type": "mirror", "count": 1 }],
+  "solution": [
+    { "type": "splitter", "x": 3, "y": 3, "angle": 45 },
+    { "type": "mirror", "x": 3, "y": 1, "angle": 45 },
+    { "type": "splitter", "x": 6, "y": 3, "angle": 45 }
+  ]
+}

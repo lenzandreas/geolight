@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "id": "colour-bridge",
+  "name": {
+    "en": "Colour Bridge",
+    "de": "Farbbrücke"
+  },
+  "intro": {
+    "en": "Only one colour of the rainbow is wanted, and the straight beam is too bright to hide behind.",
+    "de": "Nur eine Farbe des Regenbogens wird gebraucht, und der gerade Strahl ist zu hell, um sich dahinter zu verstecken."
+  },
+  "grid": {
+    "w": 11,
+    "h": 7
+  },
+  "par": 2,
+  "entities": [
+    {
+      "type": "laser",
+      "x": 0,
+      "y": 3,
+      "angle": 0
+    },
+    {
+      "type": "sink",
+      "x": 9,
+      "y": 5,
+      "params": {
+        "color": "green",
+        "strict": true,
+        "required": 0.1
+      }
+    },
+    {
+      "type": "wall",
+      "x": 8,
+      "y": 4,
+      "params": {
+        "w": 1,
+        "h": 1
+      }
+    },
+    {
+      "type": "wall",
+      "x": 9,
+      "y": 4,
+      "params": {
+        "w": 1,
+        "h": 1
+      }
+    },
+    {
+      "type": "wall",
+      "x": 10,
+      "y": 5,
+      "params": {
+        "w": 1,
+        "h": 1
+      }
+    },
+    {
+      "type": "sink",
+      "x": 9,
+      "y": 0,
+      "params": {
+        "color": "blue",
+        "strict": true,
+        "required": 0.1
+      }
+    },
+    {
+      "type": "sink",
+      "x": 7,
+      "y": 3,
+      "params": {
+        "required": 0.3
+      }
+    },
+    {
+      "type": "sensor",
+      "x": 10,
+      "y": 3,
+      "params": {
+        "limit": 0.02
+      }
+    },
+    {
+      "type": "wall",
+      "x": 7,
+      "y": 4,
+      "params": {
+        "w": 1,
+        "h": 1
+      }
+    },
+    {
+      "type": "wall",
+      "x": 7,
+      "y": 2,
+      "params": {
+        "w": 1,
+        "h": 1
+      }
+    },
+    {
+      "type": "wall",
+      "x": 9,
+      "y": 6,
+      "params": {
+        "w": 1,
+        "h": 1
+      }
+    },
+    {
+      "id": "m2",
+      "type": "mirror",
+      "x": 1,
+      "y": 3,
+      "angle": 45,
+      "lock": "rotate"
+    },
+    {
+      "id": "m3",
+      "type": "mirror",
+      "x": 5,
+      "y": 3,
+      "angle": 45,
+      "lock": "rotate"
+    }
+  ],
+  "inventory": [
+    {
+      "type": "grating",
+      "count": 2
+    },
+    {
+      "type": "mirror",
+      "count": 1
+    }
+  ],
+  "solution": [
+    {
+      "type": "grating",
+      "x": 3,
+      "y": 3,
+      "angle": 0
+    },
+    {
+      "type": "mirror",
+      "x": 6,
+      "y": 5,
+      "angle": 105
+    },
+    {
+      "id": "m2",
+      "x": 1,
+      "y": 3,
+      "angle": 90
+    },
+    {
+      "id": "m3",
+      "x": 5,
+      "y": 3,
+      "angle": 90
+    }
+  ]
+}

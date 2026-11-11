@@ -11,7 +11,7 @@
     "name": {"en": "Forks", "de": "Gabelungen"},
     "object": "splitter",
     "parents": ["mirror"],
-    "levels": ["half-and-half", "fork", "three-ways", "merge", "both-halves", "chandelier", "power-grid"]
+    "levels": ["half-and-half", "fork", "three-ways", "merge", "both-halves", "grand-split", "chandelier", "power-grid"]
   },
   {
     "id": "lens",
@@ -46,7 +46,7 @@
     "name": {"en": "Colours", "de": "Farben"},
     "object": "filter",
     "parents": ["lens"],
-    "levels": ["red-light", "seeing-red", "traffic-light", "secondary-colours", "unmix", "observatory", "colour-lock"]
+    "levels": ["red-light", "seeing-red", "traffic-light", "secondary-colours", "split-colours", "unmix", "observatory", "colour-lock"]
   },
   {
     "id": "prism",
@@ -74,7 +74,7 @@
     "name": {"en": "Spectra", "de": "Spektren"},
     "object": "grating",
     "parents": ["prism"],
-    "levels": ["fine-lines", "upside-down-rainbow", "white-stays-white", "colour-keys", "no-green", "double-take", "prism-or-grating", "rainbow-gate"]
+    "levels": ["fine-lines", "upside-down-rainbow", "white-stays-white", "colour-keys", "no-green", "colour-bridge", "double-take", "prism-or-grating", "rainbow-gate"]
   },
   {
     "id": "kaleidoscope",

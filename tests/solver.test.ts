@@ -143,7 +143,7 @@ describe('level design tools', () => {
 
   it('places pieces that are not in the tray, and says so', () => {
     const text = describeLevel(corner, { place: ['splitter@4,2@45'] });
-    expect(text).toContain('not in the tray');
+    expect(text).toContain("not in the tray");
     expect(text).toContain('RESULT: not solved.');
   });
 
