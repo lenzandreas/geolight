@@ -331,6 +331,8 @@ export interface CheckResult {
   ok: boolean;
   /** 0–8: how many of the things that make a level hard it has. */
   score: number;
+  /** The level meets the bar for a hard level: challenge 6 or more and exactly one winning layout, fully counted. */
+  bar: boolean;
   text: string;
 }
 
@@ -370,21 +372,28 @@ export function ideaKey(level: LevelDef, steps: SolutionStep[]): string {
   return [...lines].sort().join(';');
 }
 
+/** Challenge score a level needs to count as hard. */
+export const BAR_SCORE = 6;
+
 export function check(raw: unknown, opts: CheckOptions = {}): CheckResult {
   const out: string[] = [];
   const errors: string[] = [];
   const advice: string[] = [];
+  let barNotes: string[] = ['the check did not get as far as the challenge score'];
   const done = (score = 0): CheckResult => {
     out.push('');
     if (errors.length) {
       out.push(`VERDICT: FAIL. Fix these ${errors.length} problem(s), then run the check again:`);
       errors.forEach((e, i) => out.push(`  ${i + 1}. ${e}`));
     } else out.push(`VERDICT: PASS, challenge ${score}/8 (${score >= 5 ? 'challenging' : score >= 3 ? 'medium' : 'gentle'}).`);
+    if (!errors.length && score < BAR_SCORE) barNotes.push(`the challenge is ${score}/8, the bar is ${BAR_SCORE}/8`);
+    const bar = !errors.length && !barNotes.length;
+    if (!errors.length) out.push(bar ? 'BAR: MET. This level is hard enough. Stop changing it.' : `BAR: NOT MET (${barNotes.join('; ')}).`);
     if (advice.length) {
       out.push('', errors.length ? 'How to fix:' : 'To make it harder (most important first):');
       advice.forEach((a) => out.push(`  - ${a}`));
     }
-    return { ok: !errors.length, score, text: out.join('\n') };
+    return { ok: !errors.length, score, bar, text: out.join('\n') };
   };
 
   /* 1. The file itself. */
@@ -615,5 +624,8 @@ export function check(raw: unknown, opts: CheckOptions = {}): CheckResult {
   }
   out.push(`  (info) other angles of solution pieces that also win: ${forgiving}`);
   if (!proven) out.push('  (info) the shortcut search was a hunt, not a proof. Use --deep for a longer search.');
+  barNotes = [];
+  if (total !== 1) barNotes.push(`${total}${counted === 'partial' ? ' or more' : ''} layouts win, the bar is exactly 1`);
+  else if (counted === 'partial') barNotes.push('the layout count is not finished: run the check with --deep');
   return done(Math.min(loose ? 2 : 8, score));
 }

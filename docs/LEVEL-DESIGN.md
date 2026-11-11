@@ -125,7 +125,7 @@ Work through the problems it lists, top to bottom. After every change run `show 
 | `solution step … is not needed` | Your own solution has a spare piece. | Remove that step and that tray piece. |
 | `the reference solution does not win` | A ring is not full or a sensor is lit. | Run `show <file> --solve` and read the Targets table. |
 | `world … may not use …` | The piece belongs to a later world. | Use another piece, or move the file to a world that allows it. |
-| `PASS, challenge 0–2/8 (gentle)` | Sound, but easy. | Apply the "To make it harder" list, one item at a time. |
+| `BAR: NOT MET (…)` | Sound, but not hard enough yet. The brackets say what is missing. | Apply the "To make it harder" list, one item at a time. |
 
 A wall that blocks an unwanted solution can also block yours, and a new decoy can open a new shortcut. That is why every change is followed by `show --solve` and `check`.
 
@@ -133,9 +133,15 @@ Reading the rest of the output:
 
 - `Par solutions: N or more (the search ran out of time …)` means the count is a lower bound. Run `check <file> --deep` once at the end to search longer.
 - `other:` lines are different winning layouts. A solution that differs only in stray light, or in a filter slid along its beam, is not listed. A second `strict` ring on the unwanted light is another way to remove one.
-- The challenge score counts the items of the checklist (one of them can count twice). It is a rough measure made by a program that plays the level hastily, not a guarantee that people find the level hard. Treat 5/8 as the minimum, not as the goal.
+- The challenge score counts the items of the checklist (one of them can count twice). It is a rough measure made by a program that plays the level hastily, not a guarantee that people find the level hard. The `BAR:` line tells you whether the level is hard enough.
 
-Stop when the verdict is `PASS` with a challenge of **5/8 or more** and at most 3 layouts, and `check --deep` still passes. If you have changed the level six times and it still fails, the idea does not work on this board: go back to step 3 with a different path.
+**The bar.** The level is finished when `check <file> --deep` prints `BAR: MET`. That needs a `PASS`, a challenge of **6/8 or more**, and **exactly one** winning layout with the count finished (not "or more"). Use the plain `check` while you work and `--deep` when the plain check looks good.
+
+**When to change course, and when to give up.** The bar is high on purpose, and not every idea reaches it. Keep a count of your `check` runs (with and without `--deep`).
+
+- If six changes in a row have not raised the score or lowered the layout count, the idea does not work on this board. Start again at step 3 with a different path. You may start again twice.
+- After **20 runs of `check`** in total, or when the third idea is also stuck, stop. Do not keep trying, and do not lower the bar by editing the tools or the tests.
+- When you stop without `BAR: MET`: if your best version got `PASS` with 5/8 or more and at most 3 layouts, keep that file and report it as "below the bar", with its check output. Otherwise delete the file and report that no level was produced. Both are acceptable results. A level that falsely claims to meet the bar is not.
 
 ### Step 7. Register and test
 
