@@ -17,6 +17,8 @@ npm install
 npm run dev        # http://localhost:5173  (dev-only extras: ?solve applies a level's solution; ?unlock opens the whole star map; #/level/<id> opens any level; #/daily/YYYY-MM-DD any day's puzzle)
 npm test           # optics, session, progress, world-structure and level-pack tests (every level is checked to be solvable)
 npm run report     # level report: how many perfect solutions each level has, and whether any beats par (slow)
+npm run level -- check <id|file.json>   # is this level sound, how hard is it, what should change
+npm run level -- show <id|file.json>    # the board and its light as text (--solve, --place type@x,y@angle)
 npm run build      # static site in dist/ (open from any web server or sub-path)
 npm run preview    # serve the production build
 ```
@@ -43,7 +45,7 @@ One-time setup: in the repository on GitHub, go to **Settings → Pages → Buil
 ```
 src/
   core/        headless optics engine: math, tracer, interactions, entity types, rules
-  level/       level schema, validation, brute-force solver
+  level/       level schema, validation, solver, level-design tools
   levels/      the level pack: one folder per world, worlds.json defines the world tree
   game/        session (placement, undo, hints) and saved progress
   render/      Canvas 2D renderer, per-type drawers, theme, view transform
@@ -55,4 +57,4 @@ tests/         Vitest suites
 docs/          architecture and level-design notes
 ```
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the design, extension points and roadmap, and [docs/LEVELS.md](docs/LEVELS.md) for how to write levels.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the design, extension points and roadmap, [docs/LEVELS.md](docs/LEVELS.md) for the level format, and [docs/LEVEL-DESIGN.md](docs/LEVEL-DESIGN.md) for a step-by-step way to design hard levels that also works for small language models.
