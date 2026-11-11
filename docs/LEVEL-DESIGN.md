@@ -17,9 +17,14 @@ npm run level -- check <id or file.json>
 - `check` tests the level and ends with `VERDICT: PASS` or `VERDICT: FAIL`, a numbered list of problems and a list of fixes. It takes up to a minute. Add `--deep` for a longer search on big levels.
 - `--place` only works on an empty cell. To turn a piece that is already on the board, use `--turn id@angle` (the "Pieces on the board" table shows the ids).
 - Coordinates: `x` grows to the right, `y` grows **down**, both start at 0. Angles: 0 = right, 90 = down, 180 = left, 270 = up. A wall at `x,y` covers that one cell unless it has `"params": {"w": …, "h": …}`.
-- Mirrors and splitters: for a beam travelling **right**, angle 45 sends it **up** and angle 135 sends it **down**. For a beam travelling **left**, 45 sends it down and 135 sends it up. A splitter does the same with half of the light and lets the other half go straight on. Other angles (15, 30, 60, …) give slanted beams. If you are not sure, try the angle with `show --place` and look.
+- Mirrors and splitters: for a beam travelling **right**, angle 45 sends it **up** and angle 135 sends it **down**. For a beam travelling **left**, 45 sends it down and 135 sends it up. A splitter does the same with half of the light and lets the other half go straight on. For a beam travelling **up**, 45 sends it right and 135 sends it left; for a beam travelling **down**, 45 sends it left and 135 sends it right. Other angles (15, 30, 60, …) give slanted beams. If you are not sure, try the angle with `show --place` and look.
 
-Never work out by hand where light goes. Run `show` and read it.
+- Pieces turn in steps of 15°. Give pre-placed pieces angles that are multiples of 15.
+- A ring is a disc of radius 0.32 in the middle of its cell. A slanted beam can cross a ring's cell and still miss the ring, so trust the Targets table, not the picture.
+- A prism fans white light into a red, a green and a blue beam at slanted angles. Red and green leave close together; put a strict single-colour ring several cells away from the prism, where the beams have separated.
+- A polarizer lets through cos² of the angle between the light's polarization and its own axis: 15° apart keeps 0.93, 30° keeps 0.75, 45° keeps 0.5, 60° keeps 0.25, 90° keeps nothing. Unpolarized light always loses half.
+
+Never work out by hand where light goes. Run `show` and read it. (Working out polarizer amounts from the table above, to choose a `required`, is fine.)
 
 ## What makes a level hard
 
@@ -85,7 +90,7 @@ Keep going until the light travels a path you like, with 2 to 4 pieces. Make the
 
 ### Step 4. Put the rings where the light ends
 
-Read the "Beams" list of your last `show`. For every beam that should be a goal, add a ring (`sink`) in the cell where it ends or in an empty cell it passes through. Set `required` to about 90% of the beam's total power (the list shows it), so that the ring fills but a weaker beam would not. If the beam has one colour, give the ring that `color` and `"strict": true`.
+Read the "Beams" list of your last `show`. For every beam that should be a goal, add a ring (`sink`) in the cell where it ends or in an empty cell it passes through. Set `required` to about 90% of the beam's total power (the list shows it), so that the ring fills but a weaker beam would not. This is a starting value: if `check` later shows unwanted solutions that bring a little less light, raise `required` to just under what your solution delivers. If the beam has one colour, give the ring that `color` and `"strict": true`.
 
 Then copy your `--place` pieces into the file twice:
 
@@ -133,9 +138,9 @@ Reading the rest of the output:
 
 - `Par solutions: N or more (the search ran out of time …)` means the count is a lower bound. Run `check <file> --deep` once at the end to search longer.
 - `other:` lines are different winning layouts. A solution that differs only in stray light, or in a filter slid along its beam, is not listed. A second `strict` ring on the unwanted light is another way to remove one.
-- The challenge score counts the items of the checklist (one of them can count twice). It is a rough measure made by a program that plays the level hastily, not a guarantee that people find the level hard. The `BAR:` line tells you whether the level is hard enough.
+- The challenge score counts the ticked items of the checklist. The "chasing fuller rings" item counts twice when even 30 kept boards do not find the solution. "Steps that neither fill a ring nor bring light nearer" is judged by a player who always makes the best-looking move next, so a step can be clever without being counted. It is a rough measure made by a program that plays the level hastily, not a guarantee that people find the level hard. The `BAR:` line tells you whether the level is hard enough.
 
-**The bar.** The level is finished when `check <file> --deep` prints `BAR: MET`. That needs a `PASS`, a challenge of **6/8 or more**, and **exactly one** winning layout with the count finished (not "or more"). Use the plain `check` while you work and `--deep` when the plain check looks good.
+**The bar.** The level is finished when `check <file> --deep` prints `BAR: MET`. That needs a `PASS`, a challenge of **6/8 or more**, and **exactly one** winning layout with the count finished (not "or more"). Use the plain `check` while you work and `--deep` (it can take a few minutes) when the plain check looks good. Only checks of your own level count towards the limit below.
 
 **When to change course, and when to give up.** The bar is high on purpose, and not every idea reaches it. Keep a count of your `check` runs (with and without `--deep`).
 
@@ -158,4 +163,6 @@ All tests must pass. Do not edit other levels, the tests or the tools to make th
 - **Tray size.** The check proves that no shortcut exists as long as par is 3 or less. From par 4 on it switches to a hunt, which finds most shortcuts but proves nothing. Prefer par 2 to 4 and get the difficulty from the list above, not from more pieces. Pieces with `"lock": "rotate"` are cheap to check, so use them freely.
 - **Bulbs and sunlight** (diffuse light) make the check slow and the amounts fuzzy. Use lasers unless the world is about gathering light (lenses, concave mirrors); in those worlds keep the tray at 3 pieces or fewer.
 - **Black holes** act from two cells away. Keep them out of trays with more than 2 other pieces.
+- **Polarizer-only levels** differ only in angles and in how many polarizers fit on a stretch of beam. Walls that leave a single free cell, and tight `required` values, are what remove extra solutions there.
+- **Walls.** A few walls that shape the idea are good. If you need more than about eight to get down to one layout, the idea is too loose: change the path instead.
 - A level is not better for being bigger. If a row or column of the grid is empty in the solved picture and holds no decoy route, remove it.
