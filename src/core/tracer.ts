@@ -1,9 +1,9 @@
 import { addInto, black, power, type RGB } from './color';
-import { rayCircle, rayShape } from './geometry';
+import { rayCircle, raySegment, rayShape } from './geometry';
 import { addScaled, type Vec } from './math';
 import { getType } from './registry';
 import { absorb } from './interactions';
-import { param, type Entity, type Field, type Hit, type Ray, type Surface, type TraceContext } from './types';
+import { param, type Entity, type Field, type Hit, type Ray, type Surface, type TraceContext, type WarmField } from './types';
 
 export interface BeamSegment {
   a: Vec;
@@ -57,6 +57,8 @@ const NUDGE = 1e-5;
 const FIELD_STEP = 0.1;
 const FIELD_STEP_MIN = 0.02;
 const FIELD_STEP_MAX = 0.25;
+/** Step length in warm air. The turn per step is tiny, so the path is smooth and the total turn exact. */
+const WARM_STEP = 0.05;
 /** A ray caught in orbit is given up after this many steps. */
 const MAX_FIELD_STEPS = 3000;
 
@@ -109,11 +111,33 @@ export function trace(entities: Entity[], opts: TraceOptions): TraceResult {
   }
 }
 
-/** Where the next straight piece of a ray ends because of gravity fields, or null if none applies. */
+/** Is a point in a patch of warm air? */
+function inWarm(f: WarmField, p: Vec): boolean {
+  const x = (p.x - f.c.x) * f.along.x + (p.y - f.c.y) * f.along.y;
+  const y = (p.x - f.c.x) * f.facing.x + (p.y - f.c.y) * f.facing.y;
+  return Math.abs(x) < f.half && y > f.near && y < f.far;
+}
+
+/** Distance along a ray to the edge of a patch of warm air (the way in, or the way out from inside). */
+function warmEdge(f: WarmField, o: Vec, d: Vec): number {
+  const at = (x: number, y: number): Vec => ({ x: f.c.x + f.along.x * x + f.facing.x * y, y: f.c.y + f.along.y * x + f.facing.y * y });
+  const p = [at(-f.half, f.near), at(f.half, f.near), at(f.half, f.far), at(-f.half, f.far)];
+  let t = Infinity;
+  for (let i = 0; i < 4; i++) t = Math.min(t, raySegment(o, d, p[i], p[(i + 1) % 4]));
+  return t;
+}
+
+/** Where the next straight piece of a ray ends because of fields (gravity, warm air), or null if none applies. */
 function fieldStep(ray: Ray, fields: Field[]): { t: number; inside: boolean } | null {
   let h = Infinity;
   let enter = Infinity;
   for (const f of fields) {
+    if (f.kind === 'warm') {
+      const edge = warmEdge(f, ray.o, ray.d);
+      if (inWarm(f, ray.o)) h = Math.min(h, WARM_STEP, edge + 1e-4);
+      else enter = Math.min(enter, edge);
+      continue;
+    }
     const r = Math.hypot(ray.o.x - f.c.x, ray.o.y - f.c.y);
     if (r < f.reach) h = Math.min(h, Math.min(FIELD_STEP_MAX, Math.max(FIELD_STEP_MIN, FIELD_STEP * r)));
     else enter = Math.min(enter, rayCircle(ray.o, ray.d, f.c, f.reach));
@@ -123,12 +147,20 @@ function fieldStep(ray: Ray, fields: Field[]): { t: number; inside: boolean } | 
   return null;
 }
 
-/** Direction after a step of length t: every field pulls towards its centre (judged at the step's midpoint). */
+/** Direction after a step of length t, judged at the step's midpoint: gravity pulls towards its centre, warm air pushes away from its plate. */
 function bend(ray: Ray, t: number, fields: Field[]): Vec {
   const m = addScaled(ray.o, ray.d, t / 2);
   let dx = ray.d.x;
   let dy = ray.d.y;
   for (const f of fields) {
+    if (f.kind === 'warm') {
+      if (!inWarm(f, m)) continue;
+      // Only the part of the push across the ray turns it.
+      const across = f.facing.x * ray.d.x + f.facing.y * ray.d.y;
+      dx += f.turn * t * (f.facing.x - across * ray.d.x);
+      dy += f.turn * t * (f.facing.y - across * ray.d.y);
+      continue;
+    }
     const rx = m.x - f.c.x;
     const ry = m.y - f.c.y;
     const r = Math.hypot(rx, ry);
@@ -232,13 +264,17 @@ function traceOnce(entities: Entity[], opts: TraceOptions, open: Set<string>): T
     }
     if (!best) continue; // Cannot happen with a closed boundary, but stay safe.
     if (fields.length) {
-      // Inside (or about to enter) a gravity field the ray moves in short steps, turning after each.
+      // Inside (or about to enter) a field the ray moves in short steps, turning after each.
       const step = fieldStep(ray, fields);
       if (step && step.t < bestT) {
-        if (step.inside) for (let i = 0; i < fields.length; i++) if (Math.hypot(ray.o.x - fields[i].c.x, ray.o.y - fields[i].c.y) < fields[i].reach) touched.add(fieldIds[i]);
+        if (step.inside) for (let i = 0; i < fields.length; i++) {
+          const f = fields[i];
+          if (f.kind === 'warm' ? inWarm(f, ray.o) : Math.hypot(ray.o.x - f.c.x, ray.o.y - f.c.y) < f.reach) touched.add(fieldIds[i]);
+        }
         let t = step.t;
         let swallowed = false;
         for (const f of fields) {
+          if (f.kind !== 'gravity') continue;
           const tc = rayCircle(ray.o, ray.d, f.c, f.capture);
           const inside = Math.hypot(ray.o.x - f.c.x, ray.o.y - f.c.y) < f.capture;
           if (inside || tc <= t) {

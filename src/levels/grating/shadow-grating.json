@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "id": "shadow-grating",
+  "name": {
+    "en": "Spectral Lines",
+    "de": "Spektrallinien"
+  },
+  "intro": {
+    "en": "A grating draws coloured lines on the screen, and they move apart as it moves away. This picture has no green in it anywhere.",
+    "de": "Ein Gitter zeichnet farbige Linien auf den Schirm, und sie rücken auseinander, wenn es sich entfernt. In diesem Bild ist nirgends Grün."
+  },
+  "grid": {"w": 11, "h": 9},
+  "par": 3,
+  "entities": [
+    {"type": "laser", "x": 2, "y": 5, "angle": 270},
+    {"type": "sensor", "x": 2, "y": 0},
+    {"type": "screen", "x": 10, "y": 0, "angle": 180, "params": {"pattern": "r...m...r", "need": 0.3}}
+  ],
+  "inventory": [
+    {"type": "mirror", "count": 1},
+    {"type": "grating", "count": 1},
+    {"type": "filter", "count": 1, "params": {"color": "magenta"}},
+    {"type": "filter", "count": 1, "params": {"color": "yellow"}}
+  ],
+  "solution": [
+    {"type": "mirror", "x": 2, "y": 4, "angle": 45},
+    {"type": "filter", "params": {"color": "magenta"}, "x": 3, "y": 4, "angle": 0},
+    {"type": "grating", "x": 5, "y": 4, "angle": 0}
+  ]
+}

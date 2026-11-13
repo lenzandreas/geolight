@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "shadow-gravity",
+  "name": {
+    "en": "Inside Out",
+    "de": "Umgestülpt"
+  },
+  "intro": {
+    "en": "Light where the shadow is, shadow where the light is. A heavy black hole pulls passing beams towards each other, and how far behind it they meet depends on where it sits.",
+    "de": "Licht, wo der Schatten ist, und Schatten, wo das Licht ist. Ein schweres Schwarzes Loch zieht vorbeilaufende Strahlen zueinander, und wie weit dahinter sie sich treffen, hängt davon ab, wo es sitzt."
+  },
+  "grid": {"w": 11, "h": 9},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 2, "angle": 0, "params": {"width": 0.4, "power": 0.4, "rays": 40}},
+    {"type": "sun", "x": 0, "y": 6, "angle": 0, "params": {"width": 0.4, "power": 0.4, "rays": 40}},
+    {"type": "screen", "x": 10, "y": 1, "angle": 180, "params": {"pattern": "...w...", "need": 0.25}}
+  ],
+  "inventory": [
+    {"type": "blackHole", "count": 1, "params": {"reach": 3, "rs": 0.3}}
+  ],
+  "solution": [
+    {"type": "blackHole", "params": {"reach": 3, "rs": 0.3}, "x": 2, "y": 4, "angle": 0}
+  ]
+}

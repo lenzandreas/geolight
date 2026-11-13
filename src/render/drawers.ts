@@ -3,7 +3,7 @@
  * physics so a different art style (or a WebGL renderer) can replace it.
  */
 import { resolveColor } from '../core/color';
-import { PHOTOCELL_SIZE, POLARIZER_RADIUS, SHADOW_FACTOR, SLIT_THICKNESS, THIN_LEN } from '../core/entities';
+import { PHOTOCELL_SIZE, POLARIZER_RADIUS, HEATER_DEPTH, HEATER_LENGTH, SCREEN_DEPTH, SCREEN_PIXEL, screenRun, WARM_FAR, SHADOW_FACTOR, SLIT_THICKNESS, THIN_LEN } from '../core/entities';
 import { centre, regularPolygon, rotatedRect } from '../core/entities/shapes';
 import { getType } from '../core/registry';
 import type { TargetStatus } from '../core/rules';
@@ -254,6 +254,66 @@ registerDrawer('sun', (e, { ctx, theme }) => {
 });
 
 /* ---------- Targets ---------- */
+
+/**
+ * A screen is a frame with one square tile per pixel. The outline of a tile is the silhouette
+ * to cast: dashed for a pixel that must stay dark, solid (in its colour) for one that wants
+ * light. The fill is the light that actually falls on it, and a wrongly lit tile turns red.
+ */
+registerDrawer('screen', (e, { ctx, theme, time, status }) => {
+  const t = getType('screen');
+  const pattern = param<string>(e, t, 'pattern');
+  const need = param<number>(e, t, 'need') / 3;
+  const limit = param<number>(e, t, 'limit');
+  const run = screenRun(e);
+  const c = centre(e);
+  const n = pattern.length;
+  const d = SCREEN_DEPTH / 2;
+  const x0 = c.x - (run.x ? 0.5 : d);
+  const y0 = c.y - (run.y ? 0.5 : d);
+  roundRect(ctx, x0, y0, run.x ? n : SCREEN_DEPTH, run.y ? n : SCREEN_DEPTH, 0.1);
+  ctx.fillStyle = theme.wall;
+  ctx.fill();
+  ctx.strokeStyle = theme.wallEdge;
+  ctx.lineWidth = 0.025;
+  ctx.stroke();
+  const h = SCREEN_PIXEL / 2;
+  for (let i = 0; i < n; i++) {
+    const px = c.x + run.x * i;
+    const py = c.y + run.y * i;
+    const p = status?.pixels?.[i];
+    const want = p?.want ?? [0, 0, 0];
+    const wantsLight = want[0] + want[1] + want[2] > 0;
+    const got = p?.got ?? [0, 0, 0];
+    const brightest = Math.max(got[0], got[1], got[2]);
+    const level = Math.min(1, brightest / Math.max(need, 1e-9));
+    // Light below the limit counts as shadow, so it is drawn as shadow.
+    const lit = brightest > limit;
+    const wrong = !!p && !p.ok && lit && (!wantsLight || level >= 1);
+    if (lit && p?.ok) softGlow(ctx, px, py, 0.5 * (1 + Math.sin(time * 2.2 + i) * 0.04), lightColor(theme, got), 0.35);
+    roundRect(ctx, px - h, py - h, SCREEN_PIXEL, SCREEN_PIXEL, 0.07);
+    ctx.fillStyle = theme.sinkWell;
+    ctx.fill();
+    if (lit) {
+      ctx.fillStyle = rgba(lightColor(theme, got), 0.15 + 0.8 * level);
+      ctx.fill();
+    }
+    ctx.lineWidth = wrong ? 0.045 : 0.03;
+    if (wrong) ctx.strokeStyle = theme.sensor;
+    else if (wantsLight) ctx.strokeStyle = rgba(maskColor(theme, want), p?.ok ? 1 : 0.7);
+    else ctx.strokeStyle = 'rgba(170, 180, 255, 0.45)';
+    if (!wantsLight && !wrong) ctx.setLineDash([0.06, 0.06]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // A coloured pixel shows its colour as a dot until the right light covers it.
+    if (wantsLight && !(want[0] && want[1] && want[2]) && !p?.ok) {
+      ctx.beginPath();
+      ctx.arc(px, py, 0.06, 0, Math.PI * 2);
+      ctx.fillStyle = rgba(maskColor(theme, want), 0.9);
+      ctx.fill();
+    }
+  }
+});
 
 registerDrawer('sink', (e, { ctx, theme, time, status, demand }) => {
   const t = getType('sink');
@@ -548,6 +608,53 @@ registerDrawer('polarizer', (e, { ctx, theme }) => {
     ctx.stroke();
   }
   ctx.lineCap = 'butt';
+});
+
+/** A hot plate with its warm air: the haze shows exactly where light gets bent. */
+registerDrawer('heater', (e, { ctx, theme, time }) => {
+  local(e, ctx, () => {
+    const d = HEATER_DEPTH / 2;
+    // Warm air, fading with distance from the plate.
+    const haze = ctx.createLinearGradient(d, 0, WARM_FAR, 0);
+    haze.addColorStop(0, 'rgba(255, 150, 95, 0.20)');
+    haze.addColorStop(0.6, 'rgba(255, 150, 95, 0.07)');
+    haze.addColorStop(1, 'rgba(255, 150, 95, 0)');
+    ctx.fillStyle = haze;
+    ctx.fillRect(d, -0.5, WARM_FAR - d, 1);
+    // Shimmer: a few wavy lines drifting away from the plate.
+    ctx.lineWidth = 0.018;
+    ctx.lineCap = 'round';
+    for (let i = 0; i < 4; i++) {
+      const x = d + 0.12 + ((i * 0.33 + time * 0.12) % 1.32);
+      const fade = 1 - (x - d) / (WARM_FAR - d);
+      ctx.strokeStyle = `rgba(255, 190, 140, ${(0.3 * fade).toFixed(3)})`;
+      ctx.beginPath();
+      for (let k = 0; k <= 12; k++) {
+        const y = -0.44 + (0.88 * k) / 12;
+        const wx = x + 0.03 * Math.sin(k * 1.3 + i * 2.1 + time * 1.4);
+        if (k) ctx.lineTo(wx, y);
+        else ctx.moveTo(wx, y);
+      }
+      ctx.stroke();
+    }
+    ctx.lineCap = 'butt';
+    // The plate: dark metal with a glowing face.
+    roundRect(ctx, -d, -HEATER_LENGTH / 2, HEATER_DEPTH, HEATER_LENGTH, 0.05);
+    ctx.fillStyle = theme.metalDark;
+    ctx.fill();
+    ctx.strokeStyle = theme.metal;
+    ctx.lineWidth = 0.02;
+    ctx.stroke();
+    softGlow(ctx, d, 0, 0.3, [255, 140, 80], 0.25);
+    ctx.strokeStyle = 'rgba(255, 160, 100, 0.95)';
+    ctx.lineWidth = 0.05;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(d, -HEATER_LENGTH / 2 + 0.06);
+    ctx.lineTo(d, HEATER_LENGTH / 2 - 0.06);
+    ctx.stroke();
+    ctx.lineCap = 'butt';
+  });
 });
 
 registerDrawer('blackHole', (e, { ctx, time }) => {

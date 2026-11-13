@@ -6,7 +6,7 @@
 import type { LevelDef, Localized } from './schema';
 
 /** Placeable piece kinds, as the player sees them (a diverging lens counts as its own piece). */
-export type PieceKind = 'mirror' | 'splitter' | 'lens' | 'divergingLens' | 'curvedMirror' | 'filter' | 'prism' | 'block' | 'blocker' | 'polarizer' | 'blackHole' | 'grating';
+export type PieceKind = 'mirror' | 'splitter' | 'lens' | 'divergingLens' | 'curvedMirror' | 'filter' | 'prism' | 'block' | 'blocker' | 'polarizer' | 'blackHole' | 'grating' | 'heater';
 
 export interface WorldDef {
   id: string;
@@ -16,9 +16,14 @@ export interface WorldDef {
   parents: string[];
   /** Level ids in play order. */
   levels: string[];
+  /**
+   * An optional extra level where a given silhouette has to be cast on a screen. It opens once
+   * the world's children would, earns a moon instead of stars and never counts towards unlocking.
+   */
+  shadow?: string;
 }
 
-const PIECES = new Set<string>(['mirror', 'splitter', 'lens', 'curvedMirror', 'filter', 'prism', 'block', 'blocker', 'polarizer', 'blackHole', 'grating']);
+const PIECES = new Set<string>(['mirror', 'splitter', 'lens', 'curvedMirror', 'filter', 'prism', 'block', 'blocker', 'polarizer', 'blackHole', 'grating', 'heater']);
 
 /** Piece kind of an entity type, or null for sources, targets and structures. */
 export function pieceKind(type: string, params: Record<string, unknown> = {}): PieceKind | null {

@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "id": "shadow-polarizer",
+  "name": {
+    "en": "Crossed Out",
+    "de": "Ausgekreuzt"
+  },
+  "intro": {
+    "en": "The middle band is crossed out for good, yet the middle square wants light. The brightest way through two fixed polarizers lies exactly between them, and mirrors can carry that light elsewhere.",
+    "de": "Das mittlere Band ist endgültig ausgekreuzt, und doch will das mittlere Feld Licht. Der hellste Weg durch zwei feste Polarisatoren liegt genau zwischen ihnen, und Spiegel können dieses Licht woandershin tragen."
+  },
+  "grid": {"w": 10, "h": 5},
+  "par": 0,
+  "entities": [
+    {"type": "sun", "x": 0, "y": 2, "angle": 0, "params": {"width": 3, "power": 3, "rays": 45}},
+    {"type": "polarizer", "x": 2, "y": 1, "angle": 0},
+    {"id": "p1", "type": "polarizer", "x": 4, "y": 1, "angle": 90, "lock": "rotate"},
+    {"type": "polarizer", "x": 6, "y": 1, "angle": 60},
+    {"id": "m1", "type": "mirror", "x": 7, "y": 1, "angle": 90, "lock": "rotate"},
+    {"type": "polarizer", "x": 2, "y": 2, "angle": 30},
+    {"type": "polarizer", "x": 4, "y": 2, "angle": 120},
+    {"id": "m2", "type": "mirror", "x": 7, "y": 2, "angle": 90, "lock": "rotate"},
+    {"type": "polarizer", "x": 3, "y": 3, "angle": 30},
+    {"id": "p2", "type": "polarizer", "x": 5, "y": 3, "angle": 0, "lock": "rotate"},
+    {"type": "sensor", "x": 7, "y": 0},
+    {"type": "sensor", "x": 7, "y": 4},
+    {"type": "screen", "x": 9, "y": 1, "angle": 180, "params": {"pattern": ".w.", "need": 0.12, "limit": 0.002}}
+  ],
+  "inventory": [
+    {"type": "polarizer", "count": 1}
+  ],
+  "solution": [
+    {"id": "p1", "x": 4, "y": 1, "angle": 30},
+    {"id": "m1", "x": 7, "y": 1, "angle": 135},
+    {"id": "m2", "x": 7, "y": 2, "angle": 135},
+    {"id": "p2", "x": 5, "y": 3, "angle": 120}
+  ]
+}

@@ -269,3 +269,80 @@ describe('tracer', () => {
     expect(evaluate(es, trace(es, opts)).won).toBe(false);
   });
 });
+
+describe('screens', () => {
+  const sun = (y: number, color = 'white') => ent('sun', 0, y, 0, { width: 1, power: 1, rays: 30, color });
+  const picture = (entities: Entity[]) => evaluate(entities, trace(entities, opts)).targets.find((t) => t.pixels)!;
+
+  it('wants light on some pixels and shadow on the others', () => {
+    const screen = ent('screen', 8, 2, 180, { pattern: 'w.w' });
+    const lit = [sun(2), sun(3), sun(4), screen];
+    expect(picture(lit).pixels!.map((p) => p.ok)).toEqual([true, false, true]);
+    expect(picture(lit).ok).toBe(false);
+    expect(picture(lit).progress).toBeCloseTo(2 / 3);
+    // A shade in the middle band casts the missing shadow.
+    const shaded = [...lit, ent('blocker', 5, 3)];
+    expect(picture(shaded).ok).toBe(true);
+    expect(evaluate(shaded, trace(shaded, opts)).won).toBe(true);
+  });
+
+  it('wants exactly the colours of a coloured pixel', () => {
+    const screen = ent('screen', 8, 2, 180, { pattern: 'ry' });
+    expect(picture([sun(2), sun(3), screen]).pixels!.map((p) => p.ok)).toEqual([false, false]);
+    expect(picture([sun(2, 'red'), sun(3, 'yellow'), screen]).ok).toBe(true);
+    expect(picture([sun(2), ent('filter', 4, 2, 0, { color: 'red' }), sun(3, 'yellow'), screen]).ok).toBe(true);
+  });
+
+  it('only sees light from the side it faces, and runs downwards or rightwards', () => {
+    const facingAway = ent('screen', 8, 2, 0, { pattern: 'w' });
+    expect(picture([sun(2), facingAway]).ok).toBe(false);
+    // A screen facing up reads left to right: only its second pixel is under the downward band.
+    const floor = ent('screen', 3, 7, 270, { pattern: '.w.' });
+    const down = ent('sun', 4, 0, 90, { width: 1, power: 1, rays: 30 });
+    expect(picture([down, floor]).ok).toBe(true);
+  });
+
+  it('counts half the light when its need is lowered', () => {
+    const half = [sun(2), ent('splitter', 4, 2, 45), ent('screen', 8, 2, 180, { pattern: 'w', need: 0.15 })];
+    expect(picture(half).ok).toBe(true);
+    const full = [sun(2), ent('splitter', 4, 2, 45), ent('screen', 8, 2, 180, { pattern: 'w' })];
+    expect(picture(full).ok).toBe(false);
+  });
+});
+
+describe('warm air', () => {
+  const lastDirection = (entities: Entity[]) => {
+    const segs = trace(entities, opts).segments;
+    const s = segs[segs.length - 1];
+    return (Math.atan2(s.b.y - s.a.y, s.b.x - s.a.x) * 180) / Math.PI;
+  };
+
+  it('turns a beam passing in front of a hot plate by 15°, away from the plate', () => {
+    expect(lastDirection([ent('laser', 0, 3), ent('heater', 4, 4, 270)])).toBeCloseTo(-15, 1);
+    expect(lastDirection([ent('laser', 0, 3), ent('heater', 4, 2, 90)])).toBeCloseTo(15, 1);
+  });
+
+  it('turns by the same amount whatever direction the beam arrives from', () => {
+    // A beam coming down at 15° leaves level.
+    expect(lastDirection([ent('laser', 0, 3, 15), ent('heater', 4, 5, 270)])).toBeCloseTo(0, 1);
+  });
+
+  it('leaves light alone that does not pass in front of the plate', () => {
+    expect(lastDirection([ent('laser', 0, 3), ent('heater', 4, 5, 270)])).toBeCloseTo(0, 5);
+    expect(lastDirection([ent('laser', 0, 3), ent('heater', 4, 4, 90)])).toBeCloseTo(0, 5);
+  });
+
+  it('lets a second plate on the other side undo the turn, leaving the beam shifted', () => {
+    const entities = [ent('laser', 0, 4), ent('heater', 2, 5, 270), ent('heater', 6, 2, 90)];
+    const segs = trace(entities, opts).segments;
+    const end = segs[segs.length - 1];
+    expect(lastDirection(entities)).toBeCloseTo(0, 1);
+    expect(end.b.y).toBeLessThan(3.6);
+    expect(end.b.y).toBeGreaterThan(3.2);
+  });
+
+  it('absorbs light that hits the plate itself', () => {
+    const entities = [ent('laser', 0, 3), ent('heater', 4, 3, 270), ent('sink', 8, 3)];
+    expect(evaluate(entities, trace(entities, opts)).won).toBe(false);
+  });
+});

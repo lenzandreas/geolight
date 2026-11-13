@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "id": "shadow-lens",
+  "name": {
+    "en": "Burning Glass",
+    "de": "Brennglas"
+  },
+  "intro": {
+    "en": "This sunlight is too weak to light a square and too strong to count as shadow. Only light that a lens has gathered is bright enough, so every band must end at a lens or be turned away by a mirror.",
+    "de": "Dieses Sonnenlicht ist zu schwach, um ein Feld zu erhellen, und zu stark, um als Schatten zu gelten. Nur von einer Linse gebündeltes Licht ist hell genug, also muss jedes Band an einer Linse enden oder von einem Spiegel weggelenkt werden."
+  },
+  "grid": {"w": 10, "h": 8},
+  "par": 0,
+  "entities": [
+    {"type": "sun", "x": 0, "y": 3.5, "angle": 0, "params": {"width": 4, "power": 2.4, "rays": 60}},
+    {"type": "lens", "x": 7, "y": 2, "angle": 0},
+    {"type": "lens", "x": 7, "y": 4, "angle": 0},
+    {"type": "lens", "x": 3, "y": 1, "angle": 90, "params": {"f": 1}},
+    {"type": "lens", "x": 5, "y": 1, "angle": 90, "params": {"f": 1}},
+    {"type": "lens", "x": 3, "y": 6, "angle": 90, "params": {"f": 1}},
+    {"type": "lens", "x": 5, "y": 6, "angle": 90, "params": {"f": 1}},
+    {"id": "m1", "type": "mirror", "x": 3, "y": 2, "angle": 0, "lock": "rotate"},
+    {"id": "m2", "type": "mirror", "x": 5, "y": 3, "angle": 0, "lock": "rotate"},
+    {"id": "m3", "type": "mirror", "x": 3, "y": 4, "angle": 0, "lock": "rotate"},
+    {"id": "m4", "type": "mirror", "x": 5, "y": 5, "angle": 0, "lock": "rotate"},
+    {"type": "sensor", "x": 8, "y": 0},
+    {"type": "sensor", "x": 8, "y": 7},
+    {"type": "screen", "x": 9, "y": 2, "angle": 180, "params": {"pattern": "w.w."}},
+    {"type": "screen", "x": 2, "y": 0, "angle": 90, "params": {"pattern": "...w."}},
+    {"type": "screen", "x": 2, "y": 7, "angle": 270, "params": {"pattern": ".w..."}}
+  ],
+  "inventory": [
+    {"type": "lens", "count": 1}
+  ],
+  "solution": [
+    {"id": "m1", "x": 3, "y": 2, "angle": 75},
+    {"id": "m2", "x": 5, "y": 3, "angle": 45},
+    {"id": "m3", "x": 3, "y": 4, "angle": 135},
+    {"id": "m4", "x": 5, "y": 5, "angle": 30}
+  ]
+}

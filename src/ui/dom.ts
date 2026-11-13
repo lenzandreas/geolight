@@ -17,6 +17,8 @@ export function h<K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Attrs = 
 /** Inline SVG icons (stroke-based, inherit currentColor). */
 const PATHS: Record<string, string> = {
   back: 'M15 5l-7 7 7 7',
+  forward: 'M9 5l7 7-7 7',
+  book: 'M5 4.5h11a3 3 0 013 3V20H8a3 3 0 01-3-3zM5 17a3 3 0 013-3h11M9 8.5h6',
   undo: 'M9 14L4 9l5-5M4 9h10a6 6 0 010 12h-3',
   redo: 'M15 14l5-5-5-5M20 9H10a6 6 0 000 12h3',
   reset: 'M4 12a8 8 0 1 0 2.5-5.8M4 4v5h5',
@@ -28,6 +30,7 @@ const PATHS: Record<string, string> = {
   lock: 'M7 11V8a5 5 0 0110 0v3M6 11h12v9H6z',
   star: 'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',
   close: 'M6 6l12 12M18 6L6 18',
+  moon: 'M20 14.2A8.5 8.5 0 119.8 4a6.8 6.8 0 0010.2 10.2z',
 };
 
 export function icon(name: keyof typeof PATHS | string, filled = false): SVGSVGElement {

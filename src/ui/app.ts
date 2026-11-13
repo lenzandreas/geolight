@@ -9,10 +9,13 @@ import { LEVELS, WORLDS } from '../levels';
 import { h, iconButton } from './dom';
 import { GameScreen, type WinCard } from './gameScreen';
 import { mapScreen, worldScreen } from './mapScreens';
+import type { NotebookPage } from '../notebook/pages';
+import { hasNewPage, notebookScreen, pageCard, readablePages } from './notebookScreen';
 
 type Route =
   | { name: 'menu' }
   | { name: 'map' }
+  | { name: 'notebook' }
   | { name: 'world'; id: string }
   | { name: 'game'; id: string }
   | { name: 'daily'; key: string };
@@ -32,6 +35,7 @@ export class App {
     const s = this.progress.data.settings;
     setLanguage(s.lang ?? detectLanguage());
     sound.enabled = s.sound;
+    sound.music = s.music;
     document.documentElement.classList.toggle('reduce-motion', s.reducedMotion);
     root.append(this.modalRoot);
     onLanguageChange(() => this.go(this.route, false));
@@ -56,6 +60,7 @@ export class App {
       if (w && this.campaign().worldOpen(w)) return { name: 'world', id: w.id };
     }
     if (hash === '#/map' || hash === '#/levels') return { name: 'map' };
+    if (hash === '#/notebook') return { name: 'notebook' };
     if (hash === '#/daily') return { name: 'daily', key: dailyKey() };
     // Dev builds can open any day's puzzle.
     const d = hash.match(/^#\/daily\/(\d{4}-\d{2}-\d{2})$/);
@@ -67,6 +72,8 @@ export class App {
     switch (route.name) {
       case 'map':
         return '#/map';
+      case 'notebook':
+        return '#/notebook';
       case 'world':
         return `#/world/${route.id}`;
       case 'game':
@@ -87,7 +94,9 @@ export class App {
     const screen =
       route.name === 'map'
         ? this.map()
-        : route.name === 'world'
+        : route.name === 'notebook'
+          ? this.notebook()
+          : route.name === 'world'
           ? this.world(route.id)
           : route.name === 'game'
             ? this.game(route.id)
@@ -157,8 +166,55 @@ export class App {
         onBack: () => this.go({ name: 'menu' }),
         onSettings: () => this.openSettings(),
         onWorld: (w) => this.go({ name: 'world', id: w.id }),
+        onNotebook: () => this.go({ name: 'notebook' }),
+        notebookNew: hasNewPage(this.campaign(), this.progress),
       }),
     );
+  }
+
+  private notebook(): Screen {
+    const build = () =>
+      notebookScreen({
+        campaign: this.campaign(),
+        progress: this.progress,
+        onBack: () => this.go({ name: 'map' }),
+        onSettings: () => this.openSettings(),
+        onPage: (page) => this.openPage(page),
+      });
+    const screen: Screen = { el: build() };
+    // Reading a page clears its "new" dot.
+    screen.refresh = () => {
+      const fresh = build();
+      screen.el.replaceWith(fresh);
+      screen.el = fresh;
+    };
+    return screen;
+  }
+
+  /** Show a notebook page over the current screen and mark it read. */
+  private openPage(page: NotebookPage): void {
+    const pages = readablePages(this.campaign());
+    const i = pages.indexOf(page);
+    this.progress.markPageSeen(page.piece);
+    const close = () => {
+      overlay.remove();
+      this.current?.refresh?.();
+    };
+    const card = pageCard({
+      page,
+      previous: pages[i - 1],
+      next: pages[i + 1],
+      onClose: close,
+      onTurn: (to) => {
+        overlay.remove();
+        this.openPage(to);
+      },
+    });
+    const overlay = h('div', { class: 'overlay' }, card);
+    overlay.addEventListener('click', (e) => e.target === overlay && close());
+    overlay.addEventListener('keydown', (e) => e.key === 'Escape' && close());
+    this.modalRoot.append(overlay);
+    card.querySelector<HTMLElement>('.card-head button')?.focus();
   }
 
   private world(id: string): Screen {
@@ -172,6 +228,7 @@ export class App {
         progress: this.progress,
         onBack: () => this.go({ name: 'map' }),
         onSettings: () => this.openSettings(),
+        onPage: (page) => this.openPage(page),
         onLevel: (level) => {
           if (this.live?.id === level.id && this.live.session.won) this.live = null;
           this.go({ name: 'game', id: level.id });
@@ -219,15 +276,22 @@ export class App {
     const ref = before.ref(id)!;
     const { world, level, index } = ref;
     const openBefore = before.openWorldIds();
+    const shadowBefore = before.shadowOpen(world);
     const winCard = (): WinCard => {
+      // A shadow level is a side path: it leads back to its world.
+      if (ref.shadow) return { text: t('shadowDone'), nextLabel: t('backTo', { world: loc(world.name) }), next: () => this.go({ name: 'world', id: world.id }) };
       const after = this.campaign();
       const opened = after.worlds.filter((w) => after.worldOpen(w) && !openBefore.has(w.id));
+      const news = [
+        opened.length ? t('worldOpened', { world: opened.map((w) => loc(w.name)).join(', ') }) : '',
+        after.shadowOpen(world) && !shadowBefore ? t('shadowOpened', { world: loc(world.name) }) : '',
+      ].filter(Boolean);
       const next = after.next(world);
       const sameWorld = next?.world === world;
       const complete = after.solvedCount(world) === world.levels.length;
       return {
         text: complete ? t('worldComplete') : t('solvedText'),
-        news: opened.length ? t('worldOpened', { world: opened.map((w) => loc(w.name)).join(', ') }) : undefined,
+        news: news.length ? news.join(' ') : undefined,
         nextLabel: sameWorld ? t('next') : t('toMap'),
         next: () => this.go(sameWorld ? { name: 'game', id: next!.level.id } : { name: 'map' }),
       };
@@ -235,7 +299,8 @@ export class App {
     const screen = new GameScreen({
       level,
       session: this.sessionFor(level),
-      kicker: `${loc(world.name)} · ${index + 1}`,
+      kicker: `${loc(world.name)} · ${ref.shadow ? t('shadowLevel') : index + 1}`,
+      moon: ref.shadow,
       progress: this.progress,
       winCard,
       onExit: () => this.go({ name: 'world', id: world.id }),
@@ -325,6 +390,12 @@ export class App {
       toggle(t('sound'), () => s().sound, (v) => {
         this.progress.updateSettings({ sound: v });
         sound.enabled = v;
+        sound.applyHeld();
+      }),
+      toggle(t('music'), () => s().music, (v) => {
+        this.progress.updateSettings({ music: v });
+        sound.music = v;
+        sound.applyHeld();
       }),
       toggle(t('motion'), () => s().reducedMotion, (v) => {
         this.progress.updateSettings({ reducedMotion: v });

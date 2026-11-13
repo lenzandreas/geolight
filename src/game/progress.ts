@@ -10,6 +10,8 @@ export interface LevelProgress {
 export interface Settings {
   lang: Lang | null;
   sound: boolean;
+  /** Rings hold a note while lit (needs sound on). */
+  music: boolean;
   reducedMotion: boolean;
   quality: 'high' | 'low';
 }
@@ -17,6 +19,8 @@ export interface Settings {
 export interface SaveData {
   version: 1;
   levels: Record<string, LevelProgress>;
+  /** Notebook pages the player has opened. */
+  notebookSeen: string[];
   settings: Settings;
 }
 
@@ -24,7 +28,7 @@ const KEY = 'geolight.save';
 
 function defaults(): SaveData {
   const prefersReduced = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  return { version: 1, levels: {}, settings: { lang: null, sound: true, reducedMotion: prefersReduced, quality: 'high' } };
+  return { version: 1, levels: {}, notebookSeen: [], settings: { lang: null, sound: true, music: true, reducedMotion: prefersReduced, quality: 'high' } };
 }
 
 export class Progress {
@@ -70,6 +74,16 @@ export class Progress {
     return n;
   }
 
+  pageSeen(id: string): boolean {
+    return this.data.notebookSeen.includes(id);
+  }
+
+  markPageSeen(id: string): void {
+    if (this.pageSeen(id)) return;
+    this.data.notebookSeen.push(id);
+    this.save();
+  }
+
   updateSettings(patch: Partial<Settings>): void {
     this.data.settings = { ...this.data.settings, ...patch };
     this.save();
@@ -77,6 +91,7 @@ export class Progress {
 
   resetLevels(): void {
     this.data.levels = {};
+    this.data.notebookSeen = [];
     this.save();
   }
 }

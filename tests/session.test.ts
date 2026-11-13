@@ -52,3 +52,15 @@ describe('session', () => {
     expect(s.nextHint()).toEqual(level.solution![0]);
   });
 });
+
+describe('pieces with their own turning step', () => {
+  it('turns a hot plate in quarter turns even where other pieces turn by 15°', () => {
+    const s = new Session(LEVELS.find((l) => l.id === 'warm-air')!);
+    const plate = s.place(s.slots[0].key, 2, 4)!;
+    const before = s.get(plate.id)!.angle;
+    expect(s.rotate(plate.id, 1)).toBe(true);
+    expect(s.get(plate.id)!.angle).toBe((before + 90) % 360);
+    expect(s.setAngle(plate.id, 100)).toBe(true);
+    expect(s.get(plate.id)!.angle).toBe(90);
+  });
+});

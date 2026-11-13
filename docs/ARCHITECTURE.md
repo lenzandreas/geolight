@@ -32,12 +32,13 @@ Each layer depends only on the layers below it. `core`, `level` and `game` never
 - **Entity:** everything on the board (`{ id, type, x, y, angle, params }`). Its behaviour comes from an **EntityType** in a registry. A type contributes:
   - `surfaces(e)`: segments or circles with an *interaction* function,
   - `emit(e)` (sources only): initial rays,
-  - `field(e)` (black holes): a gravity field that bends passing light,
+  - `field(e)` (black holes, hot plates): a gravity field or a patch of warm air that bends passing light,
   - `isOpen(e, powered)` (gates): switchable structures that drop their surfaces while open,
   - metadata: category, defaults, rotational `symmetry`, `footprint`.
 - **Interaction:** what happens when a ray hits a surface: `absorb`, `mirror`, `splitter`, `filter`, `thinOptic` (an ideal lens or curved mirror, using the paraxial `slope −= h/f`), `refract` (Snell's law with total internal reflection and per-channel dispersion), `polarize` (Malus's law), `grating` (the grating equation per colour, with each channel standing for one wavelength), `receiver` (targets). New physics means writing a new interaction.
 - **Light** is power per R/G/B channel plus an optional polarization axis. Filters multiply channels; polarizers apply Malus's law and set the axis; other optics keep it. The tracer also records each packet a receiver absorbs, so targets can ask for a polarization. Prisms split multi-channel rays into one ray per channel. The tracer is iterative (a stack, no recursion) and limited by depth, minimum power and segment count, so mirror loops can't hang it.
 - **Gravity:** inside a field's reach, light moves in short straight steps (a tenth of its distance to the centre) and turns after each one, so beams curve smoothly and still interact with everything they pass. Each step turns the ray by `rs·b/r³` per unit length, which over a straight pass adds up to the general-relativity deflection `2·rs/b`; on close passes the bent path dips closer and turns further, as in reality. Light that comes within the shadow (2.6·rs) is swallowed.
+- **Warm air:** a hot plate contributes a second kind of field, a rectangle in front of it in which a ray turns towards the plate's facing direction at a constant rate per cell travelled along the plate. The tracer walks it in steps of 0.05 cells with the same loop it uses for gravity, stopping exactly at the rectangle's edge, so a full pass gives 15° to within a hundredth of a degree. A type can also set `turnStep` to turn in coarser steps than the level's rotation step; the hot plate uses 90°, which keeps its effect exact and its puzzles readable.
 - **Gates:** the tracer starts with every gate shut, traces, opens the gates whose photocells are powered and traces again until nothing changes. Opening a gate only adds light, so this ends after at most one extra trace per gate and gives the one consistent state.
 - **Rules** (`rules.ts`) turn received light into target status and a win. Goals are registered by name (`allTargets`, `anyTargets`), so new modes plug in.
 
@@ -50,6 +51,10 @@ The **solver** searches placements exhaustively, but only where the light goes a
 1. every level is unsolved at the start,
 2. its reference solution wins with 3 stars,
 3. multi-piece levels can't be cheesed with a single piece.
+
+### Screens and shadow levels
+
+A `screen` is a target made of pixels. Each pixel is its own receiving surface and reports under its own id (`<screen id>#<index>`), so no tracer change was needed. `screenStatus` in `rules.ts` compares what each pixel received, colour by colour, with the letter of its `pattern`; the screen's `TargetStatus` carries the per-pixel result for the renderer, and counts as one target for the win rule, the solver and hints. Shadow levels are ordinary level files that a world names in its `shadow` field. `Campaign` keeps them out of everything that drives progression (`solvedCount`, `worldOpen`, `next`) and only answers `shadowOpen` and `moon` for them.
 
 ### Worlds and progression (`src/level/worlds.ts`, `src/game/campaign.ts`)
 
@@ -68,6 +73,14 @@ A seeded generator turns the date into a level. It walks a laser path with right
 ### Session (`src/game/session.ts`)
 
 This is the headless state of one attempt: pieces, tray counts, snapshot undo/redo, hints derived from the reference solution, and star scoring. The UI, the solver and the tests all drive the same API.
+
+### Light as music (`src/audio`)
+
+`harmony.ts` is pure logic: it gives every ring a pitch on a two-octave pentatonic ladder (by colour, red lowest and blue highest; rings of one colour spread into fifths and octaves) and a level (full once the ring is lit, a faint hum while it fills). The game screen passes the result to `sound.sustain()` on every drawn frame, using the same smoothed meters the rings are drawn with, so a note swells as a beam sweeps across its ring. The sound engine only touches the audio graph when a level changes, waits for the first user gesture before it starts, tears silent notes down after a few seconds, and lets all notes fade after 45 seconds without a change or while the tab is hidden.
+
+### Notebook (`src/notebook`, `src/ui/notebookScreen.ts`)
+
+`pages.ts` holds one page per introduced piece: a one-line law, a text, a real-world note (all in English and German) and a small scene. The page's drawing is that scene traced and drawn once by the normal tracer and renderer, so it cannot disagree with the game. A page is readable once the world that introduces its piece is open; the pages a player has opened are stored in the save (`notebookSeen`). A test checks that every introduced piece has exactly one page and that every ring in a scene is lit.
 
 ### Rendering (`src/render`)
 

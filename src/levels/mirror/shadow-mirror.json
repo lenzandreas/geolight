@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "id": "shadow-mirror",
+  "name": {
+    "en": "Shadow Play",
+    "de": "Schattenspiel"
+  },
+  "intro": {
+    "en": "Cast the picture on each screen: dashed squares must stay dark, the others need light. A mirror throws a shadow and carries its light somewhere else, even onto the back of another mirror. Edge-on to the light, it does nothing.",
+    "de": "Wirf das Bild auf jeden Schirm: Gestrichelte Felder müssen dunkel bleiben, die anderen brauchen Licht. Ein Spiegel wirft einen Schatten und trägt sein Licht woandershin, auch auf die Rückseite eines anderen Spiegels. Mit der Kante zum Licht bewirkt er nichts."
+  },
+  "introOnStart": true,
+  "grid": {"w": 10, "h": 7},
+  "par": 0,
+  "entities": [
+    {"type": "sun", "x": 0, "y": 2.5, "angle": 0, "params": {"width": 4, "power": 4, "rays": 60}},
+    {"id": "m1", "type": "mirror", "x": 4, "y": 1, "angle": 0, "lock": "rotate"},
+    {"id": "m2", "type": "mirror", "x": 4, "y": 2, "angle": 0, "lock": "rotate"},
+    {"id": "m3", "type": "mirror", "x": 6, "y": 3, "angle": 0, "lock": "rotate"},
+    {"id": "m4", "type": "mirror", "x": 6, "y": 4, "angle": 0, "lock": "rotate"},
+    {"type": "sensor", "x": 8, "y": 0},
+    {"type": "sensor", "x": 8, "y": 6},
+    {"type": "screen", "x": 9, "y": 1, "angle": 180, "params": {"pattern": ".ww."}},
+    {"type": "screen", "x": 2, "y": 0, "angle": 90, "params": {"pattern": "....w."}},
+    {"type": "screen", "x": 2, "y": 6, "angle": 270, "params": {"pattern": "..w..."}}
+  ],
+  "inventory": [
+    {"type": "blocker", "count": 1}
+  ],
+  "solution": [
+    {"id": "m1", "x": 4, "y": 1, "angle": 135},
+    {"id": "m2", "x": 4, "y": 2, "angle": 135},
+    {"id": "m3", "x": 6, "y": 3, "angle": 45},
+    {"id": "m4", "x": 6, "y": 4, "angle": 45}
+  ]
+}

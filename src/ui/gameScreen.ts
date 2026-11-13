@@ -2,6 +2,7 @@
  * The play screen: wires a headless Session to the renderer, pointer/keyboard
  * input, the tray and the HUD. Rendering happens only while something moves.
  */
+import { voicesFor } from '../audio/harmony';
 import { sound } from '../audio/sound';
 import { centre } from '../core/entities/shapes';
 import { angleDelta, wrapAngle } from '../core/math';
@@ -23,6 +24,8 @@ export interface GameScreenOptions {
   session?: Session;
   /** Small label above the level name, e.g. "Level 3" or "Daily puzzle". */
   kicker: string;
+  /** A shadow level: solving it earns a moon instead of stars. */
+  moon?: boolean;
   progress: Progress;
   /** Win card contents, asked for after the solve has been recorded (so unlocks are known). */
   winCard(): WinCard;
@@ -152,6 +155,7 @@ export class GameScreen {
   }
 
   destroy(): void {
+    sound.sustain([]);
     cancelAnimationFrame(this.raf);
     this.ro.disconnect();
     clearTimeout(this.toastTimer);
@@ -268,6 +272,9 @@ export class GameScreen {
     // Pulse while something is alarmed or a bulb glows, but only briefly after a change.
     if (now - this.lastChange < 2500 && !this.reducedMotion) active = true;
 
+    // Each ring holds its note at the level its meter shows, so sweeping a beam across it is heard.
+    sound.sustain(voicesFor(optics, shown));
+
     const lockOf = (id: string) => (id === '__tray' ? 'tray' : this.session.get(id)?.lock ?? 'fixed');
     this.renderer.draw({
       gridW: this.session.level.grid.w,
@@ -331,8 +338,14 @@ export class GameScreen {
   }
 
   private showWinOverlay(stars: number): void {
-    const starRow = h('div', { class: 'stars', 'aria-label': `${stars} / 3` });
-    for (let i = 0; i < 3; i++) {
+    const moon = !!this.opts.moon;
+    const starRow = h('div', { class: 'stars', 'aria-label': moon ? t('moonEarned') : `${stars} / 3` });
+    if (moon) {
+      const m = h('span', { class: 'star on moon', style: 'animation-delay:0.15s' });
+      m.append(icon('moon', true));
+      starRow.append(m);
+    }
+    for (let i = 0; i < 3 && !moon; i++) {
       const s = h('span', { class: `star ${i < stars ? 'on' : ''}`, style: `animation-delay:${0.15 + i * 0.15}s` });
       s.append(icon('star', i < stars));
       starRow.append(s);
@@ -340,7 +353,7 @@ export class GameScreen {
     const info = this.opts.winCard();
     // Tell players why a star is missing when they used more pieces than needed (decoys in the tray make this common).
     const { par, placedCount } = this.session;
-    const parNote = par > 0 && placedCount > par ? (par === 1 ? t('parMissedOne') : t('parMissed', { n: par })) : null;
+    const parNote = !moon && par > 0 && placedCount > par ? (par === 1 ? t('parMissedOne') : t('parMissed', { n: par })) : null;
     const next = h('button', { class: 'btn primary', type: 'button' }, info.nextLabel);
     next.addEventListener('click', () => info.next());
     const card = h(
@@ -553,7 +566,7 @@ export class GameScreen {
     const p = this.session.get(id)!;
     const c = centre(p);
     const raw = (Math.atan2(w.y - c.y, w.x - c.x) * 180) / Math.PI;
-    const step = this.session.rotationStep;
+    const step = this.session.stepOf(id);
     return wrapAngle(Math.round(raw / step) * step);
   }
 

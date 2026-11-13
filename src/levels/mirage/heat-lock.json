@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "id": "heat-lock",
+  "name": {
+    "en": "Heat Lock",
+    "de": "Hitzeschloss"
+  },
+  "intro": {
+    "en": "The solar cell that opens the gate hides behind a wall. Half the light has to slip past it at a slant, and only one of these plates helps.",
+    "de": "Die Solarzelle, die das Tor öffnet, versteckt sich hinter einer Mauer. Die Hälfte des Lichts muss schräg daran vorbei, und nur eine dieser Platten hilft dabei."
+  },
+  "grid": {"w": 10, "h": 8},
+  "entities": [
+    {"type": "laser", "x": 1, "y": 2, "angle": 0},
+    {"id": "h1", "type": "heater", "x": 1, "y": 3, "angle": 270, "lock": "rotate"},
+    {"id": "h2", "type": "heater", "x": 4, "y": 1, "angle": 90, "lock": "rotate"},
+    {"id": "h3", "type": "heater", "x": 3, "y": 5, "angle": 180, "lock": "rotate"},
+    {"id": "cell", "type": "photocell", "x": 3, "y": 7, "params": {"required": 0.4}},
+    {"type": "gate", "x": 5, "y": 2, "params": {"w": 1, "h": 1, "by": "cell"}},
+    {"type": "wall", "x": 3, "y": 3, "params": {"w": 1, "h": 1}},
+    {"type": "wall", "x": 5, "y": 0, "params": {"w": 1, "h": 2}},
+    {"type": "wall", "x": 5, "y": 3, "params": {"w": 1, "h": 5}},
+    {"type": "sink", "x": 9, "y": 2, "params": {"required": 0.45}}
+  ],
+  "inventory": [
+    {"type": "splitter", "count": 1}
+  ],
+  "solution": [
+    {"type": "splitter", "x": 2, "y": 2, "angle": 135},
+    {"id": "h1", "x": 1, "y": 3, "angle": 0},
+    {"id": "h2", "x": 4, "y": 1, "angle": 270},
+    {"id": "h3", "x": 3, "y": 5, "angle": 0}
+  ]
+}

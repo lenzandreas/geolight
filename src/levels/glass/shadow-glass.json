@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "id": "shadow-glass",
+  "name": {
+    "en": "Hair's Breadth",
+    "de": "Um Haaresbreite"
+  },
+  "intro": {
+    "en": "Each ribbon of light only grazes its square. A tilted glass block shifts a ribbon sideways by a hair: towards the square, or away from it.",
+    "de": "Jedes Lichtband streift sein Feld nur. Ein schräger Glasblock versetzt ein Band um Haaresbreite zur Seite: zum Feld hin oder von ihm weg."
+  },
+  "grid": {"w": 9, "h": 5},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 1.22, "angle": 0, "params": {"width": 0.4, "power": 0.4, "rays": 40}},
+    {"type": "sun", "x": 0, "y": 2.22, "angle": 0, "params": {"width": 0.4, "power": 0.4, "rays": 40}},
+    {"type": "sun", "x": 0, "y": 2.78, "angle": 0, "params": {"width": 0.4, "power": 0.4, "rays": 40}},
+    {"type": "screen", "x": 8, "y": 1, "angle": 180, "params": {"pattern": "w.w", "need": 0.25, "limit": 0.025}}
+  ],
+  "inventory": [
+    {"type": "block", "count": 3}
+  ],
+  "solution": [
+    {"type": "block", "x": 4, "y": 1, "angle": 60},
+    {"type": "block", "x": 4, "y": 2, "angle": 30},
+    {"type": "block", "x": 4, "y": 3, "angle": 30}
+  ]
+}

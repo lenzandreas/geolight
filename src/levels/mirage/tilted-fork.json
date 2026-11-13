@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "id": "tilted-fork",
+  "name": {
+    "en": "Tilted Fork",
+    "de": "Schiefe Gabel"
+  },
+  "intro": {
+    "en": "No ring sits where a straight beam and a splitter could reach it. One plate has to tilt the beam first, and two others are only in the way.",
+    "de": "Kein Ring sitzt dort, wo ein gerader Strahl und ein Strahlteiler hinkämen. Eine Platte muss den Strahl erst neigen, und zwei andere sind nur im Weg."
+  },
+  "grid": {"w": 11, "h": 8},
+  "par": 2,
+  "entities": [
+    {"type": "laser", "x": 0, "y": 2, "angle": 0},
+    {"id": "h1", "type": "heater", "x": 2, "y": 1, "angle": 0, "lock": "rotate"},
+    {"id": "h2", "type": "heater", "x": 6, "y": 2, "angle": 90, "lock": "rotate"},
+    {"id": "h3", "type": "heater", "x": 4, "y": 5, "angle": 0, "lock": "rotate"},
+    {"type": "sensor", "x": 10, "y": 2},
+    {"type": "sink", "x": 6, "y": 7, "params": {"required": 0.45}},
+    {"type": "sink", "x": 10, "y": 4, "params": {"required": 0.22}},
+    {"type": "sink", "x": 7, "y": 0, "params": {"required": 0.22}}
+  ],
+  "inventory": [
+    {"type": "splitter", "count": 2},
+    {"type": "mirror", "count": 1}
+  ],
+  "solution": [
+    {"id": "h1", "x": 2, "y": 1, "angle": 90},
+    {"id": "h2", "x": 6, "y": 2, "angle": 270},
+    {"id": "h3", "x": 4, "y": 5, "angle": 180},
+    {"type": "splitter", "x": 5, "y": 3, "angle": 135},
+    {"type": "splitter", "x": 8, "y": 4, "angle": 45}
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "id": "shadow-kaleidoscope",
+  "name": {
+    "en": "The Missing Line",
+    "de": "Die fehlende Linie"
+  },
+  "intro": {
+    "en": "The coloured lines may be faint, but the white one in the middle has to vanish without a trace. Only a polarizer set exactly across the light's own direction does that.",
+    "de": "Die farbigen Linien dürfen blass sein, aber die weiße in der Mitte muss spurlos verschwinden. Das schafft nur ein Polarisator, der genau quer zur Richtung des Lichts steht."
+  },
+  "grid": {"w": 11, "h": 9},
+  "par": 3,
+  "entities": [
+    {"type": "laser", "x": 2, "y": 5, "angle": 270},
+    {"type": "sensor", "x": 2, "y": 0},
+    {"type": "polarizer", "x": 4, "y": 4, "angle": 30},
+    {"type": "screen", "x": 10, "y": 0, "angle": 180, "params": {"pattern": ".rb...br.", "need": 0.15, "limit": 0.002}}
+  ],
+  "inventory": [
+    {"type": "mirror", "count": 1},
+    {"type": "grating", "count": 1},
+    {"type": "polarizer", "count": 2}
+  ],
+  "solution": [
+    {"type": "mirror", "x": 2, "y": 4, "angle": 45},
+    {"type": "grating", "x": 6, "y": 4, "angle": 0},
+    {"type": "polarizer", "x": 8, "y": 4, "angle": 120}
+  ]
+}

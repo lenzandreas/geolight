@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "warm-air",
+  "name": {
+    "en": "Warm Air",
+    "de": "Warme Luft"
+  },
+  "intro": {
+    "en": "Warm air bends light. Put the hot plate next to the beam, facing it: the light curves away from the heat.",
+    "de": "Warme Luft biegt Licht. Stell die Heizplatte neben den Strahl, mit der heißen Seite zu ihm: Das Licht krümmt sich von der Hitze weg."
+  },
+  "introOnStart": true,
+  "grid": {"w": 10, "h": 6},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 3, "angle": 0},
+    {"type": "sink", "x": 9, "y": 1}
+  ],
+  "inventory": [
+    {"type": "heater", "count": 1}
+  ],
+  "solution": [
+    {"type": "heater", "x": 2, "y": 4, "angle": 270}
+  ]
+}

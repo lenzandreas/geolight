@@ -22,6 +22,11 @@ export function allTypes(): EntityType[] {
 }
 
 /** Grid cells an entity occupies. */
+/** The rotation step of a piece of this type in a level whose own step is `levelStep`. */
+export function turnStep(type: string, levelStep: number): number {
+  return Math.max(levelStep, getType(type).turnStep ?? 0);
+}
+
 export function footprint(e: Entity): Array<[number, number]> {
   const t = getType(e.type);
   return t.footprint ? t.footprint(e) : [[Math.round(e.x), Math.round(e.y)]];

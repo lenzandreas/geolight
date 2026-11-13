@@ -23,9 +23,9 @@ for (const k of Object.keys(files)) {
 /** Worlds in tree order (every world after its parents). */
 export const WORLDS: WorldDef[] = topoOrder(worldsJson as WorldDef[]);
 
-/** All campaign levels, world by world. */
+/** All campaign levels, world by world; a world's shadow level comes after its regular ones. */
 export const LEVELS: LevelDef[] = WORLDS.flatMap((w) =>
-  w.levels.map((id) => {
+  [...w.levels, ...(w.shadow ? [w.shadow] : [])].map((id) => {
     const l = byId.get(id);
     if (!l) throw new Error(`World ${w.id} lists unknown level ${id}`);
     return l;

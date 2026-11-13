@@ -2,12 +2,15 @@
 
 A calm, glowing 2D puzzle game about light. Place and rotate mirrors, lenses, prisms and filters to guide beams from lasers, light bulbs and sunlight into their targets. Avoid the sensors.
 
-- **96 levels in 12 worlds on a star map.** Each world is a constellation, and all but the last introduce exactly one new piece: mirror, beam splitter, lens, concave mirror, diverging lens, glass block, colour filter, prism, polarizer, black hole and diffraction grating. The worlds form a tree. A world opens once 4 levels of each parent are solved, and two levels are open at a time inside a world, so being stuck never blocks you completely. Two worlds need several parents at once and combine their pieces: *Polarity* (polarizers, including the famous three-polarizer paradox) and *Event Horizon* (black holes that bend light along curved paths, with gravitational lensing, Einstein rings and twin holes whose pulls cancel). *Spectra* follows the prisms with diffraction gratings, which split one beam into three and bend red the most, the reverse of a prism. The final world, *Kaleidoscope*, adds nothing new: it opens after *Polarity* and *Spectra* and combines polarizers and gratings in hard levels (fold a rainbow back into white with a second grating, crack a lock of pieces you can only turn, spread two colours apart with a diverging lens).
+- **103 levels in 13 worlds on a star map, plus 13 optional shadow levels.** Each world is a constellation, and all but the last introduce exactly one new piece: mirror, beam splitter, lens, concave mirror, diverging lens, glass block, colour filter, prism, polarizer, black hole, diffraction grating and hot plate. The worlds form a tree. A world opens once 4 levels of each parent are solved, and two levels are open at a time inside a world, so being stuck never blocks you completely. Two worlds need several parents at once and combine their pieces: *Polarity* (polarizers, including the famous three-polarizer paradox) and *Event Horizon* (black holes that bend light along curved paths, with gravitational lensing, Einstein rings and twin holes whose pulls cancel). *Mirage* follows the glass blocks with hot plates: the warm air in front of a plate curves passing light away from it by exactly 15°, the small step between a mirror's big ones, and a second plate on the other side turns it back. *Spectra* follows the prisms with diffraction gratings, which split one beam into three and bend red the most, the reverse of a prism. The final world, *Kaleidoscope*, adds nothing new: it opens after *Polarity* and *Spectra* and combines polarizers and gratings in hard levels (fold a rainbow back into white with a second grating, crack a lock of pieces you can only turn, spread two colours apart with a diverging lens).
 - **Daily puzzle:** a new level every day, generated from the date (the same for everyone), gentle on Mondays and trickier at the weekend, with a streak counter.
 - **Sources:** laser (a sharp beam), light bulb (diffuse light that has to be gathered), sunlight (a wide parallel band), all in any colour.
-- **Pieces:** mirror, beam splitter, converging and diverging lens, concave mirror, prism (splits white light into colours), colour filter, glass block, polarizer, black hole (bends passing light, swallows what comes too close), diffraction grating (one beam in, three out: straight on, plus a rainbow to each side), shade.
-- **Targets:** rings that need enough light (of one colour, a mix such as yellow = red + green, or one polarization) and sensor eyes that must stay dark. When rings need different amounts, the band of each ring is as thick as its need, like a tank.
+- **Pieces:** mirror, beam splitter, converging and diverging lens, concave mirror, prism (splits white light into colours), colour filter, glass block, polarizer, black hole (bends passing light, swallows what comes too close), diffraction grating (one beam in, three out: straight on, plus a rainbow to each side), hot plate (warm air that bends light smoothly), shade.
+- **Targets:** screens that show a silhouette to cast (shadow levels), rings that need enough light (of one colour, a mix such as yellow = red + green, or one polarization) and sensor eyes that must stay dark. When rings need different amounts, the band of each ring is as thick as its need, like a tank.
 - **Obstacles:** walls, slits with narrow, sometimes off-centre openings, and gates that open while their solar cell gets enough light.
+- **Shadow levels:** every world has one optional level where the goal is a picture on a screen: a row of squares, some of which need light (white or one exact colour) while the dashed ones must stay in shadow. Mirrors, shades, filters, lenses, polarizers and even a black hole are used to sculpt a flood of light instead of steering one beam. A shadow level opens after 4 levels of its world, earns a moon instead of stars and never affects what unlocks.
+- **Light as music:** every ring holds a soft note while it is lit, so a solved level is a chord. Colour sets the pitch (red lowest, blue highest, as with light itself) and the light received sets the loudness. The notes fade after 45 seconds without a change, and a setting turns them off.
+- **Notebook:** one page per piece on the real physics behind it (the law in one line, a short text, where it shows up outside the game), with a drawing traced by the game's own optics engine. A page appears when the world of its piece opens; unread pages show a glowing dot on the star map.
 - Works with mouse, touch and keyboard, in English and German. It plays offline once installed (PWA) and idles at zero CPU when nothing moves.
 
 ## Play / develop
@@ -15,7 +18,7 @@ A calm, glowing 2D puzzle game about light. Place and rotate mirrors, lenses, pr
 ```bash
 npm install
 npm run dev        # http://localhost:5173  (dev-only extras: ?solve applies a level's solution; ?unlock opens the whole star map; #/level/<id> opens any level; #/daily/YYYY-MM-DD any day's puzzle)
-npm test           # optics, session, progress, world-structure and level-pack tests (every level is checked to be solvable)
+npm test           # optics, session, progress, notebook, world-structure and level-pack tests (every level is checked to be solvable)
 npm run report     # level report: how many perfect solutions each level has, and whether any beats par (slow)
 npm run level -- check <id|file.json>   # is this level sound, how hard is it, what should change
 npm run level -- show <id|file.json>    # the board and its light as text (--solve, --place type@x,y@angle)
@@ -49,9 +52,10 @@ src/
   levels/      the level pack: one folder per world, worlds.json defines the world tree
   game/        session (placement, undo, hints) and saved progress
   render/      Canvas 2D renderer, per-type drawers, theme, view transform
-  ui/          screens (menu, star map, world view, game, settings) and input
-  audio/       procedural Web Audio sound effects
+  ui/          screens (menu, star map, world view, notebook, game, settings) and input
+  audio/       procedural Web Audio sound effects and the notes rings hold
   i18n/        string tables (en, de)
+  notebook/    notebook pages: texts and the scene each drawing is traced from
   platform/    storage adapter and service worker template
 tests/         Vitest suites
 docs/          architecture and level-design notes

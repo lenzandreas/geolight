@@ -4,7 +4,7 @@
  * an editor, a solver or a replay system.
  */
 import { evaluate, type Evaluation } from '../core/rules';
-import { footprint, getType } from '../core/registry';
+import { footprint, getType, turnStep } from '../core/registry';
 import { trace, type TraceResult } from '../core/tracer';
 import type { Entity } from '../core/types';
 import { wrapAngle } from '../core/math';
@@ -151,7 +151,8 @@ export class Session {
   setAngle(id: string, angle: number): boolean {
     const p = this.get(id);
     if (!p || !this.canRotate(p)) return false;
-    const a = wrapAngle(Math.round(angle / this.rotationStep) * this.rotationStep);
+    const step = this.stepOf(id);
+    const a = wrapAngle(Math.round(angle / step) * step);
     if (a === p.angle) return true;
     this.checkpoint();
     p.angle = a;
@@ -159,9 +160,15 @@ export class Session {
     return true;
   }
 
+  /** Degrees a piece turns per step: the level's step, or the piece's own if that is coarser. */
+  stepOf(id: string): number {
+    const p = this.get(id);
+    return p ? turnStep(p.type, this.rotationStep) : this.rotationStep;
+  }
+
   rotate(id: string, steps: number): boolean {
     const p = this.get(id);
-    return !!p && this.setAngle(id, p.angle + steps * this.rotationStep);
+    return !!p && this.setAngle(id, p.angle + steps * this.stepOf(id));
   }
 
   /** Return a tray piece to the inventory. */
