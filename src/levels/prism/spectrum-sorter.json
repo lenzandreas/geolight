@@ -1,0 +1,138 @@
+{
+ "schema": 1,
+ "id": "spectrum-sorter",
+ "name": {
+  "en": "Spectrum Sorter",
+  "de": "Spektralsortierer"
+ },
+ "intro": {
+  "en": "Not every colour wants to go where the others go.",
+  "de": "Nicht jede Farbe will dorthin, wohin die anderen gehen."
+ },
+ "grid": {
+  "w": 10,
+  "h": 8
+ },
+ "entities": [
+  {
+   "type": "laser",
+   "x": 0,
+   "y": 3,
+   "angle": 0
+  },
+  {
+   "type": "sink",
+   "x": 9,
+   "y": 1,
+   "params": {
+    "required": 0.45
+   }
+  },
+  {
+   "type": "sink",
+   "x": 7,
+   "y": 7,
+   "params": {
+    "color": "blue",
+    "strict": true,
+    "required": 0.15
+   }
+  },
+  {
+   "type": "sink",
+   "x": 9,
+   "y": 7,
+   "params": {
+    "color": "green",
+    "strict": true,
+    "required": 0.15
+   }
+  },
+  {
+   "type": "sink",
+   "x": 8,
+   "y": 5,
+   "params": {
+    "color": "red",
+    "strict": true,
+    "required": 0.15
+   }
+  },
+  {
+   "type": "wall",
+   "x": 0,
+   "y": 0,
+   "params": {
+    "w": 1,
+    "h": 3
+   }
+  },
+  {
+   "type": "wall",
+   "x": 2,
+   "y": 0,
+   "params": {
+    "w": 8,
+    "h": 1
+   }
+  },
+  {
+   "type": "wall",
+   "x": 2,
+   "y": 2,
+   "params": {
+    "w": 8,
+    "h": 1
+   }
+  },
+  {
+   "type": "wall",
+   "x": 1,
+   "y": 0,
+   "params": {
+    "w": 1,
+    "h": 1
+   }
+  },
+  {
+   "type": "sensor",
+   "x": 7,
+   "y": 3
+  }
+ ],
+ "inventory": [
+  {
+   "type": "splitter",
+   "count": 1
+  },
+  {
+   "type": "mirror",
+   "count": 2
+  },
+  {
+   "type": "prism",
+   "count": 1
+  }
+ ],
+ "solution": [
+  {
+   "type": "splitter",
+   "x": 1,
+   "y": 3,
+   "angle": 45
+  },
+  {
+   "type": "mirror",
+   "x": 1,
+   "y": 1,
+   "angle": 45
+  },
+  {
+   "type": "prism",
+   "x": 4,
+   "y": 3,
+   "angle": 45
+  }
+ ],
+ "par": 3
+}

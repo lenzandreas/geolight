@@ -18,7 +18,8 @@
     {"type": "wall", "x": 6, "y": 0, "params": {"w": 1, "h": 2}},
     {"type": "wall", "x": 11, "y": 3, "params": {"w": 1, "h": 3}},
     {"type": "wall", "x": 3, "y": 7, "params": {"w": 2, "h": 2}},
-    {"type": "wall", "x": 9, "y": 1, "params": {"w": 1, "h": 1}}
+    {"type": "wall", "x": 9, "y": 1, "params": {"w": 1, "h": 1}},
+    {"type": "wall", "x": 9, "y": 3, "params": {"w": 1, "h": 1}}
   ],
   "inventory": [
     {"type": "splitter", "count": 1},

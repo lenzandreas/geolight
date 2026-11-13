@@ -18,14 +18,13 @@
     {"type": "sink", "x": 9, "y": 2, "params": {"required": 0.6}}
   ],
   "inventory": [
-    {"type": "polarizer", "count": 6}
+    {"type": "polarizer", "count": 5}
   ],
   "solution": [
     {"type": "polarizer", "x": 1, "y": 2, "angle": 15},
     {"type": "polarizer", "x": 2, "y": 2, "angle": 30},
     {"type": "polarizer", "x": 3, "y": 2, "angle": 45},
     {"type": "polarizer", "x": 4, "y": 2, "angle": 60},
-    {"type": "polarizer", "x": 5, "y": 2, "angle": 75},
-    {"type": "polarizer", "x": 6, "y": 2, "angle": 90}
+    {"type": "polarizer", "x": 5, "y": 2, "angle": 75}
   ]
 }

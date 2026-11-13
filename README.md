@@ -2,7 +2,7 @@
 
 A calm, glowing 2D puzzle game about light. Place and rotate mirrors, lenses, prisms and filters to guide beams from lasers, light bulbs and sunlight into their targets. Avoid the sensors.
 
-- **97 levels in 13 worlds on a star map, plus 13 optional shadow levels.** Each world is a constellation, and all but the last introduce exactly one new piece: mirror, beam splitter, lens, concave mirror, diverging lens, glass block, colour filter, prism, polarizer, black hole, diffraction grating and hot plate. The worlds form a tree. A world opens once 4 levels of each parent are solved, and two levels are open at a time inside a world, so being stuck never blocks you completely. Two worlds need several parents at once and combine their pieces: *Polarity* (polarizers, including the famous three-polarizer paradox) and *Event Horizon* (black holes that bend light along curved paths, with gravitational lensing, Einstein rings and twin holes whose pulls cancel). *Mirage* follows the glass blocks with hot plates: the warm air in front of a plate curves passing light away from it by exactly 15°, the small step between a mirror's big ones, and a second plate on the other side turns it back. *Spectra* follows the prisms with diffraction gratings, which split one beam into three and bend red the most, the reverse of a prism. The final world, *Kaleidoscope*, adds nothing new: it opens after *Polarity* and *Spectra* and combines polarizers and gratings in hard levels (fold a rainbow back into white with a second grating, crack a lock of pieces you can only turn, spread two colours apart with a diverging lens).
+- **103 levels in 13 worlds on a star map, plus 13 optional shadow levels.** Each world is a constellation, and all but the last introduce exactly one new piece: mirror, beam splitter, lens, concave mirror, diverging lens, glass block, colour filter, prism, polarizer, black hole, diffraction grating and hot plate. The worlds form a tree. A world opens once 4 levels of each parent are solved, and two levels are open at a time inside a world, so being stuck never blocks you completely. Two worlds need several parents at once and combine their pieces: *Polarity* (polarizers, including the famous three-polarizer paradox) and *Event Horizon* (black holes that bend light along curved paths, with gravitational lensing, Einstein rings and twin holes whose pulls cancel). *Mirage* follows the glass blocks with hot plates: the warm air in front of a plate curves passing light away from it by exactly 15°, the small step between a mirror's big ones, and a second plate on the other side turns it back. *Spectra* follows the prisms with diffraction gratings, which split one beam into three and bend red the most, the reverse of a prism. The final world, *Kaleidoscope*, adds nothing new: it opens after *Polarity* and *Spectra* and combines polarizers and gratings in hard levels (fold a rainbow back into white with a second grating, crack a lock of pieces you can only turn, spread two colours apart with a diverging lens).
 - **Daily puzzle:** a new level every day, generated from the date (the same for everyone), gentle on Mondays and trickier at the weekend, with a streak counter.
 - **Sources:** laser (a sharp beam), light bulb (diffuse light that has to be gathered), sunlight (a wide parallel band), all in any colour.
 - **Pieces:** mirror, beam splitter, converging and diverging lens, concave mirror, prism (splits white light into colours), colour filter, glass block, polarizer, black hole (bends passing light, swallows what comes too close), diffraction grating (one beam in, three out: straight on, plus a rainbow to each side), hot plate (warm air that bends light smoothly), shade.
@@ -20,6 +20,8 @@ npm install
 npm run dev        # http://localhost:5173  (dev-only extras: ?solve applies a level's solution; ?unlock opens the whole star map; #/level/<id> opens any level; #/daily/YYYY-MM-DD any day's puzzle)
 npm test           # optics, session, progress, notebook, world-structure and level-pack tests (every level is checked to be solvable)
 npm run report     # level report: how many perfect solutions each level has, and whether any beats par (slow)
+npm run level -- check <id|file.json>   # is this level sound, how hard is it, what should change
+npm run level -- show <id|file.json>    # the board and its light as text (--solve, --place type@x,y@angle)
 npm run build      # static site in dist/ (open from any web server or sub-path)
 npm run preview    # serve the production build
 ```
@@ -46,7 +48,7 @@ One-time setup: in the repository on GitHub, go to **Settings → Pages → Buil
 ```
 src/
   core/        headless optics engine: math, tracer, interactions, entity types, rules
-  level/       level schema, validation, brute-force solver
+  level/       level schema, validation, solver, level-design tools
   levels/      the level pack: one folder per world, worlds.json defines the world tree
   game/        session (placement, undo, hints) and saved progress
   render/      Canvas 2D renderer, per-type drawers, theme, view transform
@@ -59,4 +61,4 @@ tests/         Vitest suites
 docs/          architecture and level-design notes
 ```
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the design, extension points and roadmap, and [docs/LEVELS.md](docs/LEVELS.md) for how to write levels.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the design, extension points and roadmap, [docs/LEVELS.md](docs/LEVELS.md) for the level format, and [docs/LEVEL-DESIGN.md](docs/LEVEL-DESIGN.md) for a step-by-step way to design hard levels that also works for small language models.

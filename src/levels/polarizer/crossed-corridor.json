@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "id": "crossed-corridor",
+  "name": {
+    "en": "Crossed Corridor",
+    "de": "Gekreuzter Gang"
+  },
+  "intro": {
+    "en": "One polarizer is already in place, tilted, and the ring wants light in the other direction. Two steps are needed, and the first one looks wrong.",
+    "de": "Ein Polarisator steht schon, schr\u00e4g, und der Ring will Licht in der anderen Richtung. Zwei Schritte sind n\u00f6tig, und der erste sieht falsch aus."
+  },
+  "grid": {
+    "w": 6,
+    "h": 5
+  },
+  "entities": [
+    {
+      "type": "laser",
+      "x": 0,
+      "y": 2,
+      "angle": 0
+    },
+    {
+      "type": "polarizer",
+      "x": 1,
+      "y": 2,
+      "angle": 20
+    },
+    {
+      "type": "sink",
+      "x": 4,
+      "y": 2,
+      "params": {
+        "color": "white",
+        "pol": 90,
+        "strict": true,
+        "required": 0.223
+      }
+    }
+  ],
+  "inventory": [
+    {
+      "type": "polarizer",
+      "count": 3
+    }
+  ],
+  "solution": [
+    {
+      "type": "polarizer",
+      "x": 2,
+      "y": 2,
+      "angle": 55
+    },
+    {
+      "type": "polarizer",
+      "x": 3,
+      "y": 2,
+      "angle": 90
+    }
+  ]
+}

@@ -46,7 +46,7 @@ Each layer depends only on the layers below it. `core`, `level` and `game` never
 
 Levels are versioned JSON (`schema: 1`). Each one lists entities with lock modes (`fixed`, `rotate`, `free`), a tray inventory, an optional goal and a reference **solution**. `parseLevel` validates files and is where migrations go when the schema grows.
 
-The **solver** searches placements, but only on cells the light currently crosses. Tests use it to check that:
+The **solver** searches placements exhaustively, but only where the light goes and only placements the light touches; each set of placements is visited once. Its **hunt** mode gives up exhaustiveness to reach bigger trays (see `docs/LEVELS.md`). `design.ts` builds the level-design tools on it: a text picture of a board and a check that rates a level and says what to change (`npm run level`). Tests use the solver to check that:
 
 1. every level is unsolved at the start,
 2. its reference solution wins with 3 stars,
@@ -107,7 +107,7 @@ This is the headless state of one attempt: pieces, tray counts, snapshot undo/re
 | a new object (e.g. wave plate, phosphor, corner reflector) | register an `EntityType` in `core/entities`, a drawer in `render/drawers.ts`, and a name in `i18n` |
 | new physics | write an `Interaction` in `core/interactions.ts` |
 | a new game mode or win condition | `registerGoal('name', rule)` and set `"goal": { "type": "name" }` in a level |
-| a level | drop a JSON file into its world folder and list it in `src/levels/worlds.json` (see `docs/LEVELS.md`); tests check it automatically |
+| a level | follow `docs/LEVEL-DESIGN.md`: drop a JSON file into its world folder, run `npm run level -- check` on it and list it in `src/levels/worlds.json`; tests check it automatically |
 | a world | add a folder and an entry in `worlds.json` with its new piece and parent(s); the star map lays it out automatically |
 | a language | add `i18n/<lang>.ts` and register it in `LANGUAGES` |
 | a theme | create another `Theme` object (`render/theme.ts`) |

@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "id": "shared-twist",
+  "name": {
+    "en": "Shared Twist",
+    "de": "Geteilte Drehung"
+  },
+  "intro": {
+    "en": "Polarized light cannot be turned through a right angle in one go. Three polarizers are enough for both rings, if one of them works for both.",
+    "de": "Polarisiertes Licht lässt sich nicht in einem Schritt um einen rechten Winkel drehen. Drei Polarisatoren reichen für beide Ringe, wenn einer für beide arbeitet."
+  },
+  "grid": {
+    "w": 8,
+    "h": 7
+  },
+  "par": 3,
+  "entities": [
+    {
+      "type": "laser",
+      "x": 0,
+      "y": 3,
+      "angle": 0,
+      "params": {
+        "pol": 0
+      }
+    },
+    {
+      "id": "s1",
+      "type": "splitter",
+      "x": 2,
+      "y": 3,
+      "angle": 45,
+      "lock": "rotate"
+    },
+    {
+      "type": "sink",
+      "x": 7,
+      "y": 3,
+      "params": {
+        "pol": 60,
+        "strict": true,
+        "required": 0.21
+      }
+    },
+    {
+      "type": "sink",
+      "x": 2,
+      "y": 6,
+      "params": {
+        "pol": 90,
+        "strict": true,
+        "required": 0.115
+      }
+    },
+    {
+      "type": "sensor",
+      "x": 2,
+      "y": 0
+    }
+  ],
+  "inventory": [
+    {
+      "type": "polarizer",
+      "count": 4
+    }
+  ],
+  "solution": [
+    {
+      "type": "polarizer",
+      "x": 1,
+      "y": 3,
+      "angle": 45
+    },
+    {
+      "id": "s1",
+      "x": 2,
+      "y": 3,
+      "angle": 135
+    },
+    {
+      "type": "polarizer",
+      "x": 5,
+      "y": 3,
+      "angle": 60
+    },
+    {
+      "type": "polarizer",
+      "x": 2,
+      "y": 5,
+      "angle": 90
+    }
+  ]
+}

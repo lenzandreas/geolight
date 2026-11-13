@@ -32,6 +32,8 @@ export interface Ray {
   root?: number;
   /** Polarization axis in degrees [0, 180), or null/undefined for unpolarized light. */
   pol?: number | null;
+  /** Index of the traced segment this ray continues from (set by the tracer). */
+  from?: number;
   /** Curved-path steps taken so far inside fields (set by the tracer). */
   steps?: number;
 }

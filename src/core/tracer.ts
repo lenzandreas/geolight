@@ -11,6 +11,12 @@ export interface BeamSegment {
   c: RGB;
   /** Index of the emitted ray this segment descends from (lets renderers group whole light paths). */
   root: number;
+  /** Polarization axis in degrees, or null for unpolarized light. */
+  pol: number | null;
+  /** Id of the entity the segment ends on (absent at the board edge and between gravity steps). */
+  hit?: string;
+  /** Index of the segment this light came from (absent for light straight from a source). */
+  parent?: number;
 }
 
 /** One packet of light absorbed by a receiver. */
@@ -32,6 +38,8 @@ export interface TraceResult {
   truncated: boolean;
   /** Ids of switchable structures (gates) that ended up open. */
   open: Set<string>;
+  /** Ids of entities the light met: a surface was hit, or a ray came within reach of a gravity field. */
+  touched: Set<string>;
 }
 
 export interface TraceOptions {
@@ -174,10 +182,15 @@ function traceOnce(entities: Entity[], opts: TraceOptions, open: Set<string>): T
 
   const surfaces = collectSurfaces(entities, opts.width, opts.height, open);
   const fields: Field[] = [];
+  const fieldIds: string[] = [];
   for (const e of entities) {
     const f = getType(e.type).field?.(e);
-    if (f) fields.push(f);
+    if (f) {
+      fields.push(f);
+      fieldIds.push(e.id);
+    }
   }
+  const touched = new Set<string>();
   const segments: BeamSegment[] = [];
   const received = new Map<string, RGB>();
   const receptions = new Map<string, Reception[]>();
@@ -196,6 +209,7 @@ function traceOnce(entities: Entity[], opts: TraceOptions, open: Set<string>): T
 
   // The surface a child ray left from; flat surfaces can never be hit again at t≈0.
   let lastSurface: Surface | null = null;
+  let currentSegment = 0;
   const parentSurface = new Map<Ray, Surface>();
 
   const ctx: TraceContext = {
@@ -213,6 +227,7 @@ function traceOnce(entities: Entity[], opts: TraceOptions, open: Set<string>): T
         source: parent.source,
         root: parent.root,
         pol: pol === undefined ? parent.pol ?? null : pol,
+        from: currentSegment,
       };
       if (lastSurface && lastSurface.shape.kind === 'segment') parentSurface.set(ray, lastSurface);
       stack.push(ray);
@@ -252,6 +267,10 @@ function traceOnce(entities: Entity[], opts: TraceOptions, open: Set<string>): T
       // Inside (or about to enter) a field the ray moves in short steps, turning after each.
       const step = fieldStep(ray, fields);
       if (step && step.t < bestT) {
+        if (step.inside) for (let i = 0; i < fields.length; i++) {
+          const f = fields[i];
+          if (f.kind === 'warm' ? inWarm(f, ray.o) : Math.hypot(ray.o.x - f.c.x, ray.o.y - f.c.y) < f.reach) touched.add(fieldIds[i]);
+        }
         let t = step.t;
         let swallowed = false;
         for (const f of fields) {
@@ -264,7 +283,7 @@ function traceOnce(entities: Entity[], opts: TraceOptions, open: Set<string>): T
           }
         }
         const point = addScaled(ray.o, ray.d, t);
-        if (t > 0) segments.push({ a: ray.o, b: point, c: ray.c, root: ray.root ?? 0 });
+        if (t > 0) segments.push({ a: ray.o, b: point, c: ray.c, root: ray.root ?? 0, pol: ray.pol ?? null, parent: ray.from });
         if (swallowed) continue;
         const steps = (ray.steps ?? 0) + 1;
         if (steps > MAX_FIELD_STEPS) {
@@ -272,17 +291,19 @@ function traceOnce(entities: Entity[], opts: TraceOptions, open: Set<string>): T
           continue;
         }
         const d = step.inside ? bend(ray, t, fields) : ray.d;
-        stack.push({ ...ray, o: point, d, steps });
+        stack.push({ ...ray, o: point, d, steps, from: t > 0 ? segments.length - 1 : ray.from });
         continue;
       }
     }
     const point = addScaled(ray.o, ray.d, bestT);
-    segments.push({ a: ray.o, b: point, c: ray.c, root: ray.root ?? 0 });
+    segments.push({ a: ray.o, b: point, c: ray.c, root: ray.root ?? 0, pol: ray.pol ?? null, hit: best.entity?.id, parent: ray.from });
+    currentSegment = segments.length - 1;
     const hit: Hit = { point, t: bestT, surface: best };
     lastSurface = best;
+    if (best.entity) touched.add(best.entity.id);
     best.interact(ray, hit, ctx);
     lastSurface = null;
   }
 
-  return { segments, received, receptions, emitted, truncated, open };
+  return { segments, received, receptions, emitted, truncated, open, touched };
 }
