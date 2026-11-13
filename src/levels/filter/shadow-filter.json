@@ -6,26 +6,42 @@
     "de": "Druckerfarben"
   },
   "intro": {
-    "en": "Yellow swallows blue, magenta swallows green, cyan swallows red. Two inks leave one colour; all three leave nothing.",
-    "de": "Gelb verschluckt Blau, Magenta verschluckt Grün, Cyan verschluckt Rot. Zwei Farben lassen eine übrig, alle drei nichts."
+    "en": "Yellow swallows blue, magenta swallows green, cyan swallows red. A filter standing edge-on swallows nothing. Two inks leave one colour, and it takes all three to keep the sensor dark.",
+    "de": "Gelb verschluckt Blau, Magenta verschluckt Grün, Cyan verschluckt Rot. Ein Filter, der mit der Kante zum Licht steht, verschluckt nichts. Zwei Farben lassen eine übrig, und erst alle drei halten den Sensor dunkel."
   },
-  "grid": {"w": 9, "h": 5},
+  "grid": {"w": 9, "h": 6},
+  "rotationStep": 90,
+  "par": 0,
   "entities": [
-    {"type": "sun", "x": 0, "y": 2, "angle": 0, "params": {"width": 3, "power": 3, "rays": 90}},
-    {"type": "filter", "x": 2, "y": 1, "angle": 0, "params": {"color": "yellow"}},
-    {"type": "filter", "x": 4, "y": 2, "angle": 0, "params": {"color": "magenta"}},
-    {"type": "filter", "x": 6, "y": 3, "angle": 0, "params": {"color": "cyan"}},
-    {"type": "screen", "x": 8, "y": 1, "angle": 180, "params": {"pattern": "rb."}}
+    {"type": "sun", "x": 0, "y": 2.5, "angle": 0, "params": {"width": 4, "power": 4, "rays": 60}},
+    {"id": "y1", "type": "filter", "x": 2, "y": 1, "angle": 90, "lock": "rotate", "params": {"color": "yellow"}},
+    {"id": "m1", "type": "filter", "x": 4, "y": 1, "angle": 90, "lock": "rotate", "params": {"color": "magenta"}},
+    {"id": "c1", "type": "filter", "x": 6, "y": 1, "angle": 90, "lock": "rotate", "params": {"color": "cyan"}},
+    {"id": "m2", "type": "filter", "x": 2, "y": 2, "angle": 90, "lock": "rotate", "params": {"color": "magenta"}},
+    {"id": "c2", "type": "filter", "x": 4, "y": 2, "angle": 90, "lock": "rotate", "params": {"color": "cyan"}},
+    {"id": "y2", "type": "filter", "x": 6, "y": 2, "angle": 90, "lock": "rotate", "params": {"color": "yellow"}},
+    {"id": "c3", "type": "filter", "x": 2, "y": 3, "angle": 90, "lock": "rotate", "params": {"color": "cyan"}},
+    {"id": "y3", "type": "filter", "x": 4, "y": 3, "angle": 90, "lock": "rotate", "params": {"color": "yellow"}},
+    {"id": "m3", "type": "filter", "x": 6, "y": 3, "angle": 90, "lock": "rotate", "params": {"color": "magenta"}},
+    {"id": "y4", "type": "filter", "x": 2, "y": 4, "angle": 90, "lock": "rotate", "params": {"color": "yellow"}},
+    {"id": "c4", "type": "filter", "x": 4, "y": 4, "angle": 90, "lock": "rotate", "params": {"color": "cyan"}},
+    {"id": "m4", "type": "filter", "x": 6, "y": 4, "angle": 90, "lock": "rotate", "params": {"color": "magenta"}},
+    {"type": "sensor", "x": 8, "y": 4},
+    {"type": "screen", "x": 8, "y": 1, "angle": 180, "params": {"pattern": "rg."}}
   ],
   "inventory": [
-    {"type": "filter", "count": 2, "params": {"color": "magenta"}},
-    {"type": "filter", "count": 1, "params": {"color": "cyan"}},
-    {"type": "filter", "count": 1, "params": {"color": "yellow"}}
+    {"type": "filter", "count": 1, "params": {"color": "red"}}
   ],
   "solution": [
-    {"type": "filter", "params": {"color": "magenta"}, "x": 4, "y": 1, "angle": 0},
-    {"type": "filter", "params": {"color": "cyan"}, "x": 6, "y": 2, "angle": 0},
-    {"type": "filter", "params": {"color": "magenta"}, "x": 3, "y": 3, "angle": 0},
-    {"type": "filter", "params": {"color": "yellow"}, "x": 4, "y": 3, "angle": 0}
+    {"id": "y1", "x": 2, "y": 1, "angle": 0},
+    {"id": "m1", "x": 4, "y": 1, "angle": 0},
+    {"id": "c2", "x": 4, "y": 2, "angle": 0},
+    {"id": "y2", "x": 6, "y": 2, "angle": 0},
+    {"id": "c3", "x": 2, "y": 3, "angle": 0},
+    {"id": "y3", "x": 4, "y": 3, "angle": 0},
+    {"id": "m3", "x": 6, "y": 3, "angle": 0},
+    {"id": "y4", "x": 2, "y": 4, "angle": 0},
+    {"id": "c4", "x": 4, "y": 4, "angle": 0},
+    {"id": "m4", "x": 6, "y": 4, "angle": 0}
   ]
 }

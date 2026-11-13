@@ -6,24 +6,33 @@
     "de": "Ausgekreuzt"
   },
   "intro": {
-    "en": "These screens count even an eighth of the light. Two crossed polarizers cast a full shadow, and a third one between them lets light back in.",
-    "de": "Diese Schirme zählen schon ein Achtel des Lichts. Zwei gekreuzte Polarisatoren werfen einen vollen Schatten, und ein dritter dazwischen lässt wieder Licht hinein."
+    "en": "The middle band is crossed out for good, yet the middle square wants light. The brightest way through two fixed polarizers lies exactly between them, and mirrors can carry that light elsewhere.",
+    "de": "Das mittlere Band ist endgültig ausgekreuzt, und doch will das mittlere Feld Licht. Der hellste Weg durch zwei feste Polarisatoren liegt genau zwischen ihnen, und Spiegel können dieses Licht woandershin tragen."
   },
-  "grid": {"w": 9, "h": 6},
+  "grid": {"w": 10, "h": 5},
+  "par": 0,
   "entities": [
-    {"type": "sun", "x": 0, "y": 2.5, "angle": 0, "params": {"width": 4, "power": 4, "rays": 120}},
+    {"type": "sun", "x": 0, "y": 2, "angle": 0, "params": {"width": 3, "power": 3, "rays": 45}},
     {"type": "polarizer", "x": 2, "y": 1, "angle": 0},
-    {"type": "polarizer", "x": 5, "y": 1, "angle": 90},
-    {"type": "polarizer", "x": 3, "y": 2, "angle": 0},
-    {"type": "polarizer", "x": 4, "y": 4, "angle": 45},
-    {"type": "screen", "x": 8, "y": 1, "angle": 180, "params": {"pattern": "w.w.", "need": 0.045}}
+    {"id": "p1", "type": "polarizer", "x": 4, "y": 1, "angle": 90, "lock": "rotate"},
+    {"type": "polarizer", "x": 6, "y": 1, "angle": 60},
+    {"id": "m1", "type": "mirror", "x": 7, "y": 1, "angle": 90, "lock": "rotate"},
+    {"type": "polarizer", "x": 2, "y": 2, "angle": 30},
+    {"type": "polarizer", "x": 4, "y": 2, "angle": 120},
+    {"id": "m2", "type": "mirror", "x": 7, "y": 2, "angle": 90, "lock": "rotate"},
+    {"type": "polarizer", "x": 3, "y": 3, "angle": 30},
+    {"id": "p2", "type": "polarizer", "x": 5, "y": 3, "angle": 0, "lock": "rotate"},
+    {"type": "sensor", "x": 7, "y": 0},
+    {"type": "sensor", "x": 7, "y": 4},
+    {"type": "screen", "x": 9, "y": 1, "angle": 180, "params": {"pattern": ".w.", "need": 0.12, "limit": 0.002}}
   ],
   "inventory": [
-    {"type": "polarizer", "count": 3}
+    {"type": "polarizer", "count": 1}
   ],
   "solution": [
-    {"type": "polarizer", "x": 3, "y": 1, "angle": 45},
-    {"type": "polarizer", "x": 5, "y": 2, "angle": 90},
-    {"type": "polarizer", "x": 6, "y": 4, "angle": 135}
+    {"id": "p1", "x": 4, "y": 1, "angle": 30},
+    {"id": "m1", "x": 7, "y": 1, "angle": 135},
+    {"id": "m2", "x": 7, "y": 2, "angle": 135},
+    {"id": "p2", "x": 5, "y": 3, "angle": 120}
   ]
 }
