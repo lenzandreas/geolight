@@ -81,5 +81,12 @@
     "name": {"en": "Kaleido\u00adscope", "de": "Kaleido\u00adskop"},
     "parents": ["polarizer", "grating"],
     "levels": ["late-turn", "steep-light", "fold-the-rainbow", "combination-lock", "elbow-room", "golden-turn", "full-circle"]
+  },
+  {
+    "id": "crystal",
+    "name": {"en": "Crystals", "de": "Kristalle"},
+    "object": "polCube",
+    "parents": ["kaleidoscope", "gravity"],
+    "levels": ["clean-cut", "there-and-back", "both-doors", "no-mirrors", "sorted-twice", "crossing-over"]
   }
 ]

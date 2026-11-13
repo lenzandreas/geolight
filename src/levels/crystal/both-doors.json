@@ -1,0 +1,160 @@
+{
+  "schema": 1,
+  "id": "both-doors",
+  "name": {
+    "en": "Both Doors",
+    "de": "Beide Türen"
+  },
+  "intro": {
+    "en": "Each door is a polarizer and swallows half of ordinary light. The ring wants nearly all of it.",
+    "de": "Jede Tür ist ein Polarisator und schluckt die Hälfte von gewöhnlichem Licht. Der Ring will fast alles."
+  },
+  "grid": {
+    "w": 11,
+    "h": 7
+  },
+  "par": 3,
+  "entities": [
+    {
+      "type": "laser",
+      "x": 0,
+      "y": 4,
+      "angle": 0,
+      "params": {
+        "power": 0.8
+      }
+    },
+    {
+      "type": "sink",
+      "x": 10,
+      "y": 4,
+      "params": {
+        "required": 0.75
+      }
+    },
+    {
+      "type": "wall",
+      "x": 5,
+      "y": 0
+    },
+    {
+      "type": "wall",
+      "x": 5,
+      "y": 2,
+      "params": {
+        "w": 1,
+        "h": 2
+      }
+    },
+    {
+      "type": "wall",
+      "x": 5,
+      "y": 5,
+      "params": {
+        "w": 1,
+        "h": 2
+      }
+    },
+    {
+      "type": "polarizer",
+      "x": 5,
+      "y": 4,
+      "angle": 0
+    },
+    {
+      "type": "polarizer",
+      "x": 5,
+      "y": 1,
+      "angle": 90
+    },
+    {
+      "id": "m1",
+      "type": "mirror",
+      "x": 2,
+      "y": 1,
+      "angle": 135,
+      "lock": "rotate"
+    },
+    {
+      "type": "wall",
+      "x": 9,
+      "y": 3,
+      "params": {
+        "w": 2,
+        "h": 1
+      }
+    },
+    {
+      "type": "wall",
+      "x": 9,
+      "y": 5,
+      "params": {
+        "w": 2,
+        "h": 1
+      }
+    },
+    {
+      "type": "wall",
+      "x": 3,
+      "y": 2,
+      "params": {
+        "w": 2,
+        "h": 2
+      }
+    },
+    {
+      "type": "wall",
+      "x": 6,
+      "y": 2,
+      "params": {
+        "w": 2,
+        "h": 2
+      }
+    },
+    {
+      "type": "wall",
+      "x": 9,
+      "y": 1
+    }
+  ],
+  "inventory": [
+    {
+      "type": "polCube",
+      "count": 2
+    },
+    {
+      "type": "mirror",
+      "count": 1
+    },
+    {
+      "type": "splitter",
+      "count": 1
+    }
+  ],
+  "solution": [
+    {
+      "type": "polCube",
+      "x": 2,
+      "y": 4,
+      "angle": 45
+    },
+    {
+      "id": "m1",
+      "x": 2,
+      "y": 1,
+      "angle": 45
+    },
+    {
+      "type": "mirror",
+      "x": 8,
+      "y": 1,
+      "angle": 135
+    },
+    {
+      "type": "polCube",
+      "x": 8,
+      "y": 4,
+      "angle": 135
+    }
+  ]
+}

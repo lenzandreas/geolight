@@ -3,7 +3,7 @@
  * physics so a different art style (or a WebGL renderer) can replace it.
  */
 import { resolveColor } from '../core/color';
-import { PHOTOCELL_SIZE, POLARIZER_RADIUS, SHADOW_FACTOR, SLIT_THICKNESS, THIN_LEN } from '../core/entities';
+import { CUBE_AXIS, PHOTOCELL_SIZE, POLARIZER_RADIUS, SHADOW_FACTOR, SLIT_THICKNESS, THIN_LEN } from '../core/entities';
 import { centre, regularPolygon, rotatedRect } from '../core/entities/shapes';
 import { getType } from '../core/registry';
 import type { TargetStatus } from '../core/rules';
@@ -522,6 +522,33 @@ function polStripes(ctx: CanvasRenderingContext2D, x: number, y: number, r: numb
   ctx.stroke();
   ctx.restore();
 }
+
+registerDrawer('polCube', (e, { ctx, theme }) => {
+  const c = centre(e);
+  local(e, ctx, () => {
+    // A glass cube seen from above, with the polarizing coating on its diagonal.
+    poly(ctx, [{ x: 0, y: -H }, { x: H, y: 0 }, { x: 0, y: H }, { x: -H, y: 0 }]);
+    ctx.fillStyle = 'rgba(170, 160, 240, 0.16)';
+    ctx.fill();
+    ctx.strokeStyle = theme.glassEdge;
+    ctx.lineWidth = 0.022;
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(214, 200, 255, 0.95)';
+    ctx.lineWidth = 0.035;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(0, -H + 0.05);
+    ctx.lineTo(0, H - 0.05);
+    ctx.stroke();
+  });
+  // The polarization that passes, drawn like a polarizer's stripes. It does not turn with the cube.
+  ctx.beginPath();
+  ctx.arc(c.x, c.y, 0.125, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(30, 30, 80, 0.8)';
+  ctx.fill();
+  polStripes(ctx, c.x, c.y, 0.125, CUBE_AXIS, 'rgba(230, 220, 255, 0.9)', 0.02, 0.062);
+});
 
 registerDrawer('polarizer', (e, { ctx, theme }) => {
   const c = centre(e);

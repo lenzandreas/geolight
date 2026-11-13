@@ -131,6 +131,21 @@ export function polarize(centre: Vec, axis: number): Interaction {
   };
 }
 
+/**
+ * Polarizing beam splitter (a cube with a polarizing coating on its diagonal): the part
+ * of the light polarized along `axis` passes straight through, the part polarized across
+ * it is mirrored. Nothing is lost: polarized light divides by Malus's law (cos² through,
+ * sin² mirrored), unpolarized light half and half. Both beams leave fully polarized.
+ */
+export function polarizingSplitter(axis = 0): Interaction {
+  return (ray, hit, ctx) => {
+    const n = surfaceNormal(hit.surface);
+    const through = malus(ray.pol, axis);
+    if (through > 1e-6) ctx.emit(ray, hit.point, ray.d, scaleRGB(ray.c, through), axis);
+    if (through < 1 - 1e-6) ctx.emit(ray, hit.point, normalize(reflect(ray.d, n)), scaleRGB(ray.c, 1 - through), (axis + 90) % 180);
+  };
+}
+
 /** Wavelength in nanometres that stands for each light channel (red, green, blue). */
 export const WAVELENGTH: RGB = [650, 530, 450];
 

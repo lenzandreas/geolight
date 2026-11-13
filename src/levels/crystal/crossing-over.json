@@ -1,0 +1,130 @@
+{
+  "schema": 1,
+  "id": "crossing-over",
+  "name": {
+    "en": "Crossing Over",
+    "de": "Über Kreuz"
+  },
+  "intro": {
+    "en": "The light that passes a cube can't be turned by another cube. Gravity doesn't care how light is polarized.",
+    "de": "Licht, das einen Würfel durchquert, lässt sich von keinem Würfel mehr umlenken. Der Schwerkraft ist die Polarisation egal."
+  },
+  "grid": {
+    "w": 11,
+    "h": 7
+  },
+  "par": 3,
+  "entities": [
+    {
+      "type": "laser",
+      "x": 0,
+      "y": 2,
+      "angle": 0
+    },
+    {
+      "type": "sink",
+      "x": 10,
+      "y": 2,
+      "params": {
+        "required": 0.45,
+        "pol": 90,
+        "strict": true
+      }
+    },
+    {
+      "type": "sink",
+      "x": 10,
+      "y": 4,
+      "params": {
+        "required": 0.45,
+        "pol": 0,
+        "strict": true
+      }
+    },
+    {
+      "type": "slit",
+      "x": 8,
+      "y": 3,
+      "angle": 0,
+      "params": {
+        "gap": 0.7
+      }
+    },
+    {
+      "type": "wall",
+      "x": 8,
+      "y": 0,
+      "params": {
+        "w": 1,
+        "h": 3
+      }
+    },
+    {
+      "type": "wall",
+      "x": 8,
+      "y": 4,
+      "params": {
+        "w": 1,
+        "h": 3
+      }
+    },
+    {
+      "type": "wall",
+      "x": 1,
+      "y": 3
+    },
+    {
+      "type": "wall",
+      "x": 3,
+      "y": 3,
+      "params": {
+        "w": 2,
+        "h": 1
+      }
+    },
+    {
+      "type": "sensor",
+      "x": 9,
+      "y": 2
+    },
+    {
+      "type": "sensor",
+      "x": 9,
+      "y": 4
+    }
+  ],
+  "inventory": [
+    {
+      "type": "polCube",
+      "count": 2
+    },
+    {
+      "type": "blackHole",
+      "count": 1
+    },
+    {
+      "type": "polarizer",
+      "count": 1
+    }
+  ],
+  "solution": [
+    {
+      "type": "polCube",
+      "x": 2,
+      "y": 2,
+      "angle": 135
+    },
+    {
+      "type": "polCube",
+      "x": 2,
+      "y": 4,
+      "angle": 135
+    },
+    {
+      "type": "blackHole",
+      "x": 6,
+      "y": 3,
+      "angle": 0
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "id": "clean-cut",
+  "name": { "en": "Clean Cut", "de": "Sauber getrennt" },
+  "intro": {
+    "en": "A polarizing cube wastes nothing: light polarized like its stripes passes, the rest is mirrored. Each ring wants one kind only.",
+    "de": "Ein Polwürfel verschwendet nichts: Licht, das wie seine Streifen polarisiert ist, geht hindurch, der Rest wird gespiegelt. Jeder Ring will nur eine Sorte."
+  },
+  "grid": { "w": 9, "h": 7 },
+  "par": 2,
+  "entities": [
+    { "type": "laser", "x": 0, "y": 4, "angle": 0 },
+    { "type": "sink", "x": 8, "y": 4, "params": { "required": 0.45, "pol": 0, "strict": true } },
+    { "type": "sink", "x": 7, "y": 1, "params": { "required": 0.45, "pol": 90, "strict": true } },
+    { "type": "wall", "x": 5, "y": 2, "params": { "w": 1, "h": 2 } },
+    { "type": "wall", "x": 7, "y": 2 }
+  ],
+  "inventory": [{ "type": "polCube", "count": 1 }, { "type": "mirror", "count": 1 }, { "type": "splitter", "count": 1 }, { "type": "polarizer", "count": 1 }],
+  "solution": [
+    { "type": "polCube", "x": 3, "y": 4, "angle": 45 },
+    { "type": "mirror", "x": 3, "y": 1, "angle": 45 }
+  ]
+}

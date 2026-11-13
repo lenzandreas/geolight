@@ -67,6 +67,7 @@ export const de: Strings = {
   piece_polarizer: 'Polarisator',
   piece_blackHole: 'Schwarzes Loch',
   piece_grating: 'Beugungsgitter',
+  piece_polCube: 'Polwürfel',
   piece_slit: 'Spalt',
   keyboardHelp: 'Tasten: Pfeile bewegen · Q/E drehen · Entf zurücklegen · Tab wählt · Strg+Z rückgängig',
   installed: 'Offline spielbereit',

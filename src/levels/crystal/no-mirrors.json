@@ -1,0 +1,103 @@
+{
+  "schema": 1,
+  "id": "no-mirrors",
+  "name": {
+    "en": "No Mirrors",
+    "de": "Ohne Spiegel"
+  },
+  "intro": {
+    "en": "No mirror in the tray. But for light polarized across its stripes, a cube is one. One ring is already full: it will not stay that way.",
+    "de": "Kein Spiegel in der Ablage. Aber für Licht, das quer zu seinen Streifen polarisiert ist, ist ein Würfel einer. Ein Ring ist schon voll: Das bleibt nicht so."
+  },
+  "grid": {
+    "w": 9,
+    "h": 6
+  },
+  "par": 3,
+  "entities": [
+    {
+      "type": "laser",
+      "x": 0,
+      "y": 5,
+      "angle": 0,
+      "params": {
+        "pol": 90
+      }
+    },
+    {
+      "type": "polarizer",
+      "x": 3,
+      "y": 3,
+      "angle": 45
+    },
+    {
+      "type": "sink",
+      "x": 3,
+      "y": 0,
+      "params": {
+        "required": 0.24,
+        "pol": 0,
+        "strict": true
+      }
+    },
+    {
+      "type": "sink",
+      "x": 7,
+      "y": 5,
+      "params": {
+        "required": 0.24,
+        "pol": 90,
+        "strict": true
+      }
+    },
+    {
+      "type": "wall",
+      "x": 6,
+      "y": 4
+    },
+    {
+      "type": "wall",
+      "x": 8,
+      "y": 4
+    },
+    {
+      "type": "wall",
+      "x": 4,
+      "y": 2,
+      "params": {
+        "w": 3,
+        "h": 1
+      }
+    }
+  ],
+  "inventory": [
+    {
+      "type": "polCube",
+      "count": 3
+    },
+    {
+      "type": "polarizer",
+      "count": 1
+    }
+  ],
+  "solution": [
+    {
+      "type": "polCube",
+      "x": 3,
+      "y": 5,
+      "angle": 45
+    },
+    {
+      "type": "polCube",
+      "x": 3,
+      "y": 1,
+      "angle": 45
+    },
+    {
+      "type": "polCube",
+      "x": 7,
+      "y": 1,
+      "angle": 135
+    }
+  ]
+}

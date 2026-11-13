@@ -65,6 +65,7 @@ export const en = {
   piece_polarizer: 'Polarizer',
   piece_blackHole: 'Black hole',
   piece_grating: 'Diffraction grating',
+  piece_polCube: 'Polarizing cube',
   piece_slit: 'Slit',
   keyboardHelp: 'Keys: arrows move · Q/E rotate · Del returns · Tab selects · Ctrl+Z undo',
   installed: 'Ready to play offline',

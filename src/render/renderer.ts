@@ -44,6 +44,9 @@ const DIFFUSE_GAIN = 18;
 const DIFFUSE_WIDTH = 0.08;
 /** Blur (CSS px) applied when the glow layer is scaled up, so halos fade out instead of stepping. */
 const GLOW_BLUR = 3;
+/** Half-length of the marks on polarized beams, and their spacing along the beam (cells). */
+const POL_MARK = 0.085;
+const POL_MARK_GAP = 0.42;
 
 export class Renderer {
   readonly view = new View();
@@ -121,6 +124,7 @@ export class Renderer {
     type Bucket = { col: [number, number, number]; a: number; path: Path2D };
     const buckets = new Map<string, Bucket>();
     const weak: BeamSegment[] = [];
+    const marks = new Path2D();
     const rootPower = new Map<number, number>();
     for (const s of trace.segments) {
       const p = power(s.c);
@@ -142,6 +146,19 @@ export class Renderer {
       }
       b.path.moveTo(s.a.x, s.a.y);
       b.path.lineTo(s.b.x, s.b.y);
+      if (s.pol !== null) {
+        // Polarized light carries small marks along its polarization axis, the way a
+        // polarizer's stripes show its axis: marks parallel to the stripes pass.
+        const len = Math.hypot(s.b.x - s.a.x, s.b.y - s.a.y);
+        const ax = Math.cos((s.pol * Math.PI) / 180) * POL_MARK;
+        const ay = Math.sin((s.pol * Math.PI) / 180) * POL_MARK;
+        for (let d = POL_MARK_GAP / 2; d < len; d += POL_MARK_GAP) {
+          const x = s.a.x + ((s.b.x - s.a.x) * d) / len;
+          const y = s.a.y + ((s.b.y - s.a.y) * d) / len;
+          marks.moveTo(x - ax, y - ay);
+          marks.lineTo(x + ax, y + ay);
+        }
+      }
     }
     const stroke = (ctx: CanvasRenderingContext2D, width: number, alpha: number, whiten: number) => {
       ctx.lineWidth = width;
@@ -180,6 +197,9 @@ export class Renderer {
     prep(ctx, this.dpr);
     if (this.quality === 'high') stroke(ctx, 0.1, 0.12, 0.15);
     stroke(ctx, 0.045, 0.85, 0.6);
+    ctx.lineWidth = 0.034;
+    ctx.strokeStyle = 'rgba(236, 228, 255, 0.5)';
+    ctx.stroke(marks);
     ctx.globalCompositeOperation = 'source-over';
   }
 

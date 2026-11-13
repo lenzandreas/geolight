@@ -6,7 +6,7 @@
  * the beam direction for emitters, the surface normal for thin optics.
  */
 import { resolveColor, spectrum, type RGB } from '../color';
-import { absorb, filter, grating, mirror, polarize, receiver, refract, splitter, thinOptic } from '../interactions';
+import { absorb, filter, grating, mirror, polarize, polarizingSplitter, receiver, refract, splitter, thinOptic } from '../interactions';
 import { add, fromAngle, perp, scale } from '../math';
 import { registerType } from '../registry';
 import { param, type Entity, type EntityType } from '../types';
@@ -217,6 +217,23 @@ export const Polarizer: EntityType = {
   },
 };
 
+/** Polarization axis (degrees) a polarizing cube lets through; it mirrors the axis across it. */
+export const CUBE_AXIS = 0;
+/**
+ * Polarizing beam splitter cube. Its coating lies on the diagonal and faces `angle`, like a
+ * mirror. Which polarization passes is fixed by the coating (CUBE_AXIS), not by how the cube
+ * is turned: turning it only changes where the mirrored part goes.
+ */
+export const PolCube: EntityType = {
+  id: 'polCube',
+  category: 'optic',
+  defaults: {},
+  symmetry: 180,
+  surfaces(e, out) {
+    thin(e, polarizingSplitter(CUBE_AXIS), out);
+  },
+};
+
 /** Light closer than this many Schwarzschild radii is captured (the black hole's shadow, 3√3/2). */
 export const SHADOW_FACTOR = (3 * Math.sqrt(3)) / 2;
 
@@ -345,7 +362,7 @@ export const Gate: EntityType = {
   },
 };
 
-export const BUILTIN_TYPES: EntityType[] = [Laser, Bulb, Sun, Sink, Sensor, Mirror, Splitter, Filter, Lens, CurvedMirror, Prism, GlassBlock, Blocker, Wall, Slit, Polarizer, BlackHole, Photocell, Gate, Grating];
+export const BUILTIN_TYPES: EntityType[] = [Laser, Bulb, Sun, Sink, Sensor, Mirror, Splitter, Filter, Lens, CurvedMirror, Prism, GlassBlock, Blocker, Wall, Slit, Polarizer, BlackHole, Photocell, Gate, Grating, PolCube];
 
 let registered = false;
 /** Idempotent registration of the built-in types. */

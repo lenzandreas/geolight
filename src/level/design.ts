@@ -89,12 +89,12 @@ export function setUp(level: LevelDef, moves: Moves = {}): { entities: Entity[];
 
 const CODES: Record<string, string> = {
   bulb: 'Bu', sun: 'Su', wall: '##', slit: '][', photocell: 'Pc', mirror: 'Mi', splitter: 'Sp', curvedMirror: 'Cm', filter: 'Fi',
-  prism: 'Pr', block: 'Gl', polarizer: 'Po', blackHole: '@@', grating: 'Gr', blocker: 'Bl',
+  prism: 'Pr', block: 'Gl', polarizer: 'Po', blackHole: '@@', grating: 'Gr', polCube: 'Cu', blocker: 'Bl',
 };
 const LEGEND: Record<string, string> = {
   'L>': 'laser (arrow = beam direction; L* = slanted)', Bu: 'bulb', Su: 'sunlight', 'O ': 'ring, not full', 'O*': 'ring, full', '! ': 'sensor, dark',
   '!X': 'sensor, TRIPPED', '##': 'wall', '[]': 'gate, shut', '[ ': 'gate, open', '][': 'slit', Pc: 'solar cell', Mi: 'mirror', Sp: 'splitter', Le: 'lens',
-  Ld: 'diverging lens', Cm: 'concave mirror', Fi: 'filter', Pr: 'prism', Gl: 'glass block', Po: 'polarizer', '@@': 'black hole', Gr: 'grating', Bl: 'shade',
+  Ld: 'diverging lens', Cm: 'concave mirror', Fi: 'filter', Pr: 'prism', Gl: 'glass block', Po: 'polarizer', '@@': 'black hole', Gr: 'grating', Cu: 'polarizing cube', Bl: 'shade',
   '--': 'light', '| ': 'light', '\\ ': 'light', '/ ': 'light', '~ ': 'light at another angle', '+ ': 'light in several directions', '::': 'diffuse light', '. ': 'empty',
 };
 
