@@ -32,7 +32,7 @@ export interface Ray {
   root?: number;
   /** Polarization axis in degrees [0, 180), or null/undefined for unpolarized light. */
   pol?: number | null;
-  /** Curved-path steps taken so far inside gravity fields (set by the tracer). */
+  /** Curved-path steps taken so far inside fields (set by the tracer). */
   steps?: number;
 }
 
@@ -41,7 +41,8 @@ export interface Ray {
  * A ray passing at distance b is turned towards the centre by 2·rs/b in total
  * (the general-relativity deflection), counted only within `reach`.
  */
-export interface Field {
+export interface GravityField {
+  kind: 'gravity';
   c: Vec;
   /** Schwarzschild radius in cells. */
   rs: number;
@@ -50,6 +51,30 @@ export interface Field {
   /** Light coming closer than this is swallowed. */
   capture: number;
 }
+
+/**
+ * Warm air over a hot plate: a rectangle in which light curves steadily away from the plate,
+ * towards the cooler, denser air (the bend behind a mirage). A ray turns by `turn` radians
+ * for every cell it travels along the plate, whatever its direction on the way in.
+ */
+export interface WarmField {
+  kind: 'warm';
+  /** Centre of the plate. */
+  c: Vec;
+  /** Unit vector along the plate, and the unit vector the plate faces. */
+  along: Vec;
+  facing: Vec;
+  /** The air is warm up to this far to each side of the centre, and between these distances in front of it. */
+  half: number;
+  near: number;
+  far: number;
+  turn: number;
+  /** How far from its own cell the piece acts (lets solvers try it next to the light, not only in it). */
+  reach: number;
+}
+
+/** A region that bends light continuously. */
+export type Field = GravityField | WarmField;
 
 export interface Hit {
   point: Vec;
@@ -87,6 +112,8 @@ export interface EntityType {
   defaults: Record<string, unknown>;
   /** Angles that produce identical physics (e.g. 180 for a two-sided mirror). Used by solvers and hints. */
   symmetry?: number;
+  /** The piece only turns in steps of this many degrees (when coarser than the level's rotation step). */
+  turnStep?: number;
   /** Cells covered relative to the anchor cell. Defaults to just the anchor. */
   footprint?(e: Entity): Array<[number, number]>;
   /** Append this entity's optical surfaces. */

@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "shadow-mirage",
+  "name": {
+    "en": "Heat Shadow",
+    "de": "Hitzeschatten"
+  },
+  "intro": {
+    "en": "Warm air casts no shadow: it carries the light somewhere else. The longer the bent light travels, the further it lands from where it started.",
+    "de": "Warme Luft wirft keinen Schatten: Sie trägt das Licht woandershin. Je länger das gebogene Licht unterwegs ist, desto weiter landet es von dort, wo es herkam."
+  },
+  "grid": {"w": 11, "h": 7},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 1.5, "angle": 0, "params": {"width": 2, "power": 2, "rays": 60}},
+    {"type": "sun", "x": 0, "y": 4.5, "angle": 0, "params": {"width": 2, "power": 2, "rays": 60}},
+    {"type": "screen", "x": 10, "y": 0, "angle": 180, "params": {"pattern": "ww...ww"}}
+  ],
+  "inventory": [
+    {"type": "heater", "count": 2}
+  ],
+  "solution": [
+    {"type": "heater", "x": 2, "y": 3, "angle": 270},
+    {"type": "heater", "x": 3, "y": 3, "angle": 90}
+  ]
+}

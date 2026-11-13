@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "summer-road",
+  "name": {
+    "en": "Summer Road",
+    "de": "Sommerstraße"
+  },
+  "intro": {
+    "en": "Warm air turns a whole band of light at once, and it stays a band. To gather it, the lens has to face the way the light now travels.",
+    "de": "Warme Luft dreht ein ganzes Lichtband auf einmal, und es bleibt ein Band. Um es zu bündeln, muss die Linse dorthin schauen, wohin das Licht jetzt läuft."
+  },
+  "grid": {"w": 11, "h": 5},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 2, "angle": 0, "params": {"width": 0.9, "power": 1, "rays": 60}},
+    {"type": "sink", "x": 9, "y": 0}
+  ],
+  "inventory": [
+    {"type": "heater", "count": 1},
+    {"type": "lens", "count": 1, "params": {"f": 3}}
+  ],
+  "solution": [
+    {"type": "heater", "x": 2, "y": 3, "angle": 270},
+    {"type": "lens", "params": {"f": 3}, "x": 6, "y": 1, "angle": 345}
+  ]
+}

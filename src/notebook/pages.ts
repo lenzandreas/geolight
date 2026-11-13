@@ -150,6 +150,27 @@ export const PAGES: NotebookPage[] = [
     },
   },
   {
+    piece: 'heater',
+    law: { en: 'Light bends towards cooler air', de: 'Licht biegt sich zur kühleren Luft hin' },
+    text: {
+      en: 'Warm air is thinner than cool air, and light travels a little faster in it. A beam passing over a hot surface therefore curves away from it, towards the cooler air: gently, a little more with every step. Across one hot plate the beam turns by 15°, whatever direction it came from.',
+      de: 'Warme Luft ist dünner als kühle, und Licht ist darin ein wenig schneller. Ein Strahl, der über eine heiße Fläche läuft, biegt sich deshalb von ihr weg zur kühleren Luft hin: sanft, mit jedem Stück ein wenig mehr. Über einer Heizplatte dreht sich der Strahl um 15°, egal aus welcher Richtung er kam.',
+    },
+    wild: {
+      en: 'The puddle you seem to see on a hot road is the sky: its light bends upwards just above the asphalt and reaches your eye from below. Over a cold sea the bend goes the other way and lifts ships into the air, the Fata Morgana.',
+      de: 'Die Pfütze, die du auf einer heißen Straße zu sehen meinst, ist der Himmel: Sein Licht biegt sich dicht über dem Asphalt nach oben und trifft dein Auge von unten. Über kaltem Meer geht die Krümmung andersherum und hebt Schiffe in die Luft, die Fata Morgana.',
+    },
+    scene: {
+      w: 8,
+      h: 4,
+      entities: [
+        { type: 'laser', x: 0, y: 2 },
+        { type: 'heater', x: 3, y: 3, angle: 270 },
+        { type: 'sink', x: 7, y: 1 },
+      ],
+    },
+  },
+  {
     piece: 'filter',
     law: { en: 'A filter only takes light away', de: 'Ein Filter nimmt nur Licht weg' },
     text: {

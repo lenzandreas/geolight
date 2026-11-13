@@ -7,7 +7,7 @@
  * with diffuse sources (light everywhere) should keep their trays small.
  */
 import { evaluate } from '../core/rules';
-import { footprint, getType } from '../core/registry';
+import { footprint, getType, turnStep } from '../core/registry';
 import { trace, type TraceResult } from '../core/tracer';
 import type { Entity } from '../core/types';
 import { Session, slotKey } from '../game/session';
@@ -57,7 +57,7 @@ function anglesFor(type: string, step: number): number[] {
   // A symmetry of 360 marks pieces that can't be turned (e.g. black holes): only one angle matters.
   if (getType(type).symmetry === 360) return [0];
   const out: number[] = [];
-  for (let a = 0; a < sym; a += step) out.push(a);
+  for (let a = 0; a < sym; a += turnStep(type, step)) out.push(a);
   return out;
 }
 

@@ -309,3 +309,40 @@ describe('screens', () => {
     expect(picture(full).ok).toBe(false);
   });
 });
+
+describe('warm air', () => {
+  const lastDirection = (entities: Entity[]) => {
+    const segs = trace(entities, opts).segments;
+    const s = segs[segs.length - 1];
+    return (Math.atan2(s.b.y - s.a.y, s.b.x - s.a.x) * 180) / Math.PI;
+  };
+
+  it('turns a beam passing in front of a hot plate by 15°, away from the plate', () => {
+    expect(lastDirection([ent('laser', 0, 3), ent('heater', 4, 4, 270)])).toBeCloseTo(-15, 1);
+    expect(lastDirection([ent('laser', 0, 3), ent('heater', 4, 2, 90)])).toBeCloseTo(15, 1);
+  });
+
+  it('turns by the same amount whatever direction the beam arrives from', () => {
+    // A beam coming down at 15° leaves level.
+    expect(lastDirection([ent('laser', 0, 3, 15), ent('heater', 4, 5, 270)])).toBeCloseTo(0, 1);
+  });
+
+  it('leaves light alone that does not pass in front of the plate', () => {
+    expect(lastDirection([ent('laser', 0, 3), ent('heater', 4, 5, 270)])).toBeCloseTo(0, 5);
+    expect(lastDirection([ent('laser', 0, 3), ent('heater', 4, 4, 90)])).toBeCloseTo(0, 5);
+  });
+
+  it('lets a second plate on the other side undo the turn, leaving the beam shifted', () => {
+    const entities = [ent('laser', 0, 4), ent('heater', 2, 5, 270), ent('heater', 6, 2, 90)];
+    const segs = trace(entities, opts).segments;
+    const end = segs[segs.length - 1];
+    expect(lastDirection(entities)).toBeCloseTo(0, 1);
+    expect(end.b.y).toBeLessThan(3.6);
+    expect(end.b.y).toBeGreaterThan(3.2);
+  });
+
+  it('absorbs light that hits the plate itself', () => {
+    const entities = [ent('laser', 0, 3), ent('heater', 4, 3, 270), ent('sink', 8, 3)];
+    expect(evaluate(entities, trace(entities, opts)).won).toBe(false);
+  });
+});

@@ -68,6 +68,7 @@ export const de: Strings = {
   piece_polarizer: 'Polarisator',
   piece_blackHole: 'Schwarzes Loch',
   piece_grating: 'Beugungsgitter',
+  piece_heater: 'Heizplatte',
   piece_slit: 'Spalt',
   shadowLevel: 'Schattenlevel',
   shadowLockedHint: 'Löse hier {n} Level, um es zu öffnen',

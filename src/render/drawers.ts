@@ -3,7 +3,7 @@
  * physics so a different art style (or a WebGL renderer) can replace it.
  */
 import { resolveColor } from '../core/color';
-import { PHOTOCELL_SIZE, POLARIZER_RADIUS, SCREEN_DEPTH, SCREEN_PIXEL, screenRun, SHADOW_FACTOR, SLIT_THICKNESS, THIN_LEN } from '../core/entities';
+import { PHOTOCELL_SIZE, POLARIZER_RADIUS, HEATER_DEPTH, HEATER_LENGTH, SCREEN_DEPTH, SCREEN_PIXEL, screenRun, WARM_FAR, SHADOW_FACTOR, SLIT_THICKNESS, THIN_LEN } from '../core/entities';
 import { centre, regularPolygon, rotatedRect } from '../core/entities/shapes';
 import { getType } from '../core/registry';
 import type { TargetStatus } from '../core/rules';
@@ -608,6 +608,53 @@ registerDrawer('polarizer', (e, { ctx, theme }) => {
     ctx.stroke();
   }
   ctx.lineCap = 'butt';
+});
+
+/** A hot plate with its warm air: the haze shows exactly where light gets bent. */
+registerDrawer('heater', (e, { ctx, theme, time }) => {
+  local(e, ctx, () => {
+    const d = HEATER_DEPTH / 2;
+    // Warm air, fading with distance from the plate.
+    const haze = ctx.createLinearGradient(d, 0, WARM_FAR, 0);
+    haze.addColorStop(0, 'rgba(255, 150, 95, 0.20)');
+    haze.addColorStop(0.6, 'rgba(255, 150, 95, 0.07)');
+    haze.addColorStop(1, 'rgba(255, 150, 95, 0)');
+    ctx.fillStyle = haze;
+    ctx.fillRect(d, -0.5, WARM_FAR - d, 1);
+    // Shimmer: a few wavy lines drifting away from the plate.
+    ctx.lineWidth = 0.018;
+    ctx.lineCap = 'round';
+    for (let i = 0; i < 4; i++) {
+      const x = d + 0.12 + ((i * 0.33 + time * 0.12) % 1.32);
+      const fade = 1 - (x - d) / (WARM_FAR - d);
+      ctx.strokeStyle = `rgba(255, 190, 140, ${(0.3 * fade).toFixed(3)})`;
+      ctx.beginPath();
+      for (let k = 0; k <= 12; k++) {
+        const y = -0.44 + (0.88 * k) / 12;
+        const wx = x + 0.03 * Math.sin(k * 1.3 + i * 2.1 + time * 1.4);
+        if (k) ctx.lineTo(wx, y);
+        else ctx.moveTo(wx, y);
+      }
+      ctx.stroke();
+    }
+    ctx.lineCap = 'butt';
+    // The plate: dark metal with a glowing face.
+    roundRect(ctx, -d, -HEATER_LENGTH / 2, HEATER_DEPTH, HEATER_LENGTH, 0.05);
+    ctx.fillStyle = theme.metalDark;
+    ctx.fill();
+    ctx.strokeStyle = theme.metal;
+    ctx.lineWidth = 0.02;
+    ctx.stroke();
+    softGlow(ctx, d, 0, 0.3, [255, 140, 80], 0.25);
+    ctx.strokeStyle = 'rgba(255, 160, 100, 0.95)';
+    ctx.lineWidth = 0.05;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(d, -HEATER_LENGTH / 2 + 0.06);
+    ctx.lineTo(d, HEATER_LENGTH / 2 - 0.06);
+    ctx.stroke();
+    ctx.lineCap = 'butt';
+  });
 });
 
 registerDrawer('blackHole', (e, { ctx, time }) => {

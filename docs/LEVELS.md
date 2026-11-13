@@ -8,7 +8,7 @@ Levels live in one folder per world, `src/levels/<world>/<id>.json`. Their order
 
 The rules, all enforced by `npm test`:
 
-- **One new piece per world.** `object` is the piece the world introduces (`mirror`, `splitter`, `lens`, `divergingLens`, `curvedMirror`, `block`, `filter`, `prism`, `polarizer`, `blackHole`, `grating`). A world may have several `parents`; it opens when each of them has 4 solved levels and can use all of their pieces. Every level in the world uses it, and may otherwise only use pieces introduced by the world's ancestors. Sources, targets, sensors, walls, slits, photocells and gates are level features and can be used anywhere.
+- **One new piece per world.** `object` is the piece the world introduces (`mirror`, `splitter`, `lens`, `divergingLens`, `curvedMirror`, `block`, `filter`, `prism`, `polarizer`, `blackHole`, `grating`, `heater`). A world may have several `parents`; it opens when each of them has 4 solved levels and can use all of their pieces. Every level in the world uses it, and may otherwise only use pieces introduced by the world's ancestors. Sources, targets, sensors, walls, slits, photocells and gates are level features and can be used anywhere.
 - **Combining worlds.** A world with two or more `parents` may leave out `object`. It introduces nothing and combines its parents' pieces instead: every level uses each parent's piece (in the tray or pre-placed), and may use anything from the ancestors. *Kaleidoscope* (polarizer + grating) is one. Keep these worlds hard; they are for players who know both pieces well.
 - **At least 6 levels per world**, ordered from easy to hard.
 - **One shadow level per world**, named in the world's `"shadow"` field and stored in the world's folder. It is judged by `screen` entities and has no rings. It may use the pieces the world knows plus the shade (`blocker`), and has to use the world's own piece. It opens after 4 regular levels, gives a moon instead of stars and counts for nothing else.
@@ -65,6 +65,7 @@ The test suite checks every level automatically.
 | `photocell` | `required` (0.1): powered once it receives this much light |
 | `gate` | `w`, `h` like a wall, `by`: a photocell id (or a list of ids). It opens while all of them are powered; a gate can't hold itself open with light that only gets through once it is open |
 | `grating` | `spacing` (1000): line spacing in nanometres. A third of the light goes straight on (all colours), a third to each side, where each colour turns by the grating equation sin θ = sin θᵢ ± λ/spacing (red 650 nm, green 530 nm, blue 450 nm). A side beam that can't exist gives its share to the straight beam. So a white laser gives side beams of 1/9 per colour |
+| `heater` | none: a hot plate facing `angle`. Light passing through the cell in front of it curves away from the plate, by 15° for a full pass along the plate, whatever direction it came from. Two plates in a row give about 30°; a plate on the other side undoes the turn and leaves the beam shifted (one row after about four cells). The plate itself absorbs. It turns only in quarter turns |
 | `blocker` | `size` (0.56) |
 | `screen` | `pattern` (`w`): one letter per pixel, one pixel per cell from the anchor cell rightwards or downwards. `.` must stay dark, `w` wants white light, `r`/`g`/`b`/`y`/`c`/`m` want exactly those colours. `angle` (0, 90, 180 or 270) is the side it faces; the back and the frame between pixels absorb. `need` (0.3): light a white pixel needs, where each wanted colour has to bring a third of it. `limit` (0.02): the most light an unwanted colour may bring |
 | `wall` | `w`, `h` in cells (anchored at the top-left cell) |
@@ -83,7 +84,7 @@ Colours can be names (`white`, `red`, `green`, `blue`, `yellow`, `cyan`, `magent
 1. Give the level a reference `solution`. Steps with `type` place tray pieces; steps with `id` turn pre-placed ones. The `intro` text is the first hint (free, it doesn't cost a star); after it, hints reveal the solution one step at a time. Set `"introOnStart": true` only for tutorial levels whose text explains the controls.
 2. Run `npm test`. It checks that the level is unsolved at the start, that the solution wins with 3 stars, and that multi-piece levels can't be solved with a single piece.
 3. Use `npm run dev` and open `#/level/<id>` (add `?solve` to see the solution) to check that it looks right.
-4. Black holes act at a distance, so the solver also tries them next to lit cells. Levels with sunlight or bulbs plus black holes trace slowly; keep their trays small.
+4. Black holes and hot plates act at a distance, so the solver also tries them next to lit cells. Levels with sunlight or bulbs plus black holes trace slowly; keep their trays small.
 5. If sinks need different amounts, players see it: each ring's band is drawn as thick as its `required`, relative to the largest one on the board.
 6. For diffuse sources (bulbs), choose `required` values from experiment. The solver API (`src/level/solver.ts`) helps there: rings show progress relative to `required`.
 7. Run `REPORT_LEVELS=<id> npm run report` (see below) to see how loose the level is.

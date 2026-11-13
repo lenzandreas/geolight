@@ -279,7 +279,33 @@ export const BlackHole: EntityType = {
   surfaces() {},
   field(e) {
     const rs = param<number>(e, BlackHole, 'rs');
-    return { c: centre(e), rs, reach: param<number>(e, BlackHole, 'reach'), capture: SHADOW_FACTOR * rs };
+    return { kind: 'gravity', c: centre(e), rs, reach: param<number>(e, BlackHole, 'reach'), capture: SHADOW_FACTOR * rs };
+  },
+};
+
+export const HEATER_LENGTH = 0.9;
+export const HEATER_DEPTH = 0.22;
+/** Warm air reaches across the whole cell in front of the plate. */
+export const WARM_FAR = 1.5;
+/** A beam passing along the plate turns by this much per cell: 15° across one plate. */
+export const WARM_TURN = Math.PI / 12;
+
+/**
+ * A hot plate. It faces `angle`, and the air in front of it is warm: light passing through that
+ * air curves away from the plate, as it does over a hot road. The plate itself absorbs.
+ */
+export const Heater: EntityType = {
+  id: 'heater',
+  category: 'optic',
+  defaults: {},
+  // Four facings keep its effect exact: light passing along the plate turns by 15°, no more and no less.
+  turnStep: 90,
+  surfaces(e, out) {
+    pushPolygon(out, e, rotatedRect(e, HEATER_DEPTH, HEATER_LENGTH), absorb);
+  },
+  field(e) {
+    const facing = fromAngle(e.angle);
+    return { kind: 'warm', c: centre(e), along: perp(facing), facing, half: 0.5, near: HEATER_DEPTH / 2, far: WARM_FAR, turn: WARM_TURN, reach: 1 };
   },
 };
 
@@ -391,7 +417,7 @@ export const Gate: EntityType = {
   },
 };
 
-export const BUILTIN_TYPES: EntityType[] = [Laser, Bulb, Sun, Sink, Sensor, Mirror, Splitter, Filter, Lens, CurvedMirror, Prism, GlassBlock, Blocker, Wall, Slit, Polarizer, BlackHole, Photocell, Gate, Grating, Screen];
+export const BUILTIN_TYPES: EntityType[] = [Laser, Bulb, Sun, Sink, Sensor, Mirror, Splitter, Filter, Lens, CurvedMirror, Prism, GlassBlock, Blocker, Wall, Slit, Polarizer, BlackHole, Photocell, Gate, Grating, Screen, Heater];
 
 let registered = false;
 /** Idempotent registration of the built-in types. */

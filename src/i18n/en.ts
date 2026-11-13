@@ -66,6 +66,7 @@ export const en = {
   piece_polarizer: 'Polarizer',
   piece_blackHole: 'Black hole',
   piece_grating: 'Diffraction grating',
+  piece_heater: 'Hot plate',
   piece_slit: 'Slit',
   shadowLevel: 'Shadow level',
   shadowLockedHint: 'Solve {n} levels here to open it',

@@ -566,7 +566,7 @@ export class GameScreen {
     const p = this.session.get(id)!;
     const c = centre(p);
     const raw = (Math.atan2(w.y - c.y, w.x - c.x) * 180) / Math.PI;
-    const step = this.session.rotationStep;
+    const step = this.session.stepOf(id);
     return wrapAngle(Math.round(raw / step) * step);
   }
 

@@ -48,6 +48,14 @@
     "shadow": "shadow-glass"
   },
   {
+    "id": "mirage",
+    "name": {"en": "Mirage", "de": "Fata Morgana"},
+    "object": "heater",
+    "parents": ["glass"],
+    "levels": ["warm-air", "detour", "hot-corner", "tilted-fork", "summer-road", "heat-lock", "fata-morgana"],
+    "shadow": "shadow-mirage"
+  },
+  {
     "id": "filter",
     "name": {"en": "Colours", "de": "Farben"},
     "object": "filter",

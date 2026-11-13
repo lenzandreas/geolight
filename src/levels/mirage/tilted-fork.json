@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "id": "tilted-fork",
+  "name": {
+    "en": "Tilted Fork",
+    "de": "Schiefe Gabel"
+  },
+  "intro": {
+    "en": "Neither ring sits where a straight beam and a mirror could reach it. Tilt the beam first; everything after it tilts along.",
+    "de": "Kein Ring sitzt dort, wo ein gerader Strahl und ein Spiegel hinkämen. Neige erst den Strahl; alles danach neigt sich mit."
+  },
+  "grid": {"w": 11, "h": 7},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 1, "angle": 0},
+    {"type": "sink", "x": 10, "y": 3, "params": {"required": 0.45}},
+    {"type": "sink", "x": 6, "y": 6, "params": {"required": 0.45}}
+  ],
+  "inventory": [
+    {"type": "heater", "count": 1},
+    {"type": "splitter", "count": 1}
+  ],
+  "solution": [
+    {"type": "heater", "x": 2, "y": 0, "angle": 90},
+    {"type": "splitter", "x": 5, "y": 2, "angle": 135}
+  ]
+}
