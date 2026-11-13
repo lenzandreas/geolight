@@ -1,25 +1,129 @@
 {
   "schema": 1,
   "id": "sorted-twice",
-  "name": { "en": "Sorted Twice", "de": "Doppelt sortiert" },
-  "intro": {
-    "en": "Five rings, each wants one colour and one polarization. A rainbow is narrow close to where it starts.",
-    "de": "Fünf Ringe, jeder will eine Farbe und eine Polarisation. Ein Regenbogen ist schmal, wo er beginnt."
+  "name": {
+    "en": "Sorted Twice",
+    "de": "Doppelt sortiert"
   },
-  "grid": { "w": 10, "h": 6 },
+  "intro": {
+    "en": "Six rings, each wants one colour, and most want one polarization too. A rainbow is narrow close to where it starts.",
+    "de": "Sechs Ringe, jeder will eine Farbe, die meisten auch eine Polarisation. Ein Regenbogen ist schmal, wo er beginnt."
+  },
+  "grid": {
+    "w": 10,
+    "h": 6
+  },
   "par": 3,
   "entities": [
-    { "type": "laser", "x": 0, "y": 4, "angle": 0 },
-    { "type": "sink", "x": 7, "y": 0, "params": { "required": 0.05, "color": "red", "pol": 0, "strict": true } },
-    { "type": "sink", "x": 9, "y": 0, "params": { "required": 0.05, "color": "green", "pol": 0, "strict": true } },
-    { "type": "sink", "x": 2, "y": 2, "params": { "required": 0.05, "color": "red", "pol": 90, "strict": true } },
-    { "type": "sink", "x": 2, "y": 3, "params": { "required": 0.05, "color": "green", "pol": 90, "strict": true } },
-    { "type": "sink", "x": 8, "y": 1, "params": { "required": 0.05, "color": "blue", "pol": 90, "strict": true } }
+    {
+      "type": "laser",
+      "x": 0,
+      "y": 4,
+      "angle": 0
+    },
+    {
+      "type": "sink",
+      "x": 7,
+      "y": 0,
+      "params": {
+        "required": 0.05,
+        "color": "red",
+        "pol": 0,
+        "strict": true
+      }
+    },
+    {
+      "type": "sink",
+      "x": 9,
+      "y": 0,
+      "params": {
+        "required": 0.05,
+        "color": "green",
+        "pol": 0,
+        "strict": true
+      }
+    },
+    {
+      "type": "sink",
+      "x": 2,
+      "y": 2,
+      "params": {
+        "required": 0.05,
+        "color": "red",
+        "pol": 90,
+        "strict": true
+      }
+    },
+    {
+      "type": "sink",
+      "x": 2,
+      "y": 3,
+      "params": {
+        "required": 0.05,
+        "color": "green",
+        "pol": 90,
+        "strict": true
+      }
+    },
+    {
+      "type": "sink",
+      "x": 8,
+      "y": 1,
+      "params": {
+        "required": 0.05,
+        "color": "blue",
+        "pol": 90,
+        "strict": true
+      }
+    },
+    {
+      "type": "sink",
+      "x": 3,
+      "y": 5,
+      "params": {
+        "required": 0.2,
+        "color": "yellow",
+        "strict": true,
+        "each": true
+      }
+    }
   ],
-  "inventory": [{ "type": "grating", "count": 1 }, { "type": "polCube", "count": 1 }, { "type": "polarizer", "count": 1 }, { "type": "mirror", "count": 1 }],
+  "inventory": [
+    {
+      "type": "grating",
+      "count": 1
+    },
+    {
+      "type": "polCube",
+      "count": 1
+    },
+    {
+      "type": "polarizer",
+      "count": 1
+    },
+    {
+      "type": "mirror",
+      "count": 1
+    }
+  ],
   "solution": [
-    { "type": "grating", "x": 2, "y": 4, "angle": 0 },
-    { "type": "polCube", "x": 3, "y": 3, "angle": 0 },
-    { "type": "polarizer", "x": 6, "y": 2, "angle": 90 }
+    {
+      "type": "grating",
+      "x": 2,
+      "y": 4,
+      "angle": 0
+    },
+    {
+      "type": "polCube",
+      "x": 3,
+      "y": 3,
+      "angle": 0
+    },
+    {
+      "type": "polarizer",
+      "x": 6,
+      "y": 2,
+      "angle": 90
+    }
   ]
 }

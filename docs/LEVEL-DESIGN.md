@@ -23,6 +23,7 @@ npm run level -- check <id or file.json>
 - A ring is a disc of radius 0.32 in the middle of its cell. A slanted beam can cross a ring's cell and still miss the ring, so trust the Targets table, not the picture.
 - A prism fans white light into a red, a green and a blue beam at slanted angles. Red and green leave close together; put a strict single-colour ring several cells away from the prism, where the beams have separated.
 - A polarizer lets through cos² of the angle between the light's polarization and its own axis: 15° apart keeps 0.93, 30° keeps 0.75, 45° keeps 0.5, 60° keeps 0.25, 90° keeps nothing. Unpolarized light always loses half.
+- A polarizing cube (`polCube`) turns like a mirror or splitter but sorts by polarization: the 0° part goes straight on, the 90° part is mirrored, and nothing is lost. Light polarized at 0° does not notice it; for light polarized at 90° it is a plain mirror. A polarizer at +45° and one at −45° in front of a cube give the same light behind it, which counts as two layouts: use a fixed polarizer, or a ring with `pol: 45`, where that matters.
 
 Never work out by hand where light goes. Run `show` and read it. (Working out polarizer amounts from the table above, to choose a `required`, is fine.)
 

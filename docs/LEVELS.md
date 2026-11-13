@@ -3,13 +3,14 @@
 Levels live in one folder per world, `src/levels/<world>/<id>.json`. Their order and the world tree are defined in `src/levels/worlds.json`:
 
 ```json
-{ "id": "splitter", "name": { "en": "Forks", "de": "Gabelungen" }, "object": "splitter", "parents": ["mirror"], "levels": ["half-and-half", "fork", "…"] }
+{ "id": "splitter", "map": [1.9, 0.3], "name": { "en": "Forks", "de": "Gabelungen" }, "object": "splitter", "parents": ["mirror"], "levels": ["half-and-half", "fork", "…"] }
 ```
 
 The rules, all enforced by `npm test`:
 
-- **One new piece per world.** `object` is the piece the world introduces (`mirror`, `splitter`, `lens`, `divergingLens`, `curvedMirror`, `block`, `filter`, `prism`, `polarizer`, `blackHole`, `grating`). A world may have several `parents`; it opens when each of them has 4 solved levels and can use all of their pieces. Every level in the world uses it, and may otherwise only use pieces introduced by the world's ancestors. Sources, targets, sensors, walls, slits, photocells and gates are level features and can be used anywhere.
+- **One new piece per world.** `object` is the piece the world introduces (`mirror`, `splitter`, `lens`, `divergingLens`, `curvedMirror`, `block`, `filter`, `prism`, `polarizer`, `blackHole`, `grating`, `polCube`). A world may have several `parents`; it opens when each of them has 4 solved levels and can use all of their pieces. Every level in the world uses it, and may otherwise only use pieces introduced by the world's ancestors. Sources, targets, sensors, walls, slits, photocells and gates are level features and can be used anywhere.
 - **Combining worlds.** A world with two or more `parents` may leave out `object`. It introduces nothing and combines its parents' pieces instead: every level uses each parent's piece (in the tray or pre-placed), and may use anything from the ancestors. *Kaleidoscope* (polarizer + grating) is one. Keep these worlds hard; they are for players who know both pieces well.
+- **A place on the star map.** `map` is `[x, y]` in map units, `x` to the right and `y` down. A world sits below all of its parents, at least 0.95 away from every other world in `x` or in `y`, and no line between two worlds may run through a third.
 - **At least 6 levels per world**, ordered from easy to hard.
 - Every level file is listed by exactly one world.
 
@@ -64,6 +65,7 @@ The test suite checks every level automatically.
 | `photocell` | `required` (0.1): powered once it receives this much light |
 | `gate` | `w`, `h` like a wall, `by`: a photocell id (or a list of ids). It opens while all of them are powered; a gate can't hold itself open with light that only gets through once it is open |
 | `grating` | `spacing` (1000): line spacing in nanometres. A third of the light goes straight on (all colours), a third to each side, where each colour turns by the grating equation sin θ = sin θᵢ ± λ/spacing (red 650 nm, green 530 nm, blue 450 nm). A side beam that can't exist gives its share to the straight beam. So a white laser gives side beams of 1/9 per colour |
+| `polCube` | none: a polarizing beam splitter cube. Its coating faces `angle` like a mirror. Light polarized at 0° passes straight through, light polarized at 90° is mirrored; other light divides by Malus's law (cos² through, sin² mirrored), unpolarized light half and half. Both beams leave polarized and nothing is lost. Which polarization passes does not depend on how the cube is turned |
 | `blocker` | `size` (0.56) |
 | `wall` | `w`, `h` in cells (anchored at the top-left cell) |
 | `slit` | `gap` (0.2), `offset` (0): a one-cell barrier facing `angle` with an opening of `gap` cells, shifted sideways by `offset` |

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { LEVELS, UNLISTED, WORLDS } from '../src/levels';
 import { ancestors, featuredPieces, piecesUsed } from '../src/level/worlds';
 import { Campaign, OPEN_LEVELS, UNLOCK_AFTER } from '../src/game/campaign';
+import { layoutMap, mapPositions, MAP_CLEARANCE } from '../src/ui/mapLayout';
 
 describe('world structure', () => {
   it('lists every level file exactly once', () => {
@@ -82,5 +83,56 @@ describe('campaign progression', () => {
   it('suggests the next level in the same world first', () => {
     const c = make(root.levels.slice(0, UNLOCK_AFTER));
     expect(c.next(root)?.level.id).toBe(root.levels[UNLOCK_AFTER]);
+  });
+});
+
+describe('star map', () => {
+  const pos = mapPositions(WORLDS);
+
+  it('places every world by hand, below all of its parents', () => {
+    for (const w of WORLDS) {
+      expect(w.map, w.id).toBeDefined();
+      for (const p of w.parents) expect(pos.get(w.id)!.y, `${w.id} below ${p}`).toBeGreaterThan(pos.get(p)!.y);
+    }
+  });
+
+  it('keeps worlds from overlapping', () => {
+    for (const a of WORLDS)
+      for (const b of WORLDS) {
+        if (a.id >= b.id) continue;
+        const dx = Math.abs(pos.get(a.id)!.x - pos.get(b.id)!.x);
+        const dy = Math.abs(pos.get(a.id)!.y - pos.get(b.id)!.y);
+        expect(Math.max(dx, dy), `${a.id} / ${b.id}`).toBeGreaterThanOrEqual(MAP_CLEARANCE);
+      }
+  });
+
+  it('draws no line through a world it does not belong to, on phones and desktops', () => {
+    for (const avail of [336, 366, 760]) {
+      const l = layoutMap(WORLDS, avail);
+      expect(l.width).toBeLessThanOrEqual(avail + 1);
+      const centre = (id: string) => ({ x: l.at.get(id)!.x, y: l.at.get(id)!.y + l.nodeH / 2 });
+      for (const w of WORLDS)
+        for (const parent of w.parents) {
+          const a = centre(parent);
+          const b = centre(w.id);
+          for (const other of WORLDS) {
+            if (other.id === w.id || other.id === parent) continue;
+            const c = centre(other.id);
+            // Sample the line; no sample may fall inside the other world's box.
+            for (let i = 0; i <= 50; i++) {
+              const x = a.x + ((b.x - a.x) * i) / 50;
+              const y = a.y + ((b.y - a.y) * i) / 50;
+              const inside = Math.abs(x - c.x) < l.nodeW / 2 && Math.abs(y - c.y) < l.nodeH / 2;
+              expect(inside, `${parent} -> ${w.id} crosses ${other.id} at width ${avail}`).toBe(false);
+            }
+          }
+        }
+    }
+  });
+
+  it('still places a world that has no map position', () => {
+    const extra = [...WORLDS, { id: 'extra', name: { en: 'Extra' }, parents: [WORLDS[WORLDS.length - 1].id], levels: [] }];
+    const p = mapPositions(extra);
+    for (const w of WORLDS) expect(Math.max(Math.abs(p.get('extra')!.x - p.get(w.id)!.x), Math.abs(p.get('extra')!.y - p.get(w.id)!.y))).toBeGreaterThanOrEqual(MAP_CLEARANCE);
   });
 });

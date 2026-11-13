@@ -35,7 +35,7 @@ Each layer depends only on the layers below it. `core`, `level` and `game` never
   - `field(e)` (black holes): a gravity field that bends passing light,
   - `isOpen(e, powered)` (gates): switchable structures that drop their surfaces while open,
   - metadata: category, defaults, rotational `symmetry`, `footprint`.
-- **Interaction:** what happens when a ray hits a surface: `absorb`, `mirror`, `splitter`, `filter`, `thinOptic` (an ideal lens or curved mirror, using the paraxial `slope −= h/f`), `refract` (Snell's law with total internal reflection and per-channel dispersion), `polarize` (Malus's law), `grating` (the grating equation per colour, with each channel standing for one wavelength), `receiver` (targets). New physics means writing a new interaction.
+- **Interaction:** what happens when a ray hits a surface: `absorb`, `mirror`, `splitter`, `filter`, `thinOptic` (an ideal lens or curved mirror, using the paraxial `slope −= h/f`), `refract` (Snell's law with total internal reflection and per-channel dispersion), `polarize` (Malus's law), `polarizingSplitter` (a polarizing cube: the part polarized along its axis passes, the part across it is mirrored, nothing is lost), `grating` (the grating equation per colour, with each channel standing for one wavelength), `receiver` (targets). New physics means writing a new interaction.
 - **Light** is power per R/G/B channel plus an optional polarization axis. Filters multiply channels; polarizers apply Malus's law and set the axis; other optics keep it. The tracer also records each packet a receiver absorbs, so targets can ask for a polarization. Prisms split multi-channel rays into one ray per channel. The tracer is iterative (a stack, no recursion) and limited by depth, minimum power and segment count, so mirror loops can't hang it.
 - **Gravity:** inside a field's reach, light moves in short straight steps (a tenth of its distance to the centre) and turns after each one, so beams curve smoothly and still interact with everything they pass. Each step turns the ray by `rs·b/r³` per unit length, which over a straight pass adds up to the general-relativity deflection `2·rs/b`; on close passes the bent path dips closer and turns further, as in reality. Light that comes within the shadow (2.6·rs) is swallowed.
 - **Gates:** the tracer starts with every gate shut, traces, opens the gates whose photocells are powered and traces again until nothing changes. Opening a gate only adds light, so this ends after at most one extra trace per gate and gives the one consistent state.
@@ -53,13 +53,13 @@ The **solver** searches placements exhaustively, but only where the light goes a
 
 ### Worlds and progression (`src/level/worlds.ts`, `src/game/campaign.ts`)
 
-Worlds form a tree defined in `src/levels/worlds.json`. Each world introduces one piece and lists its levels in order. `Campaign` holds the progression rules over "is this level solved?", independent of storage and UI:
+Worlds form a graph (each world lists its parents) defined in `src/levels/worlds.json`. Each world introduces one piece and lists its levels in order. `Campaign` holds the progression rules over "is this level solved?", independent of storage and UI:
 
 - a world opens once each parent world has 4 levels solved (`UNLOCK_AFTER`),
 - inside an open world, at most 2 unsolved levels are open at once (`OPEN_LEVELS`), so one level can be skipped,
 - `next()` suggests the next level, preferring the current world.
 
-The star map (`src/ui/mapScreens.ts`) draws the tree with a tidy-tree layout; worlds with several parents are centred under all of them, with curved lines converging into them. Inside a world, `skyLayout` (`src/ui/constellation.ts`) snakes the level stars through a grid sized to the screen (no overlapping labels, lines never cross), with a stable per-world wobble so it still looks like a constellation.
+The star map (`src/ui/mapScreens.ts`) is a map, not a tree diagram: every world has a hand-placed position (`map` in `worlds.json`), and straight lines join each world to its parents. `src/ui/mapLayout.ts` scales those positions to the screen width (the map fits a phone without sideways scrolling and scrolls down); a world without a position is put below its parents. Tests check that no two worlds overlap and that no line runs through a world it doesn't belong to. Inside a world, `skyLayout` (`src/ui/constellation.ts`) snakes the level stars through a grid sized to the screen (no overlapping labels, lines never cross), with a stable per-world wobble so it still looks like a constellation.
 
 ### Daily puzzle (`src/level/daily.ts`)
 
@@ -95,7 +95,7 @@ This is the headless state of one attempt: pieces, tray counts, snapshot undo/re
 | new physics | write an `Interaction` in `core/interactions.ts` |
 | a new game mode or win condition | `registerGoal('name', rule)` and set `"goal": { "type": "name" }` in a level |
 | a level | follow `docs/LEVEL-DESIGN.md`: drop a JSON file into its world folder, run `npm run level -- check` on it and list it in `src/levels/worlds.json`; tests check it automatically |
-| a world | add a folder and an entry in `worlds.json` with its new piece and parent(s); the star map lays it out automatically |
+| a world | add a folder and an entry in `worlds.json` with its new piece, its parent(s) and a `map` position; `npm test` checks that the map stays tidy |
 | a language | add `i18n/<lang>.ts` and register it in `LANGUAGES` |
 | a theme | create another `Theme` object (`render/theme.ts`) |
 | a platform (app stores) | wrap `dist/` with Capacitor or Tauri and swap `platform/storage.ts` if needed |

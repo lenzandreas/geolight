@@ -14,6 +14,11 @@ export interface WorldDef {
   /** The one new piece this world introduces; absent for a world that combines its parents' pieces. */
   object?: PieceKind;
   parents: string[];
+  /**
+   * Where the world sits on the star map: [x, y] in map units (x to the right, y down).
+   * One unit is a little more than a world's box, so worlds at least 1 apart in x or in y never overlap.
+   */
+  map?: [number, number];
   /** Level ids in play order. */
   levels: string[];
 }

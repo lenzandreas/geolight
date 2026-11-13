@@ -1,5 +1,5 @@
 /**
- * The constellation map: worlds as constellations on a tree, and each world as a
+ * The constellation map: worlds as constellations spread over a sky, and each world as a
  * sky of level stars. Plain DOM + SVG, so it is accessible and costs nothing at rest.
  */
 import { NIGHT } from '../render/theme';
@@ -7,9 +7,10 @@ import type { Campaign } from '../game/campaign';
 import type { Progress } from '../game/progress';
 import { loc, t } from '../i18n';
 import type { LevelDef } from '../level/schema';
-import { depths, featuredPieces, type WorldDef } from '../level/worlds';
+import { featuredPieces, type WorldDef } from '../level/worlds';
 import { constellation, skyLayout } from './constellation';
 import { h, icon, iconButton } from './dom';
+import { layoutMap } from './mapLayout';
 import { pieceIcon } from './pieceIcon';
 
 const SVG = 'http://www.w3.org/2000/svg';
@@ -18,58 +19,6 @@ function svg<K extends keyof SVGElementTagNameMap>(tag: K, attrs: Record<string,
   const el = document.createElementNS(SVG, tag);
   for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, String(v));
   return el;
-}
-
-/**
- * Tidy tree layout: leaves get their own column, parents sit centred above their
- * children. Worlds with several parents (joins) are laid out afterwards, centred
- * under all their parents, one row below the deepest one.
- */
-function treeLayout(worlds: WorldDef[]): { pos: Map<string, { col: number; row: number }>; cols: number; rows: number } {
-  const depth = depths(worlds);
-  const isJoin = (w: WorldDef) => w.parents.length > 1;
-  const children = new Map<string, WorldDef[]>();
-  for (const w of worlds) if (w.parents.length && !isJoin(w)) children.set(w.parents[0], [...(children.get(w.parents[0]) ?? []), w]);
-  const pos = new Map<string, { col: number; row: number }>();
-  const place = (w: WorldDef, start: number): number => {
-    const kids = children.get(w.id) ?? [];
-    if (!kids.length) {
-      pos.set(w.id, { col: start, row: depth.get(w.id)! });
-      return 1;
-    }
-    let width = 0;
-    for (const k of kids) width += place(k, start + width);
-    pos.set(w.id, { col: start + (width - 1) / 2, row: depth.get(w.id)! });
-    return width;
-  };
-  let cols = 0;
-  for (const root of worlds.filter((w) => !w.parents.length)) cols += place(root, cols);
-  // Joins, in tree order so a join below another join finds its parents placed.
-  for (const w of worlds.filter(isJoin)) {
-    const cs = w.parents.map((p) => pos.get(p)!.col);
-    const col = cs.reduce((a, b) => a + b, 0) / cs.length;
-    const width = place(w, 0);
-    // Shift the join's subtree so the join itself lands at `col`.
-    const shift = col - pos.get(w.id)!.col;
-    const moved = new Set<string>();
-    const move = (id: string) => {
-      if (moved.has(id)) return;
-      moved.add(id);
-      pos.get(id)!.col += shift;
-      for (const k of children.get(id) ?? []) move(k.id);
-    };
-    move(w.id);
-    cols = Math.max(cols, Math.ceil(col + width / 2));
-  }
-  // Joins with overlapping parents can land on top of each other: keep worlds in a row a column apart.
-  const rows = new Map<number, { col: number; row: number }[]>();
-  for (const p of pos.values()) rows.set(p.row, [...(rows.get(p.row) ?? []), p]);
-  for (const row of rows.values()) {
-    row.sort((a, b) => a.col - b.col);
-    for (let i = 1; i < row.length; i++) row[i].col = Math.max(row[i].col, row[i - 1].col + 1);
-    cols = Math.max(cols, Math.ceil(row[row.length - 1].col + 1));
-  }
-  return { pos, cols, rows: Math.max(...depth.values()) + 1 };
 }
 
 /** Small constellation drawing for a world on the map. */
@@ -92,9 +41,6 @@ function miniSky(world: WorldDef, solved: (id: string) => boolean): SVGSVGElemen
   return el;
 }
 
-/** Narrowest column (px) before the map scrolls sideways instead of squeezing the boxes further. */
-const MIN_COLUMN = 64;
-
 export interface MapScreenOptions {
   campaign: Campaign;
   progress: Progress;
@@ -106,32 +52,22 @@ export interface MapScreenOptions {
 export function mapScreen(o: MapScreenOptions): HTMLElement {
   const { campaign } = o;
   const solved = (id: string) => !!o.progress.level(id);
-  const { pos, cols, rows } = treeLayout(campaign.worlds);
   // Lay out in real pixels for the space available: on narrow screens the boxes get compact,
   // and only if even compact boxes don't fit does the map scroll sideways.
-  const avail = Math.min(760, window.innerWidth - 24);
-  const compact = avail / cols < 110;
-  const colW = Math.max(MIN_COLUMN, avail / cols);
-  const width = colW * cols;
-  const nodeW = Math.min(128, colW - (compact ? 4 : 6));
-  const nodeH = compact ? 96 : 118;
-  const ROW = nodeH + (compact ? 44 : 50);
-  const sky = h('div', { class: `sky-map ${compact ? 'compact' : ''}`, style: `width:${width}px;height:${rows * ROW}px` });
-  const lines = svg('svg', { class: 'sky-lines', viewBox: `0 0 ${width} ${rows * ROW}`, 'aria-hidden': 'true' });
+  const { at, width, height, nodeW, nodeH, compact } = layoutMap(campaign.worlds, Math.min(760, window.innerWidth - 24));
+  const sky = h('div', { class: `sky-map ${compact ? 'compact' : ''}`, style: `width:${width}px;height:${height}px` });
+  const lines = svg('svg', { class: 'sky-lines', viewBox: `0 0 ${width} ${height}`, 'aria-hidden': 'true' });
   sky.append(lines);
-  const x = (id: string) => (pos.get(id)!.col + 0.5) * colW;
-  const top = (id: string) => pos.get(id)!.row * ROW;
   for (const w of campaign.worlds) {
     for (const parent of w.parents) {
-      // A soft S-curve from the bottom of the parent's box to the top of the child's.
-      const a = { x: x(parent), y: top(parent) + nodeH };
-      const b = { x: x(w.id), y: top(w.id) };
-      const mid = (a.y + b.y) / 2;
-      lines.append(svg('path', { d: `M${a.x},${a.y} C${a.x},${mid} ${b.x},${mid} ${b.x},${b.y}`, class: campaign.worldOpen(w) ? 'open' : '' }));
+      // Straight lines between the boxes' centres, like the lines of a constellation; the boxes cover their ends.
+      const a = at.get(parent)!;
+      const b = at.get(w.id)!;
+      lines.append(svg('line', { x1: a.x, y1: a.y + nodeH / 2, x2: b.x, y2: b.y + nodeH / 2, class: campaign.worldOpen(w) ? 'open' : '' }));
     }
   }
   for (const w of campaign.worlds) {
-    const p = pos.get(w.id)!;
+    const p = at.get(w.id)!;
     const open = campaign.worldOpen(w);
     const done = campaign.solvedCount(w);
     const status = open ? `${done}/${w.levels.length}` : t('locked');
@@ -142,7 +78,7 @@ export function mapScreen(o: MapScreenOptions): HTMLElement {
       {
         class: `world-node ${open ? 'open' : 'locked'} ${done === w.levels.length ? 'complete' : ''}`,
         type: 'button',
-        style: `left:${(p.col + 0.5) * colW}px;top:${p.row * ROW}px;width:${nodeW}px;height:${nodeH}px`,
+        style: `left:${p.x}px;top:${p.y}px;width:${nodeW}px;height:${nodeH}px`,
         'aria-label': label,
         title: label,
       },

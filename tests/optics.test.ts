@@ -137,6 +137,35 @@ describe('tracer', () => {
       expect(got(r, sink)).toBeCloseTo(0.25);
     });
 
+    it('a polarizing cube passes one polarization and mirrors the other, losing nothing', () => {
+      const through = ent('sink', 9, 3);
+      const up = ent('sink', 5, 0);
+      const r = trace([ent('laser', 1, 3, 0), ent('polCube', 5, 3, 45), through, up], opts);
+      expect(got(r, through)).toBeCloseTo(0.5);
+      expect(got(r, up)).toBeCloseTo(0.5);
+      expect(r.receptions.get(through.id)!.every((p) => p.pol === 0)).toBe(true);
+      expect(r.receptions.get(up.id)!.every((p) => p.pol === 90)).toBe(true);
+    });
+
+    it('a polarizing cube ignores light polarized along its axis and is a mirror for light across it', () => {
+      const through = ent('sink', 9, 3);
+      const up = ent('sink', 5, 0);
+      const along = trace([ent('laser', 1, 3, 0, { pol: 0 }), ent('polCube', 5, 3, 45), through, up], opts);
+      expect(got(along, through)).toBeCloseTo(1);
+      expect(got(along, up)).toBeCloseTo(0);
+      const across = trace([ent('laser', 1, 3, 0, { pol: 90 }), ent('polCube', 5, 3, 45), through, up], opts);
+      expect(got(across, through)).toBeCloseTo(0);
+      expect(got(across, up)).toBeCloseTo(1);
+    });
+
+    it('a polarizing cube divides polarized light by Malus\'s law', () => {
+      const through = ent('sink', 9, 3);
+      const up = ent('sink', 5, 0);
+      const r = trace([ent('laser', 1, 3, 0, { pol: 30 }), ent('polCube', 5, 3, 45), through, up], opts);
+      expect(got(r, through)).toBeCloseTo(0.75);
+      expect(got(r, up)).toBeCloseTo(0.25);
+    });
+
     it('a polarization target only counts light along its axis', () => {
       const sink = ent('sink', 9, 3, 0, { pol: 90, required: 0.4 });
       const unpolarized = [ent('laser', 1, 3, 0), sink];

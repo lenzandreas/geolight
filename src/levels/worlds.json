@@ -1,6 +1,7 @@
 [
   {
     "id": "mirror",
+    "map": [0.5, 0],
     "name": {"en": "Reflections", "de": "Spiegelungen"},
     "object": "mirror",
     "parents": [],
@@ -8,6 +9,7 @@
   },
   {
     "id": "splitter",
+    "map": [1.9, 0.3],
     "name": {"en": "Forks", "de": "Gabelungen"},
     "object": "splitter",
     "parents": ["mirror"],
@@ -15,6 +17,7 @@
   },
   {
     "id": "lens",
+    "map": [2.0, 1.4],
     "name": {"en": "Gathering Light", "de": "Licht sammeln"},
     "object": "lens",
     "parents": ["splitter"],
@@ -22,6 +25,7 @@
   },
   {
     "id": "concave",
+    "map": [3.5, 1.9],
     "name": {"en": "Dishes", "de": "Schalen"},
     "object": "curvedMirror",
     "parents": ["lens"],
@@ -29,6 +33,7 @@
   },
   {
     "id": "diverging",
+    "map": [0.3, 1.9],
     "name": {"en": "Spreading Out", "de": "Zerstreuung"},
     "object": "divergingLens",
     "parents": ["lens"],
@@ -36,6 +41,7 @@
   },
   {
     "id": "glass",
+    "map": [1.25, 2.9],
     "name": {"en": "Through the Glass", "de": "Durch das Glas"},
     "object": "block",
     "parents": ["lens"],
@@ -43,6 +49,7 @@
   },
   {
     "id": "filter",
+    "map": [2.5, 2.5],
     "name": {"en": "Colours", "de": "Farben"},
     "object": "filter",
     "parents": ["lens"],
@@ -50,6 +57,7 @@
   },
   {
     "id": "prism",
+    "map": [2.6, 3.6],
     "name": {"en": "Rainbows", "de": "Regenbögen"},
     "object": "prism",
     "parents": ["filter"],
@@ -57,6 +65,7 @@
   },
   {
     "id": "polarizer",
+    "map": [1.2, 4.3],
     "name": {"en": "Polarity", "de": "Polarität"},
     "object": "polarizer",
     "parents": ["prism", "glass", "diverging"],
@@ -64,6 +73,7 @@
   },
   {
     "id": "gravity",
+    "map": [3.6, 4.1],
     "name": {"en": "Event Horizon", "de": "Ereignishorizont"},
     "object": "blackHole",
     "parents": ["concave", "prism"],
@@ -71,6 +81,7 @@
   },
   {
     "id": "grating",
+    "map": [2.5, 4.9],
     "name": {"en": "Spectra", "de": "Spektren"},
     "object": "grating",
     "parents": ["prism"],
@@ -78,15 +89,17 @@
   },
   {
     "id": "kaleidoscope",
+    "map": [1.4, 5.7],
     "name": {"en": "Kaleido\u00adscope", "de": "Kaleido\u00adskop"},
     "parents": ["polarizer", "grating"],
     "levels": ["late-turn", "steep-light", "fold-the-rainbow", "combination-lock", "elbow-room", "golden-turn", "full-circle"]
   },
   {
     "id": "crystal",
+    "map": [3.0, 6.2],
     "name": {"en": "Crystals", "de": "Kristalle"},
     "object": "polCube",
     "parents": ["kaleidoscope", "gravity"],
-    "levels": ["clean-cut", "there-and-back", "both-doors", "no-mirrors", "sorted-twice", "crossing-over"]
+    "levels": ["clean-cut", "sorted-twice", "no-mirrors", "there-and-back", "crossing-over", "both-doors"]
   }
 ]

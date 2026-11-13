@@ -21,7 +21,7 @@ for (const k of Object.keys(files)) {
 }
 
 /** Worlds in tree order (every world after its parents). */
-export const WORLDS: WorldDef[] = topoOrder(worldsJson as WorldDef[]);
+export const WORLDS: WorldDef[] = topoOrder(worldsJson as unknown as WorldDef[]);
 
 /** All campaign levels, world by world. */
 export const LEVELS: LevelDef[] = WORLDS.flatMap((w) =>
