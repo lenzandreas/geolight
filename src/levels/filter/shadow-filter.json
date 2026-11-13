@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "id": "shadow-filter",
+  "name": {
+    "en": "Printer's Inks",
+    "de": "Druckerfarben"
+  },
+  "intro": {
+    "en": "Yellow swallows blue, magenta swallows green, cyan swallows red. Two inks leave one colour; all three leave nothing.",
+    "de": "Gelb verschluckt Blau, Magenta verschluckt Grün, Cyan verschluckt Rot. Zwei Farben lassen eine übrig, alle drei nichts."
+  },
+  "grid": {"w": 9, "h": 5},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 2, "angle": 0, "params": {"width": 3, "power": 3, "rays": 90}},
+    {"type": "filter", "x": 2, "y": 1, "angle": 0, "params": {"color": "yellow"}},
+    {"type": "filter", "x": 4, "y": 2, "angle": 0, "params": {"color": "magenta"}},
+    {"type": "filter", "x": 6, "y": 3, "angle": 0, "params": {"color": "cyan"}},
+    {"type": "screen", "x": 8, "y": 1, "angle": 180, "params": {"pattern": "rb."}}
+  ],
+  "inventory": [
+    {"type": "filter", "count": 2, "params": {"color": "magenta"}},
+    {"type": "filter", "count": 1, "params": {"color": "cyan"}},
+    {"type": "filter", "count": 1, "params": {"color": "yellow"}}
+  ],
+  "solution": [
+    {"type": "filter", "params": {"color": "magenta"}, "x": 4, "y": 1, "angle": 0},
+    {"type": "filter", "params": {"color": "cyan"}, "x": 6, "y": 2, "angle": 0},
+    {"type": "filter", "params": {"color": "magenta"}, "x": 3, "y": 3, "angle": 0},
+    {"type": "filter", "params": {"color": "yellow"}, "x": 4, "y": 3, "angle": 0}
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "id": "shadow-mirror",
+  "name": {
+    "en": "Shadow Play",
+    "de": "Schattenspiel"
+  },
+  "intro": {
+    "en": "Cast the picture on each screen: dashed squares must stay dark, the others need light. A mirror throws a shadow and carries the light somewhere else.",
+    "de": "Wirf das Bild auf jeden Schirm: Gestrichelte Felder müssen dunkel bleiben, die anderen brauchen Licht. Ein Spiegel wirft einen Schatten und trägt das Licht woandershin."
+  },
+  "introOnStart": true,
+  "grid": {"w": 10, "h": 7},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 2.5, "angle": 0, "params": {"width": 4, "power": 4, "rays": 120}},
+    {"type": "screen", "x": 9, "y": 1, "angle": 180, "params": {"pattern": "w..w"}},
+    {"type": "screen", "x": 3, "y": 6, "angle": 270, "params": {"pattern": ".w.w."}}
+  ],
+  "inventory": [
+    {"type": "mirror", "count": 2}
+  ],
+  "solution": [
+    {"type": "mirror", "x": 4, "y": 2, "angle": 135},
+    {"type": "mirror", "x": 6, "y": 3, "angle": 135}
+  ]
+}

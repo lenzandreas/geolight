@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "id": "shadow-splitter",
+  "name": {
+    "en": "Half Shadow",
+    "de": "Halbschatten"
+  },
+  "intro": {
+    "en": "These screens are content with half the light. A beam splitter takes light without casting a shadow; a mirror takes it all.",
+    "de": "Diesen Schirmen genügt das halbe Licht. Ein Strahlteiler nimmt Licht, ohne einen Schatten zu werfen; ein Spiegel nimmt alles."
+  },
+  "grid": {"w": 10, "h": 8},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 3, "angle": 0, "params": {"width": 3, "power": 3, "rays": 90}},
+    {"type": "screen", "x": 9, "y": 2, "angle": 180, "params": {"pattern": "w..", "need": 0.15}},
+    {"type": "screen", "x": 2, "y": 0, "angle": 90, "params": {"pattern": ".w.....", "need": 0.15}},
+    {"type": "screen", "x": 2, "y": 7, "angle": 270, "params": {"pattern": "...w.w.", "need": 0.15}}
+  ],
+  "inventory": [
+    {"type": "splitter", "count": 1},
+    {"type": "mirror", "count": 2}
+  ],
+  "solution": [
+    {"type": "splitter", "x": 3, "y": 3, "angle": 45},
+    {"type": "mirror", "x": 5, "y": 3, "angle": 135},
+    {"type": "mirror", "x": 7, "y": 4, "angle": 135}
+  ]
+}

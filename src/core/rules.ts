@@ -2,7 +2,8 @@
  * Turning traced light into game outcomes. Goals are pluggable: register a new
  * goal type to add modes (e.g. "light at least N of M targets", timed goals).
  */
-import { dotRGB, power, resolveColor, type RGB } from './color';
+import { dotRGB, NAMED_COLORS, power, resolveColor, type RGB } from './color';
+import { pixelId } from './entities';
 import { getType } from './registry';
 import type { Reception, TraceResult } from './tracer';
 import { param, type Entity } from './types';
@@ -22,6 +23,15 @@ export interface TargetStatus {
   ok: boolean;
   /** Strict sink receiving light of the wrong colour. */
   contaminated: boolean;
+  /** Screens: every pixel in order (`progress` is the share of them that are right). */
+  pixels?: PixelStatus[];
+}
+
+export interface PixelStatus {
+  /** Colours the pixel should show; all zero for a pixel that must stay dark. */
+  want: RGB;
+  got: RGB;
+  ok: boolean;
 }
 
 export interface Evaluation {
@@ -96,10 +106,29 @@ export function targetStatus(e: Entity, received: RGB | undefined, receptions: R
   return null;
 }
 
+const PATTERN: Record<string, RGB> = { '.': [0, 0, 0] };
+for (const [name, mask] of Object.entries(NAMED_COLORS)) PATTERN[name[0]] = mask;
+
+/** A screen is right when every pixel shows its colours and nothing else. */
+export function screenStatus(e: Entity, received: Map<string, RGB>): TargetStatus {
+  const t = getType('screen');
+  const need = param<number>(e, t, 'need') / 3;
+  const limit = param<number>(e, t, 'limit');
+  const total: RGB = [0, 0, 0];
+  const pixels = [...param<string>(e, t, 'pattern')].map((letter, i): PixelStatus => {
+    const want = PATTERN[letter] ?? PATTERN['.'];
+    const got = received.get(pixelId(e, i)) ?? [0, 0, 0];
+    for (let ch = 0; ch < 3; ch++) total[ch] += got[ch];
+    return { want, got, ok: [0, 1, 2].every((ch) => (want[ch] > 0 ? got[ch] + TOLERANCE >= need : got[ch] <= limit)) };
+  });
+  const right = pixels.filter((p) => p.ok).length;
+  return { id: e.id, kind: 'sink', received: total, value: right, threshold: pixels.length, progress: pixels.length ? right / pixels.length : 1, ok: right === pixels.length, contaminated: false, pixels };
+}
+
 export function evaluate(entities: Entity[], result: TraceResult, goal: GoalDef = { type: 'allTargets' }): Evaluation {
   const targets: TargetStatus[] = [];
   for (const e of entities) {
-    const s = targetStatus(e, result.received.get(e.id), result.receptions.get(e.id));
+    const s = e.type === 'screen' ? screenStatus(e, result.received) : targetStatus(e, result.received.get(e.id), result.receptions.get(e.id));
     if (s) targets.push(s);
   }
   const rule = goals.get(goal.type) ?? goals.get('allTargets')!;

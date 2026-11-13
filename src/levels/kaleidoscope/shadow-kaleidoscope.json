@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "id": "shadow-kaleidoscope",
+  "name": {
+    "en": "The Missing Line",
+    "de": "Die fehlende Linie"
+  },
+  "intro": {
+    "en": "These lines may be faint, but the white one in the middle has to vanish completely. Only two crossed polarizers make a full shadow.",
+    "de": "Diese Linien dürfen blass sein, aber die weiße in der Mitte muss ganz verschwinden. Nur zwei gekreuzte Polarisatoren ergeben einen vollen Schatten."
+  },
+  "grid": {"w": 11, "h": 9},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 4, "angle": 0},
+    {"type": "screen", "x": 10, "y": 0, "angle": 180, "params": {"pattern": ".rb...br.", "need": 0.15}}
+  ],
+  "inventory": [
+    {"type": "grating", "count": 1},
+    {"type": "polarizer", "count": 2}
+  ],
+  "solution": [
+    {"type": "grating", "x": 6, "y": 4, "angle": 0},
+    {"type": "polarizer", "x": 7, "y": 4, "angle": 0},
+    {"type": "polarizer", "x": 8, "y": 4, "angle": 90}
+  ]
+}

@@ -918,3 +918,57 @@ button {
     width: 38px;
   }
 }
+
+/* ---------- Shadow levels ---------- */
+
+.moon-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 auto 6px;
+  padding: 6px 18px 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--panel-edge);
+  background: var(--panel);
+  cursor: pointer;
+  text-align: left;
+  flex: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+.moon-btn .icon {
+  width: 26px;
+  height: 26px;
+  color: var(--accent);
+  flex: none;
+}
+.moon-btn.open:hover,
+.moon-btn.solved:hover {
+  border-color: rgba(190, 200, 255, 0.4);
+  background: rgba(46, 54, 110, 0.8);
+}
+.moon-btn.solved .icon,
+.star.moon,
+.world-status .icon {
+  color: #dfe6ff;
+  filter: drop-shadow(0 0 8px rgba(200, 212, 255, 0.8));
+}
+.moon-btn.locked {
+  cursor: default;
+  opacity: 0.55;
+}
+.moon-btn.locked .icon:last-child {
+  width: 16px;
+  height: 16px;
+  color: var(--text-dim);
+}
+.moon-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+.moon-text small {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}

@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "shadow-concave",
+  "name": {
+    "en": "Backlight",
+    "de": "Gegenlicht"
+  },
+  "intro": {
+    "en": "The screen has its back to the sun, and it wants more light than the sun gives. A concave mirror sends light back and gathers it at once: the deep one close by, the shallow one far away.",
+    "de": "Der Schirm kehrt der Sonne den Rücken zu und will mehr Licht, als die Sonne gibt. Ein Hohlspiegel wirft Licht zurück und bündelt es zugleich: der tiefe aus der Nähe, der flache aus der Ferne."
+  },
+  "grid": {"w": 10, "h": 7},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 3, "angle": 0, "params": {"width": 5, "power": 5, "rays": 150}},
+    {"type": "screen", "x": 5, "y": 2, "angle": 0, "params": {"pattern": "ww.", "need": 0.5}}
+  ],
+  "inventory": [
+    {"type": "curvedMirror", "count": 1},
+    {"type": "curvedMirror", "count": 1, "params": {"f": 4}}
+  ],
+  "solution": [
+    {"type": "curvedMirror", "x": 7, "y": 1, "angle": 165},
+    {"type": "curvedMirror", "params": {"f": 4}, "x": 9, "y": 5, "angle": 195}
+  ]
+}

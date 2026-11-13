@@ -7,7 +7,7 @@
  */
 import { resolveColor, spectrum, type RGB } from '../color';
 import { absorb, filter, grating, mirror, polarize, receiver, refract, splitter, thinOptic } from '../interactions';
-import { add, fromAngle, perp, scale } from '../math';
+import { add, fromAngle, perp, scale, type Vec } from '../math';
 import { registerType } from '../registry';
 import { param, type Entity, type EntityType } from '../types';
 import { centre, pushPolygon, regularPolygon, rotatedRect, thinSegment } from './shapes';
@@ -104,6 +104,52 @@ export const Sensor: EntityType = {
   symmetry: 360,
   surfaces(e, out) {
     out.push({ shape: { kind: 'circle', c: centre(e), r: SENSOR_RADIUS }, entity: e, interact: receiver(e) });
+  },
+};
+
+/** How deep a screen is, front to back, and how wide each of its pixels is (in cells). */
+export const SCREEN_DEPTH = 0.5;
+export const SCREEN_PIXEL = 0.4;
+
+/** Direction a screen's pixels run in: always rightwards or downwards, so its pattern reads like text. */
+export function screenRun(e: Entity): Vec {
+  const f = fromAngle(e.angle);
+  return Math.abs(f.x) > Math.abs(f.y) ? { x: 0, y: 1 } : { x: 1, y: 0 };
+}
+
+/** Receiver id of one pixel of a screen. */
+export const pixelId = (e: Entity, i: number): string => `${e.id}#${i}`;
+
+/**
+ * A row of pixels that shows a silhouette to cast (shadow levels). `pattern` has one letter
+ * per pixel, one pixel per cell from the anchor cell rightwards or downwards: `.` must stay
+ * dark, `w` wants white light, and r/g/b/y/c/m want exactly those colours. The screen faces
+ * `angle` (0, 90, 180 or 270); its back and the frame between the pixels absorb.
+ * need: light a white pixel needs (each wanted colour must bring a third of it).
+ * limit: the most light a colour that is not wanted may bring.
+ */
+export const Screen: EntityType = {
+  id: 'screen',
+  category: 'target',
+  defaults: { pattern: 'w', need: 0.3, limit: 0.02 },
+  symmetry: 360,
+  footprint(e) {
+    const run = screenRun(e);
+    return [...param<string>(e, Screen, 'pattern')].map((_, i) => [e.x + i * run.x, e.y + i * run.y] as [number, number]);
+  },
+  surfaces(e, out) {
+    const n = param<string>(e, Screen, 'pattern').length;
+    const f = fromAngle(Math.round(e.angle / 90) * 90);
+    const run = screenRun(e);
+    const c = centre(e);
+    const at = (along: number, front: number) => add(add(c, scale(run, along)), scale(f, front));
+    const d = SCREEN_DEPTH / 2;
+    pushPolygon(out, e, [at(-0.5, -d), at(n - 0.5, -d), at(n - 0.5, d), at(-0.5, d)], absorb);
+    for (let i = 0; i < n; i++) {
+      // Each pixel reports under its own id, just in front of the frame.
+      const pixel = { ...e, id: pixelId(e, i) };
+      out.push({ shape: { kind: 'segment', a: at(i - SCREEN_PIXEL / 2, d + 0.01), b: at(i + SCREEN_PIXEL / 2, d + 0.01) }, entity: e, interact: receiver(pixel), normal: f });
+    }
   },
 };
 
@@ -345,7 +391,7 @@ export const Gate: EntityType = {
   },
 };
 
-export const BUILTIN_TYPES: EntityType[] = [Laser, Bulb, Sun, Sink, Sensor, Mirror, Splitter, Filter, Lens, CurvedMirror, Prism, GlassBlock, Blocker, Wall, Slit, Polarizer, BlackHole, Photocell, Gate, Grating];
+export const BUILTIN_TYPES: EntityType[] = [Laser, Bulb, Sun, Sink, Sensor, Mirror, Splitter, Filter, Lens, CurvedMirror, Prism, GlassBlock, Blocker, Wall, Slit, Polarizer, BlackHole, Photocell, Gate, Grating, Screen];
 
 let registered = false;
 /** Idempotent registration of the built-in types. */

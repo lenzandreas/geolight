@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "shadow-diverging",
+  "name": {
+    "en": "Split Shadow",
+    "de": "Geteilter Schatten"
+  },
+  "intro": {
+    "en": "One narrow band of light, two squares to light, and the one between them must stay dark. Spread the light first; a shade's shadow grows with it.",
+    "de": "Ein schmales Lichtband, zwei Felder zu erhellen, und das dazwischen muss dunkel bleiben. Weite das Licht zuerst auf; der Schatten einer Blende wächst mit."
+  },
+  "grid": {"w": 9, "h": 7},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 3, "angle": 0, "params": {"width": 0.9, "power": 2.7, "rays": 90}},
+    {"type": "screen", "x": 8, "y": 1, "angle": 180, "params": {"pattern": ".w.w."}}
+  ],
+  "inventory": [
+    {"type": "lens", "count": 1, "params": {"f": -1}},
+    {"type": "blocker", "count": 1}
+  ],
+  "solution": [
+    {"type": "lens", "params": {"f": -1}, "x": 5, "y": 3, "angle": 0},
+    {"type": "blocker", "x": 6, "y": 3, "angle": 0}
+  ]
+}

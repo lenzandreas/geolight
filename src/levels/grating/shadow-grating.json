@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "shadow-grating",
+  "name": {
+    "en": "Spectral Lines",
+    "de": "Spektrallinien"
+  },
+  "intro": {
+    "en": "A grating draws coloured lines on the screen, and they move apart as it moves away. One line too many still has to go.",
+    "de": "Ein Gitter zeichnet farbige Linien auf den Schirm, und sie rücken auseinander, wenn es sich entfernt. Eine Linie zu viel muss noch weg."
+  },
+  "grid": {"w": 11, "h": 9},
+  "entities": [
+    {"type": "laser", "x": 0, "y": 4, "angle": 0},
+    {"type": "screen", "x": 10, "y": 0, "angle": 180, "params": {"pattern": "r...w..gr", "need": 0.3}}
+  ],
+  "inventory": [
+    {"type": "grating", "count": 1},
+    {"type": "blocker", "count": 1}
+  ],
+  "solution": [
+    {"type": "grating", "x": 5, "y": 4, "angle": 0},
+    {"type": "blocker", "x": 8, "y": 2, "angle": 0}
+  ]
+}

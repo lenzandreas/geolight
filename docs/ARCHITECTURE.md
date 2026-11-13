@@ -51,6 +51,10 @@ The **solver** searches placements, but only on cells the light currently crosse
 2. its reference solution wins with 3 stars,
 3. multi-piece levels can't be cheesed with a single piece.
 
+### Screens and shadow levels
+
+A `screen` is a target made of pixels. Each pixel is its own receiving surface and reports under its own id (`<screen id>#<index>`), so no tracer change was needed. `screenStatus` in `rules.ts` compares what each pixel received, colour by colour, with the letter of its `pattern`; the screen's `TargetStatus` carries the per-pixel result for the renderer, and counts as one target for the win rule, the solver and hints. Shadow levels are ordinary level files that a world names in its `shadow` field. `Campaign` keeps them out of everything that drives progression (`solvedCount`, `worldOpen`, `next`) and only answers `shadowOpen` and `moon` for them.
+
 ### Worlds and progression (`src/level/worlds.ts`, `src/game/campaign.ts`)
 
 Worlds form a tree defined in `src/levels/worlds.json`. Each world introduces one piece and lists its levels in order. `Campaign` holds the progression rules over "is this level solved?", independent of storage and UI:

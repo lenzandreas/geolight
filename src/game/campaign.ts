@@ -13,8 +13,10 @@ export const OPEN_LEVELS = 2;
 export interface LevelRef {
   world: WorldDef;
   level: LevelDef;
-  /** Position inside the world (0-based). */
+  /** Position inside the world (0-based); -1 for the world's shadow level. */
   index: number;
+  /** The world's optional shadow level. */
+  shadow?: boolean;
 }
 
 export class Campaign {
@@ -36,6 +38,11 @@ export class Campaign {
         if (!level) throw new Error(`World ${w.id}: unknown level ${id}`);
         this.byLevel.set(id, { world: w, level, index });
       });
+      if (w.shadow) {
+        const level = levelById.get(w.shadow);
+        if (!level) throw new Error(`World ${w.id}: unknown shadow level ${w.shadow}`);
+        this.byLevel.set(w.shadow, { world: w, level, index: -1, shadow: true });
+      }
     }
   }
 
@@ -64,9 +71,22 @@ export class Campaign {
     });
   }
 
+  /** A world's shadow level opens when its child worlds would: after `needed` regular levels. */
+  shadowOpen(world: WorldDef): boolean {
+    if (!world.shadow) return false;
+    if (this.unlockAll || this.solved(world.shadow)) return true;
+    return this.worldOpen(world) && this.solvedCount(world) >= this.needed(world);
+  }
+
+  /** Has the world's shadow level been solved (its moon earned)? */
+  moon(world: WorldDef): boolean {
+    return !!world.shadow && this.solved(world.shadow);
+  }
+
   levelOpen(levelId: string): boolean {
     const ref = this.byLevel.get(levelId);
     if (!ref) return false;
+    if (ref.shadow) return this.shadowOpen(ref.world);
     if (this.unlockAll || this.solved(levelId)) return true;
     if (!this.worldOpen(ref.world)) return false;
     const unsolvedBefore = ref.world.levels.slice(0, ref.index).filter((id) => !this.solved(id)).length;

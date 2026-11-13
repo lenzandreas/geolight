@@ -140,7 +140,7 @@ export function mapScreen(o: MapScreenOptions): HTMLElement {
     const done = campaign.solvedCount(w);
     const status = open ? `${done}/${w.levels.length}` : t('locked');
     const parentNames = w.parents.map((id) => loc(campaign.world(id)!.name)).join(', ');
-    const label = `${loc(w.name)}: ${status}${open ? '' : `. ${t('worldLockedHint', { n: campaign.needed(campaign.world(w.parents[0])!), world: parentNames })}`}`;
+    const label = `${loc(w.name)}: ${status}${campaign.moon(w) ? `, ${t('moonEarned')}` : ''}${open ? '' : `. ${t('worldLockedHint', { n: campaign.needed(campaign.world(w.parents[0])!), world: parentNames })}`}`;
     const node = h(
       'button',
       {
@@ -152,7 +152,7 @@ export function mapScreen(o: MapScreenOptions): HTMLElement {
       },
       miniSky(w, solved),
       h('span', { class: 'world-name' }, loc(w.name)),
-      h('span', { class: 'world-status' }, open ? status : '', open ? null : icon('lock')),
+      h('span', { class: 'world-status' }, open ? status : '', open ? null : icon('lock'), campaign.moon(w) ? icon('moon', true) : null),
     );
     if (open) node.addEventListener('click', () => o.onWorld(w));
     else node.setAttribute('aria-disabled', 'true');
@@ -185,6 +185,25 @@ export interface WorldScreenOptions {
   /** Open the notebook page of the world's own piece. */
   onPage(page: NotebookPage): void;
   onLevel(level: LevelDef): void;
+}
+
+/** The world's optional shadow level, shown as a moon above its constellation. */
+function shadowButton(o: WorldScreenOptions): HTMLElement | null {
+  const { world, campaign } = o;
+  const level = o.levels.find((l) => l.id === world.shadow);
+  if (!level) return null;
+  const open = campaign.shadowOpen(world);
+  const done = campaign.moon(world);
+  const hint = open ? loc(level.name) : t('shadowLockedHint', { n: campaign.needed(world) });
+  const btn = h(
+    'button',
+    { class: `moon-btn ${done ? 'solved' : open ? 'open' : 'locked'}`, type: 'button', disabled: !open, 'aria-label': `${t('shadowLevel')}: ${hint}${done ? ` (${t('moonEarned')})` : ''}` },
+    icon('moon', done),
+    h('span', { class: 'moon-text' }, h('small', {}, t('shadowLevel')), h('span', {}, hint)),
+    open ? null : icon('lock'),
+  );
+  btn.addEventListener('click', () => o.onLevel(level));
+  return btn;
 }
 
 export function worldScreen(o: WorldScreenOptions): HTMLElement {
@@ -262,6 +281,6 @@ export function worldScreen(o: WorldScreenOptions): HTMLElement {
       h('h1', {}, loc(world.name), h('small', {}, `${campaign.solvedCount(world)}/${world.levels.length}`)),
       iconButton('settings', t('settings'), o.onSettings),
     ),
-    h('div', { class: 'world-body' }, intro, sky),
+    h('div', { class: 'world-body' }, intro, shadowButton(o), sky),
   );
 }

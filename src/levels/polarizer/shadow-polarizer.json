@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "id": "shadow-polarizer",
+  "name": {
+    "en": "Crossed Out",
+    "de": "Ausgekreuzt"
+  },
+  "intro": {
+    "en": "These screens count even an eighth of the light. Two crossed polarizers cast a full shadow, and a third one between them lets light back in.",
+    "de": "Diese Schirme zählen schon ein Achtel des Lichts. Zwei gekreuzte Polarisatoren werfen einen vollen Schatten, und ein dritter dazwischen lässt wieder Licht hinein."
+  },
+  "grid": {"w": 9, "h": 6},
+  "entities": [
+    {"type": "sun", "x": 0, "y": 2.5, "angle": 0, "params": {"width": 4, "power": 4, "rays": 120}},
+    {"type": "polarizer", "x": 2, "y": 1, "angle": 0},
+    {"type": "polarizer", "x": 5, "y": 1, "angle": 90},
+    {"type": "polarizer", "x": 3, "y": 2, "angle": 0},
+    {"type": "polarizer", "x": 4, "y": 4, "angle": 45},
+    {"type": "screen", "x": 8, "y": 1, "angle": 180, "params": {"pattern": "w.w.", "need": 0.045}}
+  ],
+  "inventory": [
+    {"type": "polarizer", "count": 3}
+  ],
+  "solution": [
+    {"type": "polarizer", "x": 3, "y": 1, "angle": 45},
+    {"type": "polarizer", "x": 5, "y": 2, "angle": 90},
+    {"type": "polarizer", "x": 6, "y": 4, "angle": 135}
+  ]
+}

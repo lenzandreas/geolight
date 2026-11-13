@@ -276,15 +276,22 @@ export class App {
     const ref = before.ref(id)!;
     const { world, level, index } = ref;
     const openBefore = before.openWorldIds();
+    const shadowBefore = before.shadowOpen(world);
     const winCard = (): WinCard => {
+      // A shadow level is a side path: it leads back to its world.
+      if (ref.shadow) return { text: t('shadowDone'), nextLabel: t('backTo', { world: loc(world.name) }), next: () => this.go({ name: 'world', id: world.id }) };
       const after = this.campaign();
       const opened = after.worlds.filter((w) => after.worldOpen(w) && !openBefore.has(w.id));
+      const news = [
+        opened.length ? t('worldOpened', { world: opened.map((w) => loc(w.name)).join(', ') }) : '',
+        after.shadowOpen(world) && !shadowBefore ? t('shadowOpened', { world: loc(world.name) }) : '',
+      ].filter(Boolean);
       const next = after.next(world);
       const sameWorld = next?.world === world;
       const complete = after.solvedCount(world) === world.levels.length;
       return {
         text: complete ? t('worldComplete') : t('solvedText'),
-        news: opened.length ? t('worldOpened', { world: opened.map((w) => loc(w.name)).join(', ') }) : undefined,
+        news: news.length ? news.join(' ') : undefined,
         nextLabel: sameWorld ? t('next') : t('toMap'),
         next: () => this.go(sameWorld ? { name: 'game', id: next!.level.id } : { name: 'map' }),
       };
@@ -292,7 +299,8 @@ export class App {
     const screen = new GameScreen({
       level,
       session: this.sessionFor(level),
-      kicker: `${loc(world.name)} · ${index + 1}`,
+      kicker: `${loc(world.name)} · ${ref.shadow ? t('shadowLevel') : index + 1}`,
+      moon: ref.shadow,
       progress: this.progress,
       winCard,
       onExit: () => this.go({ name: 'world', id: world.id }),

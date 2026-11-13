@@ -6,7 +6,7 @@ import { Campaign, OPEN_LEVELS, UNLOCK_AFTER } from '../src/game/campaign';
 describe('world structure', () => {
   it('lists every level file exactly once', () => {
     expect(UNLISTED).toEqual([]);
-    const ids = WORLDS.flatMap((w) => w.levels);
+    const ids = WORLDS.flatMap((w) => [...w.levels, ...(w.shadow ? [w.shadow] : [])]);
     expect(new Set(ids).size).toBe(ids.length);
   });
 
@@ -39,6 +39,47 @@ describe('world structure', () => {
       });
     });
   }
+});
+
+describe('shadow levels', () => {
+  for (const world of WORLDS) {
+    it(`${world.id} has one, judged by screens and built from pieces the world knows`, () => {
+      const level = LEVELS.find((l) => l.id === world.shadow);
+      expect(level, `${world.id} needs a shadow level`).toBeDefined();
+      expect(level!.entities.some((e) => e.type === 'screen')).toBe(true);
+      expect(level!.entities.some((e) => e.type === 'sink')).toBe(false);
+      const known = new Set<string | undefined>(WORLDS.filter((w) => ancestors(WORLDS, world.id).has(w.id)).map((w) => w.object));
+      if (world.object) known.add(world.object);
+      // A shade is the one piece every shadow level may use.
+      known.add('blocker');
+      const used = piecesUsed(level!);
+      for (const piece of featuredPieces(WORLDS, world)) expect(used.has(piece), `${level!.id} should use ${piece}`).toBe(true);
+      for (const piece of used) expect(known.has(piece), `${level!.id} uses ${piece} before it is introduced`).toBe(true);
+    });
+  }
+
+  const make = (solved: string[]) => new Campaign(WORLDS, LEVELS, (id) => solved.includes(id));
+  const root = WORLDS[0];
+
+  it('opens with the child worlds and not before', () => {
+    expect(make(root.levels.slice(0, UNLOCK_AFTER - 1)).levelOpen(root.shadow!)).toBe(false);
+    expect(make(root.levels.slice(0, UNLOCK_AFTER)).levelOpen(root.shadow!)).toBe(true);
+  });
+
+  it('earns a moon but never counts towards progress', () => {
+    const before = make(root.levels.slice(0, UNLOCK_AFTER - 1));
+    const after = make([...root.levels.slice(0, UNLOCK_AFTER - 1), root.shadow!]);
+    expect(before.moon(root)).toBe(false);
+    expect(after.moon(root)).toBe(true);
+    expect(after.solvedCount(root)).toBe(before.solvedCount(root));
+    expect(after.openWorldIds()).toEqual(before.openWorldIds());
+  });
+
+  it('is never suggested as the next level', () => {
+    const everything = WORLDS.flatMap((w) => w.levels);
+    expect(make(everything).next()).toBeUndefined();
+    expect(make(root.levels.slice(0, UNLOCK_AFTER)).next(root)?.shadow).toBeFalsy();
+  });
 });
 
 describe('campaign progression', () => {

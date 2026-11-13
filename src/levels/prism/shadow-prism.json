@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "shadow-prism",
+  "name": {
+    "en": "Rainbow on the Wall",
+    "de": "Regenbogen an der Wand"
+  },
+  "intro": {
+    "en": "Red, green and blue each have their own square, and no colour may stray into another. A prism spreads the colours further the longer they travel.",
+    "de": "Rot, Grün und Blau haben je ihr eigenes Feld, und keine Farbe darf in ein anderes geraten. Ein Prisma fächert die Farben umso weiter auf, je länger sie unterwegs sind."
+  },
+  "grid": {"w": 11, "h": 8},
+  "entities": [
+    {"type": "laser", "x": 2, "y": 5, "angle": 270},
+    {"type": "screen", "x": 10, "y": 0, "angle": 180, "params": {"pattern": "...rg.b.", "need": 0.9}}
+  ],
+  "inventory": [
+    {"type": "mirror", "count": 1},
+    {"type": "prism", "count": 1}
+  ],
+  "solution": [
+    {"type": "mirror", "x": 2, "y": 1, "angle": 45},
+    {"type": "prism", "x": 6, "y": 1, "angle": 45}
+  ]
+}

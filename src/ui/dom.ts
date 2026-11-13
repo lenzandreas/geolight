@@ -30,6 +30,7 @@ const PATHS: Record<string, string> = {
   lock: 'M7 11V8a5 5 0 0110 0v3M6 11h12v9H6z',
   star: 'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',
   close: 'M6 6l12 12M18 6L6 18',
+  moon: 'M20 14.2A8.5 8.5 0 119.8 4a6.8 6.8 0 0010.2 10.2z',
 };
 
 export function icon(name: keyof typeof PATHS | string, filled = false): SVGSVGElement {

@@ -24,6 +24,8 @@ export interface GameScreenOptions {
   session?: Session;
   /** Small label above the level name, e.g. "Level 3" or "Daily puzzle". */
   kicker: string;
+  /** A shadow level: solving it earns a moon instead of stars. */
+  moon?: boolean;
   progress: Progress;
   /** Win card contents, asked for after the solve has been recorded (so unlocks are known). */
   winCard(): WinCard;
@@ -336,8 +338,14 @@ export class GameScreen {
   }
 
   private showWinOverlay(stars: number): void {
-    const starRow = h('div', { class: 'stars', 'aria-label': `${stars} / 3` });
-    for (let i = 0; i < 3; i++) {
+    const moon = !!this.opts.moon;
+    const starRow = h('div', { class: 'stars', 'aria-label': moon ? t('moonEarned') : `${stars} / 3` });
+    if (moon) {
+      const m = h('span', { class: 'star on moon', style: 'animation-delay:0.15s' });
+      m.append(icon('moon', true));
+      starRow.append(m);
+    }
+    for (let i = 0; i < 3 && !moon; i++) {
       const s = h('span', { class: `star ${i < stars ? 'on' : ''}`, style: `animation-delay:${0.15 + i * 0.15}s` });
       s.append(icon('star', i < stars));
       starRow.append(s);
@@ -345,7 +353,7 @@ export class GameScreen {
     const info = this.opts.winCard();
     // Tell players why a star is missing when they used more pieces than needed (decoys in the tray make this common).
     const { par, placedCount } = this.session;
-    const parNote = par > 0 && placedCount > par ? (par === 1 ? t('parMissedOne') : t('parMissed', { n: par })) : null;
+    const parNote = !moon && par > 0 && placedCount > par ? (par === 1 ? t('parMissedOne') : t('parMissed', { n: par })) : null;
     const next = h('button', { class: 'btn primary', type: 'button' }, info.nextLabel);
     next.addEventListener('click', () => info.next());
     const card = h(
