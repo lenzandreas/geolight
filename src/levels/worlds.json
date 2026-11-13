@@ -52,7 +52,7 @@
     "name": {"en": "Mirage", "de": "Fata Morgana"},
     "object": "heater",
     "parents": ["glass"],
-    "levels": ["warm-air", "detour", "hot-corner", "tilted-fork", "summer-road", "heat-lock", "fata-morgana"],
+    "levels": ["warm-air", "detour", "summer-road", "hot-corner", "heat-lock", "tilted-fork", "fata-morgana"],
     "shadow": "shadow-mirage"
   },
   {

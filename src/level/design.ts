@@ -89,12 +89,12 @@ export function setUp(level: LevelDef, moves: Moves = {}): { entities: Entity[];
 
 const CODES: Record<string, string> = {
   bulb: 'Bu', sun: 'Su', wall: '##', slit: '][', photocell: 'Pc', mirror: 'Mi', splitter: 'Sp', curvedMirror: 'Cm', filter: 'Fi',
-  prism: 'Pr', block: 'Gl', polarizer: 'Po', blackHole: '@@', grating: 'Gr', blocker: 'Bl',
+  prism: 'Pr', block: 'Gl', polarizer: 'Po', blackHole: '@@', grating: 'Gr', blocker: 'Bl', heater: 'Hp',
 };
 const LEGEND: Record<string, string> = {
   'L>': 'laser (arrow = beam direction; L* = slanted)', Bu: 'bulb', Su: 'sunlight', 'O ': 'ring, not full', 'O*': 'ring, full', '! ': 'sensor, dark',
   '!X': 'sensor, TRIPPED', '##': 'wall', '[]': 'gate, shut', '[ ': 'gate, open', '][': 'slit', Pc: 'solar cell', Mi: 'mirror', Sp: 'splitter', Le: 'lens',
-  Ld: 'diverging lens', Cm: 'concave mirror', Fi: 'filter', Pr: 'prism', Gl: 'glass block', Po: 'polarizer', '@@': 'black hole', Gr: 'grating', Bl: 'shade',
+  Ld: 'diverging lens', Cm: 'concave mirror', Fi: 'filter', Pr: 'prism', Gl: 'glass block', Po: 'polarizer', '@@': 'black hole', Gr: 'grating', Bl: 'shade', Hp: 'hot plate (warm air in front of it)', '# ': 'screen, picture wrong', '#*': 'screen, picture right',
   '--': 'light', '| ': 'light', '\\ ': 'light', '/ ': 'light', '~ ': 'light at another angle', '+ ': 'light in several directions', '::': 'diffuse light', '. ': 'empty',
 };
 
@@ -109,6 +109,7 @@ function code(e: Entity, ev: Evaluation, t: TraceResult): string {
   }
   const status = ev.targets.find((x) => x.id === e.id);
   if (e.type === 'sink') return status?.ok ? 'O*' : 'O ';
+  if (e.type === 'screen') return status?.ok ? '#*' : '# ';
   if (e.type === 'sensor') return status?.ok ? '! ' : '!X';
   if (e.type === 'gate') return t.open.has(e.id) ? '[ ' : '[]';
   if (e.type === 'lens') return pieceKind(e.type, e.params) === 'divergingLens' ? 'Ld' : 'Le';
@@ -185,7 +186,14 @@ export function describe(level: LevelDef, moves: Moves = {}): string {
   for (const s of ev.targets) {
     const e = entities.find((x) => x.id === s.id)!;
     const got = `gets ${rgbText(s.received)} (total ${fmt(s.received[0] + s.received[1] + s.received[2])})`;
-    if (s.kind === 'sink') {
+    if (s.pixels) {
+      // One letter per pixel: . dark, w white, r/g/b/y/c/m a colour, ? neither lit nor dark enough.
+      const need = ((e.params.need as number | undefined) ?? 0.3) / 3;
+      const limit = (e.params.limit as number | undefined) ?? 0.02;
+      const names: Record<string, string> = { '000': '.', '111': 'w', '100': 'r', '010': 'g', '001': 'b', '110': 'y', '011': 'c', '101': 'm' };
+      const shows = s.pixels.map((p) => (p.got.some((v) => v > limit && v + 1e-6 < need) ? '?' : names[p.got.map((v) => (v > limit ? 1 : 0)).join('')])).join('');
+      out.push(`  screen ${s.id} at ${e.x},${e.y}: wants "${e.params.pattern}", shows "${shows}" (per pixel: ${s.pixels.map((p) => fmt(p.got[0] + p.got[1] + p.got[2])).join(' ')}) -> ${s.ok ? 'RIGHT' : `${s.value} of ${s.threshold} pixels right`}`);
+    } else if (s.kind === 'sink') {
       const want = [`needs ${fmt(s.threshold)}`, e.params.color ? `of ${JSON.stringify(e.params.color)}` : '', e.params.each ? 'each colour equally' : '', e.params.strict ? 'strict' : '', e.params.pol !== undefined && e.params.pol !== null ? `polarized ${e.params.pol}°` : ''].filter(Boolean).join(', ');
       out.push(`  ring ${s.id} at ${e.x},${e.y}: ${want}; ${got}, counts ${fmt(s.value)} -> ${s.ok ? 'FULL' : s.contaminated ? 'SPOILED by wrong light' : `${Math.round(s.progress * 100)}%`}`);
       const pols = [...new Set((t.receptions.get(s.id) ?? []).map((r) => (r.pol === null ? 'unpolarized' : `${fmt(r.pol, 1)}°`)))];
@@ -435,6 +443,8 @@ export function check(raw: unknown, opts: CheckOptions = {}): CheckResult {
     else {
       const known = new Set(opts.worlds.filter((x) => ancestors(opts.worlds!, world.id).has(x.id)).map((x) => x.object));
       if (world.object) known.add(world.object);
+      // A shade is the one extra piece shadow levels (levels with a screen) may use.
+      if (level.entities.some((e) => e.type === 'screen')) known.add('blocker');
       const used = piecesUsed(level);
       for (const p of featuredPieces(opts.worlds, world)) if (!used.has(p)) errors.push(`every level of world "${world.id}" must use a ${p} (in the tray or pre-placed)`);
       for (const p of used) if (!known.has(p)) errors.push(`world "${world.id}" may not use ${p}. Allowed pieces: ${[...known].join(', ')}`);
@@ -604,6 +614,8 @@ export function check(raw: unknown, opts: CheckOptions = {}): CheckResult {
 
   const exact = solved.ev.targets.some((t) => {
     const e = solved.entities.find((x) => x.id === t.id)!;
+    // A screen with a pixel that must stay dark, or must show one colour only, is spoiled by stray light like a strict ring.
+    if (t.pixels) return t.pixels.some((p) => p.want.some((v) => v === 0));
     return t.kind === 'sink' && (e.params.strict === true || e.params.each === true || (e.params.pol !== undefined && e.params.pol !== null) || t.value < 1.15 * t.threshold) && t.threshold < 0.85;
   });
   point(exact, 'exact amounts or colours (a ring that is strict, mixed, polarized, or needs nearly all the light the solution brings)', 'Set a ring\'s "required" just below what the solution delivers (see `show --solve`), or make it "strict" so that extra colours spoil it.');

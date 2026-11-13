@@ -6,23 +6,30 @@
     "de": "Halbschatten"
   },
   "intro": {
-    "en": "These screens are content with half the light. A beam splitter takes light without casting a shadow; a mirror takes it all.",
-    "de": "Diesen Schirmen genügt das halbe Licht. Ein Strahlteiler nimmt Licht, ohne einen Schatten zu werfen; ein Spiegel nimmt alles."
+    "en": "These screens are content with half the light. A beam splitter takes half and casts no shadow; the mirror takes it all.",
+    "de": "Diesen Schirmen genügt das halbe Licht. Ein Strahlteiler nimmt die Hälfte und wirft keinen Schatten; der Spiegel nimmt alles."
   },
-  "grid": {"w": 10, "h": 8},
+  "grid": {"w": 10, "h": 7},
+  "par": 0,
   "entities": [
-    {"type": "sun", "x": 0, "y": 3, "angle": 0, "params": {"width": 3, "power": 3, "rays": 90}},
-    {"type": "screen", "x": 9, "y": 2, "angle": 180, "params": {"pattern": "w..", "need": 0.15}},
-    {"type": "screen", "x": 2, "y": 0, "angle": 90, "params": {"pattern": ".w.....", "need": 0.15}},
-    {"type": "screen", "x": 2, "y": 7, "angle": 270, "params": {"pattern": "...w.w.", "need": 0.15}}
+    {"type": "sun", "x": 0, "y": 2.5, "angle": 0, "params": {"width": 4, "power": 4, "rays": 60}},
+    {"id": "s1", "type": "splitter", "x": 4, "y": 1, "angle": 0, "lock": "rotate"},
+    {"id": "m2", "type": "mirror", "x": 4, "y": 2, "angle": 0, "lock": "rotate"},
+    {"id": "s3", "type": "splitter", "x": 6, "y": 3, "angle": 0, "lock": "rotate"},
+    {"id": "s4", "type": "splitter", "x": 6, "y": 4, "angle": 0, "lock": "rotate"},
+    {"type": "sensor", "x": 8, "y": 0},
+    {"type": "sensor", "x": 8, "y": 6},
+    {"type": "screen", "x": 9, "y": 1, "angle": 180, "params": {"pattern": "w.ww", "need": 0.15}},
+    {"type": "screen", "x": 2, "y": 0, "angle": 90, "params": {"pattern": "..ww..", "need": 0.15}},
+    {"type": "screen", "x": 2, "y": 6, "angle": 270, "params": {"pattern": "..w.w.", "need": 0.15}}
   ],
   "inventory": [
-    {"type": "splitter", "count": 1},
-    {"type": "mirror", "count": 2}
+    {"type": "blocker", "count": 1}
   ],
   "solution": [
-    {"type": "splitter", "x": 3, "y": 3, "angle": 45},
-    {"type": "mirror", "x": 5, "y": 3, "angle": 135},
-    {"type": "mirror", "x": 7, "y": 4, "angle": 135}
+    {"id": "s1", "x": 4, "y": 1, "angle": 45},
+    {"id": "m2", "x": 4, "y": 2, "angle": 60},
+    {"id": "s3", "x": 6, "y": 3, "angle": 15},
+    {"id": "s4", "x": 6, "y": 4, "angle": 135}
   ]
 }

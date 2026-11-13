@@ -6,22 +6,31 @@
     "de": "Heiße Ecke"
   },
   "intro": {
-    "en": "A mirror turns the beam in big steps. Warm air adds the small step in between.",
-    "de": "Ein Spiegel dreht den Strahl in großen Schritten. Warme Luft ergänzt den kleinen Schritt dazwischen."
+    "en": "A mirror turns the beam in big steps, and straight up means an alarm. Warm air adds the small step in between.",
+    "de": "Ein Spiegel dreht den Strahl in großen Schritten, und gerade nach oben heißt Alarm. Warme Luft ergänzt den kleinen Schritt dazwischen."
   },
-  "grid": {"w": 9, "h": 7},
+  "grid": {"w": 10, "h": 7},
   "entities": [
-    {"type": "laser", "x": 0, "y": 5, "angle": 0},
-    {"type": "wall", "x": 4, "y": 5, "params": {"w": 1, "h": 1}},
-    {"type": "wall", "x": 2, "y": 4, "params": {"w": 1, "h": 1}},
-    {"type": "sink", "x": 4, "y": 0}
+    {"type": "laser", "x": 0, "y": 6, "angle": 0},
+    {"type": "splitter", "x": 3, "y": 6, "angle": 45},
+    {"type": "wall", "x": 4, "y": 4, "params": {"w": 1, "h": 1}},
+    {"type": "wall", "x": 6, "y": 3, "params": {"w": 1, "h": 1}},
+    {"type": "wall", "x": 5, "y": 0, "params": {"w": 1, "h": 4}},
+    {"type": "wall", "x": 8, "y": 5, "params": {"w": 1, "h": 2}},
+    {"type": "wall", "x": 8, "y": 3, "params": {"w": 1, "h": 1}},
+    {"type": "wall", "x": 2, "y": 3, "params": {"w": 1, "h": 1}},
+    {"type": "sensor", "x": 3, "y": 1},
+    {"type": "sensor", "x": 7, "y": 1},
+    {"type": "sink", "x": 4, "y": 0, "params": {"required": 0.45, "radius": 0.2}},
+    {"type": "sink", "x": 6, "y": 0, "params": {"required": 0.45, "radius": 0.2}}
   ],
   "inventory": [
-    {"type": "mirror", "count": 1},
-    {"type": "heater", "count": 1}
+    {"type": "heater", "count": 2},
+    {"type": "mirror", "count": 1}
   ],
   "solution": [
-    {"type": "mirror", "x": 3, "y": 5, "angle": 45},
-    {"type": "heater", "x": 2, "y": 3, "angle": 0}
+    {"type": "heater", "x": 2, "y": 4, "angle": 0},
+    {"type": "mirror", "x": 7, "y": 6, "angle": 45},
+    {"type": "heater", "x": 8, "y": 4, "angle": 180}
   ]
 }

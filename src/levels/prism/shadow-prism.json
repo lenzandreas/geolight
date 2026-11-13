@@ -10,12 +10,14 @@
     "de": "Rot, Grün und Blau haben je ihr eigenes Feld, und keine Farbe darf in ein anderes geraten. Ein Prisma fächert die Farben umso weiter auf, je länger sie unterwegs sind."
   },
   "grid": {"w": 11, "h": 8},
+  "par": 2,
   "entities": [
     {"type": "laser", "x": 2, "y": 5, "angle": 270},
+    {"type": "sensor", "x": 2, "y": 0},
     {"type": "screen", "x": 10, "y": 0, "angle": 180, "params": {"pattern": "...rg.b.", "need": 0.9}}
   ],
   "inventory": [
-    {"type": "mirror", "count": 1},
+    {"type": "mirror", "count": 2},
     {"type": "prism", "count": 1}
   ],
   "solution": [

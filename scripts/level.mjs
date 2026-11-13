@@ -60,7 +60,7 @@ try {
     }
     const level = LEVELS.find((l) => l.id === target);
     if (!level) throw new Error(`No level with id "${target}". Give an id from \`npm run level -- list\` or a path ending in .json.`);
-    return { raw: level, world: WORLDS.find((w) => w.levels.includes(target))?.id, taken: [] };
+    return { raw: level, world: WORLDS.find((w) => w.levels.includes(target) || w.shadow === target)?.id, taken: [] };
   };
 
   if (cmd === 'list') {

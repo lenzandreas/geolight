@@ -6,28 +6,34 @@
     "de": "Fata Morgana"
   },
   "intro": {
-    "en": "Over one wall and under the next. Not every plate here should face the beam, and one is still missing.",
-    "de": "Über die eine Mauer und unter der nächsten hindurch. Nicht jede Platte hier sollte zum Strahl zeigen, und eine fehlt noch."
+    "en": "Over one wall, under the next, and level through the slit. Every plate is already here, but not every plate should face the beam.",
+    "de": "Über die eine Mauer, unter der nächsten hindurch und gerade durch den Spalt. Alle Platten sind schon da, aber nicht jede sollte zum Strahl zeigen."
   },
-  "grid": {"w": 14, "h": 7},
+  "grid": {"w": 16, "h": 7},
+  "par": 0,
   "entities": [
     {"type": "laser", "x": 0, "y": 4, "angle": 0},
-    {"id": "p0", "type": "heater", "x": 2, "y": 5, "angle": 0, "lock": "rotate"},
-    {"id": "d1", "type": "heater", "x": 4, "y": 2, "angle": 0, "lock": "rotate"},
-    {"id": "p1", "type": "heater", "x": 6, "y": 2, "angle": 0, "lock": "rotate"},
-    {"id": "p2", "type": "heater", "x": 8, "y": 2, "angle": 0, "lock": "rotate"},
-    {"id": "d2", "type": "heater", "x": 10, "y": 5, "angle": 0, "lock": "rotate"},
+    {"id": "h1", "type": "heater", "x": 2, "y": 5, "angle": 0, "lock": "rotate"},
+    {"id": "h2", "type": "heater", "x": 4, "y": 2, "angle": 90, "lock": "rotate"},
+    {"id": "h3", "type": "heater", "x": 6, "y": 2, "angle": 0, "lock": "rotate"},
+    {"id": "h4", "type": "heater", "x": 8, "y": 2, "angle": 0, "lock": "rotate"},
+    {"id": "h5", "type": "heater", "x": 10, "y": 5, "angle": 270, "lock": "rotate"},
+    {"id": "h6", "type": "heater", "x": 12, "y": 5, "angle": 0, "lock": "rotate"},
     {"type": "wall", "x": 7, "y": 4, "params": {"w": 1, "h": 3}},
     {"type": "wall", "x": 10, "y": 0, "params": {"w": 1, "h": 3}},
-    {"type": "sink", "x": 13, "y": 4}
+    {"type": "slit", "x": 13, "y": 4, "angle": 0},
+    {"type": "sensor", "x": 15, "y": 3},
+    {"type": "sink", "x": 15, "y": 4}
   ],
   "inventory": [
-    {"type": "heater", "count": 1}
+    {"type": "mirror", "count": 1}
   ],
   "solution": [
-    {"id": "p0", "x": 2, "y": 5, "angle": 270},
-    {"id": "p1", "x": 6, "y": 2, "angle": 90},
-    {"id": "p2", "x": 8, "y": 2, "angle": 90},
-    {"type": "heater", "x": 12, "y": 5, "angle": 270}
+    {"id": "h1", "x": 2, "y": 5, "angle": 270},
+    {"id": "h2", "x": 4, "y": 2, "angle": 0},
+    {"id": "h3", "x": 6, "y": 2, "angle": 90},
+    {"id": "h4", "x": 8, "y": 2, "angle": 90},
+    {"id": "h5", "x": 10, "y": 5, "angle": 0},
+    {"id": "h6", "x": 12, "y": 5, "angle": 270}
   ]
 }

@@ -12,7 +12,8 @@
   "grid": {"w": 12, "h": 7},
   "entities": [
     {"type": "laser", "x": 0, "y": 4, "angle": 0},
-    {"type": "wall", "x": 7, "y": 4, "params": {"w": 1, "h": 3}},
+    {"type": "wall", "x": 5, "y": 4, "params": {"w": 3, "h": 3}},
+    {"type": "wall", "x": 3, "y": 3, "params": {"w": 1, "h": 1}},
     {"type": "wall", "x": 9, "y": 0, "params": {"w": 1, "h": 3}},
     {"type": "sink", "x": 11, "y": 3}
   ],
