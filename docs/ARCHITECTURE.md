@@ -69,6 +69,14 @@ A seeded generator turns the date into a level. It walks a laser path with right
 
 This is the headless state of one attempt: pieces, tray counts, snapshot undo/redo, hints derived from the reference solution, and star scoring. The UI, the solver and the tests all drive the same API.
 
+### Light as music (`src/audio`)
+
+`harmony.ts` is pure logic: it gives every ring a pitch on a two-octave pentatonic ladder (by colour, red lowest and blue highest; rings of one colour spread into fifths and octaves) and a level (full once the ring is lit, a faint hum while it fills). The game screen passes the result to `sound.sustain()` on every drawn frame, using the same smoothed meters the rings are drawn with, so a note swells as a beam sweeps across its ring. The sound engine only touches the audio graph when a level changes, waits for the first user gesture before it starts, tears silent notes down after a few seconds, and lets all notes fade after 45 seconds without a change or while the tab is hidden.
+
+### Notebook (`src/notebook`, `src/ui/notebookScreen.ts`)
+
+`pages.ts` holds one page per introduced piece: a one-line law, a text, a real-world note (all in English and German) and a small scene. The page's drawing is that scene traced and drawn once by the normal tracer and renderer, so it cannot disagree with the game. A page is readable once the world that introduces its piece is open; the pages a player has opened are stored in the save (`notebookSeen`). A test checks that every introduced piece has exactly one page and that every ring in a scene is lit.
+
 ### Rendering (`src/render`)
 
 - Canvas 2D with the device pixel ratio capped at 2 (1.25 on "low" quality).

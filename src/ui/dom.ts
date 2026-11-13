@@ -17,6 +17,8 @@ export function h<K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Attrs = 
 /** Inline SVG icons (stroke-based, inherit currentColor). */
 const PATHS: Record<string, string> = {
   back: 'M15 5l-7 7 7 7',
+  forward: 'M9 5l7 7-7 7',
+  book: 'M5 4.5h11a3 3 0 013 3V20H8a3 3 0 01-3-3zM5 17a3 3 0 013-3h11M9 8.5h6',
   undo: 'M9 14L4 9l5-5M4 9h10a6 6 0 010 12h-3',
   redo: 'M15 14l5-5-5-5M20 9H10a6 6 0 000 12h3',
   reset: 'M4 12a8 8 0 1 0 2.5-5.8M4 4v5h5',

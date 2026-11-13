@@ -10,6 +10,7 @@ import type { LevelDef } from '../level/schema';
 import { depths, featuredPieces, type WorldDef } from '../level/worlds';
 import { constellation, skyLayout } from './constellation';
 import { h, icon, iconButton } from './dom';
+import { PAGES, type NotebookPage } from '../notebook/pages';
 import { pieceIcon } from './pieceIcon';
 
 const SVG = 'http://www.w3.org/2000/svg';
@@ -101,6 +102,9 @@ export interface MapScreenOptions {
   onBack(): void;
   onSettings(): void;
   onWorld(world: WorldDef): void;
+  onNotebook(): void;
+  /** A notebook page is waiting to be read. */
+  notebookNew: boolean;
 }
 
 export function mapScreen(o: MapScreenOptions): HTMLElement {
@@ -157,7 +161,16 @@ export function mapScreen(o: MapScreenOptions): HTMLElement {
   return h(
     'section',
     { class: 'screen map-screen' },
-    h('header', { class: 'page-header' }, iconButton('back', t('back'), o.onBack), h('h1', {}, t('starMap')), iconButton('settings', t('settings'), o.onSettings)),
+    h(
+      'header',
+      { class: 'page-header' },
+      iconButton('back', t('back'), o.onBack),
+      // An empty slot the size of a button keeps the title centred.
+      h('span', { class: 'icon-slot', 'aria-hidden': 'true' }),
+      h('h1', {}, t('starMap')),
+      iconButton('book', o.notebookNew ? `${t('notebook')} (${t('notebookNew')})` : t('notebook'), o.onNotebook, o.notebookNew ? 'has-new' : ''),
+      iconButton('settings', t('settings'), o.onSettings),
+    ),
     h('div', { class: 'sky-scroll' }, sky),
   );
 }
@@ -169,6 +182,8 @@ export interface WorldScreenOptions {
   progress: Progress;
   onBack(): void;
   onSettings(): void;
+  /** Open the notebook page of the world's own piece. */
+  onPage(page: NotebookPage): void;
   onLevel(level: LevelDef): void;
 }
 
@@ -229,6 +244,14 @@ export function worldScreen(o: WorldScreenOptions): HTMLElement {
         : t('worldCombines', { pieces: names.slice(0, -1).join(', '), last: names[names.length - 1] }),
     ),
   );
+  const page = PAGES.find((p) => p.piece === world.object);
+  if (page) {
+    const read = iconButton('book', t('notebookRead'), () => {
+      read.classList.remove('has-new');
+      o.onPage(page);
+    }, o.progress.pageSeen(page.piece) ? '' : 'has-new');
+    intro.append(read);
+  }
   return h(
     'section',
     { class: 'screen world-screen' },

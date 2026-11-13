@@ -2,6 +2,7 @@
  * The play screen: wires a headless Session to the renderer, pointer/keyboard
  * input, the tray and the HUD. Rendering happens only while something moves.
  */
+import { voicesFor } from '../audio/harmony';
 import { sound } from '../audio/sound';
 import { centre } from '../core/entities/shapes';
 import { angleDelta, wrapAngle } from '../core/math';
@@ -152,6 +153,7 @@ export class GameScreen {
   }
 
   destroy(): void {
+    sound.sustain([]);
     cancelAnimationFrame(this.raf);
     this.ro.disconnect();
     clearTimeout(this.toastTimer);
@@ -267,6 +269,9 @@ export class GameScreen {
     if (this.hint && now < this.hintUntil && !this.reducedMotion) active = true;
     // Pulse while something is alarmed or a bulb glows, but only briefly after a change.
     if (now - this.lastChange < 2500 && !this.reducedMotion) active = true;
+
+    // Each ring holds its note at the level its meter shows, so sweeping a beam across it is heard.
+    sound.sustain(voicesFor(optics, shown));
 
     const lockOf = (id: string) => (id === '__tray' ? 'tray' : this.session.get(id)?.lock ?? 'fixed');
     this.renderer.draw({

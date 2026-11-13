@@ -8,6 +8,8 @@ A calm, glowing 2D puzzle game about light. Place and rotate mirrors, lenses, pr
 - **Pieces:** mirror, beam splitter, converging and diverging lens, concave mirror, prism (splits white light into colours), colour filter, glass block, polarizer, black hole (bends passing light, swallows what comes too close), diffraction grating (one beam in, three out: straight on, plus a rainbow to each side), shade.
 - **Targets:** rings that need enough light (of one colour, a mix such as yellow = red + green, or one polarization) and sensor eyes that must stay dark. When rings need different amounts, the band of each ring is as thick as its need, like a tank.
 - **Obstacles:** walls, slits with narrow, sometimes off-centre openings, and gates that open while their solar cell gets enough light.
+- **Light as music:** every ring holds a soft note while it is lit, so a solved level is a chord. Colour sets the pitch (red lowest, blue highest, as with light itself) and the light received sets the loudness. The notes fade after 45 seconds without a change, and a setting turns them off.
+- **Notebook:** one page per piece on the real physics behind it (the law in one line, a short text, where it shows up outside the game), with a drawing traced by the game's own optics engine. A page appears when the world of its piece opens; unread pages show a glowing dot on the star map.
 - Works with mouse, touch and keyboard, in English and German. It plays offline once installed (PWA) and idles at zero CPU when nothing moves.
 
 ## Play / develop
@@ -15,7 +17,7 @@ A calm, glowing 2D puzzle game about light. Place and rotate mirrors, lenses, pr
 ```bash
 npm install
 npm run dev        # http://localhost:5173  (dev-only extras: ?solve applies a level's solution; ?unlock opens the whole star map; #/level/<id> opens any level; #/daily/YYYY-MM-DD any day's puzzle)
-npm test           # optics, session, progress, world-structure and level-pack tests (every level is checked to be solvable)
+npm test           # optics, session, progress, notebook, world-structure and level-pack tests (every level is checked to be solvable)
 npm run report     # level report: how many perfect solutions each level has, and whether any beats par (slow)
 npm run build      # static site in dist/ (open from any web server or sub-path)
 npm run preview    # serve the production build
@@ -47,9 +49,10 @@ src/
   levels/      the level pack: one folder per world, worlds.json defines the world tree
   game/        session (placement, undo, hints) and saved progress
   render/      Canvas 2D renderer, per-type drawers, theme, view transform
-  ui/          screens (menu, star map, world view, game, settings) and input
-  audio/       procedural Web Audio sound effects
+  ui/          screens (menu, star map, world view, notebook, game, settings) and input
+  audio/       procedural Web Audio sound effects and the notes rings hold
   i18n/        string tables (en, de)
+  notebook/    notebook pages: texts and the scene each drawing is traced from
   platform/    storage adapter and service worker template
 tests/         Vitest suites
 docs/          architecture and level-design notes
